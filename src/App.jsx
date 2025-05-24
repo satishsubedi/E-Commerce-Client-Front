@@ -5,6 +5,7 @@ import { Route, Routes } from "react-router-dom";
 import LoginPage from "./pages/Auth/LoginPage";
 
 function App() {
+
   return (
     <>
       <Routes>
@@ -23,6 +24,7 @@ function App() {
       </div>
     </>
   );
+
 }
 
 export default App;
