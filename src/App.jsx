@@ -3,14 +3,15 @@ import "./App.css";
 import { Button } from "@/components/ui/button";
 import { Route, Routes } from "react-router-dom";
 import LoginPage from "./pages/Auth/LoginPage";
+import ForgotPassword from "./pages/Auth/ForgotPassword";
 
 function App() {
-
   return (
     <>
       <Routes>
         {/* public Routes */}
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
 
         {/* private Routes */}
       </Routes>
@@ -24,7 +25,6 @@ function App() {
       </div>
     </>
   );
-
 }
 
 export default App;
