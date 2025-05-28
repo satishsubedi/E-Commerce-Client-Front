@@ -96,7 +96,7 @@ const SignupForm = () => {
           <div className="mt-6">
             <Button
               type="submit"
-              className="w-full bg-green-800 hover:bg-green-900"
+              className="w-full bg-green-700 hover:bg-green-900"
               //   disabled={isLoading}
             >
               Signup
