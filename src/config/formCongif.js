@@ -25,6 +25,23 @@ export const ForgotPasswordFormControls = [
     autoComplete: "email",
   },
 ];
+//This is for reset password
+export const ResetPasswordFormControls = [
+  {
+    name: "newPassword",
+    label: "New Password",
+    type: "password",
+    placeholder: "Enter your new password",
+    autoComplete: "new-password",
+  },
+  {
+    name: "confirmPassword",
+    label: "Confirm Password",
+    type: "password",
+    placeholder: "Confirm your new password",
+    autoComplete: "new-password",
+  },
+];
 
 //initial login form
 export const initialLoginFormData = {
@@ -35,4 +52,10 @@ export const initialLoginFormData = {
 //Initial forgot password form
 export const initialForgotPasswordFormData = {
   userEmail: "",
+};
+
+//Reset password form
+export const resetPasswordFormData = {
+  newPassword: "",
+  confirmPassword: "",
 };
