@@ -3,9 +3,8 @@ import "./App.css";
 import { Button } from "@/components/ui/button";
 import { Route, Routes } from "react-router-dom";
 import LoginPage from "./pages/Auth/LoginPage";
-import ForgotPassword from "./pages/Auth/ForgotPassword";
 
-import ResetPasswordPage from "./pages/Auth/ResetPasswordPage";
+import SignupPage from "./pages/Auth/SignupPage";
 
 
 function App() {
@@ -14,8 +13,9 @@ function App() {
       <Routes>
         {/* public Routes */}
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
+
+        <Route path="/signup" element={<SignupPage />} />
+
 
         {/* private Routes */}
       </Routes>
