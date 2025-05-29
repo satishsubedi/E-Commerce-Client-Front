@@ -15,6 +15,12 @@ export const LogInFormControls = [
     autComplete: "current-password",
   },
 ];
+
+//Initial forgot password form
+export const initialForgotPasswordFormData = {
+  userEmail: "",
+};
+
 //This is for forgot password
 export const ForgotPasswordFormControls = [
   {
@@ -43,16 +49,15 @@ export const ResetPasswordFormControls = [
   },
 ];
 //Initial reset password form data
-export const resetPasswordFormData = {
+export const initialresetPasswordFormData = {
   newPassword: "",
-  confirmPassword: ""
-}
+  confirmPassword: "",
+};
 //initial login form
 export const initialLoginFormData = {
   userEmail: "",
   password: "",
 };
-
 
 export const SignupFormControls = [
   {
@@ -121,5 +126,4 @@ export const initialSignupFormData = {
   userEmail: "",
   password: "",
   confirmpassword: "",
-
 };
