@@ -4,7 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Route, Routes } from "react-router-dom";
 import LoginPage from "./pages/Auth/LoginPage";
 import ForgotPassword from "./pages/Auth/ForgotPassword";
+
 import ResetPasswordPage from "./pages/Auth/ResetPasswordPage";
+
 
 function App() {
   return (
@@ -17,7 +19,9 @@ function App() {
 
         {/* private Routes */}
       </Routes>
+      <Footer />
       <ToastContainer position="top-center" autoClose={2000} />
+
 
       <div className="text-green-700 text-5xl text-center">
         Home Page Coming soon ...
@@ -25,6 +29,7 @@ function App() {
           <Button>Click me</Button>
         </div>
       </div>
+
     </>
   );
 }
