@@ -42,7 +42,11 @@ export const ResetPasswordFormControls = [
     autoComplete: "new-password",
   },
 ];
-
+//Initial reset password form data
+export const resetPasswordFormData = {
+  newPassword: "",
+  confirmPassword: ""
+}
 //initial login form
 export const initialLoginFormData = {
   userEmail: "",
