@@ -75,8 +75,8 @@ const LoginForm = () => {
     <div className="flex flex-col justify-center px-10 md:px-20">
       <div className="space-y-6 max-w-md mx-auto w-full">
         <div>
-          <h2 className="text-2xl font-bold">Welcome back!</h2>
-          <p className="text-sm text-muted-foreground">
+          <h2 className="text-2xl font-bold text-white">Welcome back!</h2>
+          <p className="text-sm  text-white">
             Enter your Credentials to access your account
           </p>
         </div>
@@ -87,7 +87,9 @@ const LoginForm = () => {
             <div key={index}>
               {field.name === "password" ? (
                 <div className="relative">
-                  <Label htmlFor={field.name}>{field.label}</Label>
+                  <Label htmlFor={field.name} className="text-white">
+                    {field.label}
+                  </Label>
                   <div className="relative">
                     <Input
                       type={showPassword ? "text" : "password"}
@@ -97,7 +99,7 @@ const LoginForm = () => {
                       placeholder={field.placeholder}
                       required
                       id={field.name}
-                      className="pr-10"
+                      className="pr-10 placeholder:text-gray-200"
                       autoComplete="current-password"
                     />
                     <div
@@ -105,9 +107,9 @@ const LoginForm = () => {
                       onClick={() => setShowPassword(!showPassword)}
                     >
                       {showPassword ? (
-                        <EyeOff className="h-4 w-4 text-gray-500" />
+                        <EyeOff className="h-4 w-4 text-gray-200" />
                       ) : (
-                        <Eye className="h-4 w-4 text-gray-500" />
+                        <Eye className="h-4 w-4 text-gray-200" />
                       )}
                     </div>
                   </div>
@@ -143,11 +145,11 @@ const LoginForm = () => {
         </form>
 
         {/* Forgot password */}
-        <p className="mt-8 text-center text-sm text-gray-500">
+        <p className="mt-8 text-center text-sm text-white">
           Forgot password?
           <a
             href="/forgot-password"
-            className="ml-1 text-sm text-blue-600 hover:underline"
+            className="ml-1 text-sm text-blue-300 hover:underline"
           >
             Click here
           </a>
@@ -170,9 +172,9 @@ const LoginForm = () => {
           </Button>
         </div>
         {/* Sign up link */}
-        <p className="text-center text-sm">
+        <p className="text-center text-sm text-white">
           Don’t have an account?{" "}
-          <a href="#" className="text-blue-600 hover:underline">
+          <a href="#" className="text-blue-300 hover:underline">
             Sign Up
           </a>
         </p>

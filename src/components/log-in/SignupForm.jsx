@@ -33,12 +33,13 @@ const SignupForm = () => {
   };
   const [showPassword, setShowPassword] = useState(false);
   return (
-    <div className="flex flex-col justify-center px-10 md:px-20 ">
+    <div className="flex flex-col justify-center px-4 md:px-8 w-full">
       <div className="space-y-6">
-        <h3 className="text-2xl font-bold">User Registration Form </h3>
-        <hr />
+        <h3 className="text-2xl font-bold text-green-300 mb-4 text-center">
+          Sign Up Now!{" "}
+        </h3>
       </div>
-      <div className="border ">
+      <div>
         <form onSubmit={handleOnSubmit} className="space-y-4" autoComplete="on">
           {SignupFormControls.map((field, index) => (
             <div key={index}>
@@ -47,7 +48,7 @@ const SignupForm = () => {
                 <div>
                   <Label
                     htmlFor={field.name}
-                    className="block text-sm   font-bold text-gray-900 dark:text-white "
+                    className="block text-sm   font-bold text-white dark:text-white "
                   >
                     {field.label}
                   </Label>
@@ -60,7 +61,7 @@ const SignupForm = () => {
                       placeholder={field.placeholder}
                       required
                       id={field.name}
-                      className="pr-10"
+                      className="pr-10 placeholder:text-gray-200"
                       autoComplete="current-password"
                     />
                     <div
@@ -68,9 +69,9 @@ const SignupForm = () => {
                       onClick={() => setShowPassword(!showPassword)}
                     >
                       {showPassword ? (
-                        <EyeOff className="h-4 w-4 text-gray-500" />
+                        <EyeOff className="h-4 w-4 text-gray-200" />
                       ) : (
-                        <Eye className="h-4 w-4 text-gray-500" />
+                        <Eye className="h-4 w-4 text-gray-200" />
                       )}
                     </div>
                   </div>
