@@ -1,21 +1,29 @@
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { FcGoogle } from "react-icons/fc";
-import { FaApple } from "react-icons/fa";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { toast } from "react-toastify";
+import { AlertCircle, ArrowLeft, CheckCircle2, Key } from "lucide-react";
 import useForm from "../../hooks/useForm";
 import useLoading from "../../hooks/useLoading";
 import {
   ForgotPasswordFormControls,
-  initialLoginFormData,
+  initialForgotPasswordFormData,
 } from "../../config/formCongif";
-import FormControl from "../common-Input/FormControl";
-const ForgotPasswordForm = () => {
-  //useform from custom hook
-  const { formData, handleOnChange, setFormData } =
-    useForm(initialLoginFormData);
+import FormControl from "../../components/common-Input/FormControl";
+import LoadingSpinner from "../../components/helper/LoadingSpinner";
+import { forgetPasswordEmail } from "../../axios/userAxios";
 
-  //loading from custom hook
-  const { isLoading, startLoading, stopLoading } = useLoading();
+const ForgotPasswordForm = () => {
+  const { formData, handleOnChange } = useForm(initialForgotPasswordFormData); //useform from custom hook
+  const { isLoading, startLoading, stopLoading } = useLoading(); //loading from custom hook
+  const [isSuccess, setIsSuccess] = useState(false); // local state
 
   // function handle form submit
   const handleOnSubmit = async (e) => {
@@ -24,98 +32,161 @@ const ForgotPasswordForm = () => {
     startLoading();
     try {
       //api call
-      alert("Please check your email including spam mails. Thnaks");
+      const response = await forgetPasswordEmail(formData);
+      // console.log("Sending Link response:", response);
+
+      if (response?.status === "success") {
+        toast.success(response.message || " reset link sent successfully.");
+        setIsSuccess(true);
+      }
+      ``;
     } catch (error) {
       console.error("Sending Link failed failed:", error);
-      toast.error("Sending password reset link failed. Please try again.");
+      toast.error(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Sending password reset link failed. Please try again."
+      );
     } finally {
       stopLoading();
     }
   };
 
-  return (
-    <div className="flex flex-col justify-center px-10 md:px-20">
-      <div className="space-y-6 max-w-md mx-auto w-full">
-        <div>
-          <h2 className="text-2xl font-bold">Forgot Password? No Worries!</h2>
-          <p className="text-sm text-muted-foreground">
-            Enter your Credentials to reset password.
-          </p>
-        </div>
-
-        {/* form */}
-        <form onSubmit={handleOnSubmit} className="space-y-4" autoComplete="on">
-          {ForgotPasswordFormControls.map((field, index) => (
-            <div key={index}>
-              <FormControl
-                label={field.label}
-                handleOnChange={handleOnChange}
-                inputAttributes={{
-                  type: field.type,
-                  name: field.name,
-                  value: formData[field.name],
-                  placeholder: field.placeholder,
-                  autoComplete: field.autoComplete,
-                  required: true,
-                  id: field.name,
-                }}
-              />
+  // if success then only show this card
+  if (isSuccess) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-blue-50 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md mx-auto shadow-lg rounded-2xl overflow-hidden border-0">
+          <CardHeader className="bg-green-600 p-8 text-center">
+            <div className="flex justify-center mb-4">
+              <div className="p-3 bg-green-700 rounded-full">
+                <CheckCircle2
+                  className="w-10 h-10 text-white"
+                  strokeWidth={2}
+                />
+              </div>
             </div>
-          ))}
+            <CardTitle className="text-2xl font-bold text-white">
+              Email Sent Successfully!
+            </CardTitle>
+          </CardHeader>
 
-          {/* Login button */}
-          <div className="mt-6">
+          <CardContent className="p-8 space-y-4">
+            <div className="text-center">
+              <p className="text-gray-700 mb-2">
+                We've sent a password reset link to
+              </p>
+              <p className="font-semibold text-green-600 text-lg">
+                {formData.email}
+              </p>
+            </div>
+
+            <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
+              <div className="flex items-start">
+                <AlertCircle className="w-5 h-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
+                <p className="text-sm text-green-700">
+                  If you don't see the email, please check your spam folder or
+                  wait a few seconds.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+
+          <CardFooter className="px-8 pb-8">
+            <Button
+              asChild
+              variant="outline"
+              className="w-full border-green-300 text-green-600 hover:bg-green-600 hover:text-white "
+            >
+              <Link to="/login" className="flex items-center justify-center">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Login
+              </Link>
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
+    );
+  }
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 to-blue-50 p-4">
+      <Card className="w-full max-w-md mx-auto shadow-xl rounded-xl overflow-hidden border-0">
+        <CardHeader className="bg-green-600 p-6 text-center">
+          <Key className="w-8 h-8 mx-auto text-white" strokeWidth={2} />
+          <CardTitle className="text-2xl font-bold text-white mt-2">
+            Reset Your Password
+          </CardTitle>
+        </CardHeader>
+
+        <CardContent className="p-6 space-y-4">
+          <div className="text-center mb-2">
+            <p className="text-sm text-muted-foreground">
+              Enter your email to receive a reset link
+            </p>
+          </div>
+
+          <form
+            onSubmit={handleOnSubmit}
+            className="space-y-4"
+            autoComplete="on"
+          >
+            {ForgotPasswordFormControls.map((field, index) => (
+              <div key={index}>
+                <FormControl
+                  label={field.label}
+                  handleOnChange={handleOnChange}
+                  inputAttributes={{
+                    type: field.type,
+                    name: field.name,
+                    value: formData[field.name],
+                    placeholder: field.placeholder,
+                    autoComplete: field.autoComplete,
+                    required: true,
+                    id: field.name,
+                  }}
+                />
+              </div>
+            ))}
+
             <Button
               type="submit"
-              className="w-full bg-green-800 hover:bg-green-900 cursor-pointer"
+              className="w-full  bg-green-500 hover:bg-green-600 hover:text-black "
               disabled={isLoading}
             >
-              Send Link
+              {isLoading ? <LoadingSpinner /> : "Send Reset Link"}
             </Button>
-          </div>
-        </form>
+          </form>
 
-        {/* Information */}
-        <p className="mt-8 text-center text-sm text-gray-500">
-          Please Check your Email including spam folder. Thanks
-        </p>
-        {/* Divider */}
-        <div className="flex items-center justify-center gap-2 text-muted-foreground text-sm">
-          <span className="h-px bg-border flex-1" />
-          <span>Or</span>
-          <span className="h-px bg-border flex-1" />
-        </div>
-        {/* Social Login Buttons */}
-        <div className="flex  items-center justify-center space-x-5">
-          <Button
-            variant="outline"
-            className="w-50 flex items-center gap-2 cursor-pointer"
-          >
-            <FcGoogle className="text-xl" />
-            Sign in with Google
-          </Button>
-          <Button
-            variant="outline"
-            className="w-50 flex items-center gap-2 cursor-pointer"
-          >
-            <FaApple className="text-xl" />
-            Sign in with Apple
-          </Button>
-        </div>
-        {/* Sign up link */}
-        <p className="text-center text-sm">
-          Don’t have an account?{" "}
-          <a href="signup" className="text-blue-600 hover:underline">
-            Sign Up
-          </a>
-        </p>
-        <p className="text-center text-sm">
-          Already have an account?{" "}
-          <a href="login" className="text-blue-600 hover:underline">
-            LogIn
-          </a>
-        </p>
-      </div>
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">
+                Or contact support
+              </span>
+            </div>
+          </div>
+
+          <div className="text-center">
+            <p className="text-sm text-gray-600">
+              Forgot your email? Call{" "}
+              <span className="font-bold text-green-600">
+                Mahesh | +61 0426182792
+              </span>
+            </p>
+            <p className="text-sm mt-4">
+              Remember your password?{" "}
+              <Link
+                to="/login"
+                className="font-medium text-green-600 hover:underline"
+              >
+                Login
+              </Link>
+            </p>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

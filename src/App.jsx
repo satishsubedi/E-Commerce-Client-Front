@@ -6,11 +6,14 @@ import LoginPage from "./pages/Auth/LoginPage";
 
 import SignupPage from "./pages/Auth/SignupPage";
 import ForgotPassword from "./pages/Auth/ForgotPassword";
-import ResetPassword from "./pages/Auth/ResetPasswordPage";
+
 import Footer from "./components/shared/Footer";
 import { HomePage } from "./pages/Auth/HomePage";
 
+
 import Header from "./components/Header/Header";
+import ChangePasswordForm from "./components/log-in/ResetPasswordForm";
+
 
 function App() {
   return (
@@ -21,7 +24,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/change-password" element={<ChangePasswordForm />} />
         <Route path="/signup" element={<SignupPage />} />
 
         {/* private Routes */}
