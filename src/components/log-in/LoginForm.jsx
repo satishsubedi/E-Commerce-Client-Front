@@ -13,7 +13,15 @@ import {
   LogInFormControls,
 } from "../../config/formCongif";
 import FormControl from "../common-Input/FormControl";
+import { loginUser } from "../../axios/userAxios";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import LoadingSpinner from "../helper/LoadingSpinner";
+import { getUserAction } from "../../redux/user/userAction";
 const LoginForm = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   //useform from custom hook
   const { formData, handleOnChange, setFormData } =
     useForm(initialLoginFormData);
@@ -27,14 +35,37 @@ const LoginForm = () => {
   // function handle form submit
   const handleOnSubmit = async (e) => {
     e.preventDefault();
-
     startLoading();
+
     try {
       //api call
-      alert("Login successful");
+      const response = await loginUser(formData);
+      console.log("Login response:", response);
+
+      //destructure response
+      const { payload, message, status } = response;
+
+      // Check if the response is successful
+      if (status !== "success" || !payload) {
+        toast.error(message || "Invalid response from server.");
+        return;
+      }
+
+      // Destructure accessJWT and refreshJWT from payload
+      const { accessJWT, refreshJWT } = payload;
+
+      // Store tokens
+      sessionStorage.setItem("accessJWT", accessJWT);
+      localStorage.setItem("refreshJWT", refreshJWT);
+
+      // Dispatch user fetch
+      dispatch(getUserAction());
+
+      toast.success(response?.message || "Login successful!");
+      setFormData(initialLoginFormData);
     } catch (error) {
-      console.error("Login failed:", error);
-      toast.error("Login failed. Please try again.");
+      console.error("Login failed.", error);
+      toast.error(error?.response?.data?.message || error?.message);
     } finally {
       stopLoading();
     }
@@ -106,7 +137,7 @@ const LoginForm = () => {
               className="w-full bg-green-800 hover:bg-green-900"
               disabled={isLoading}
             >
-              Login
+              {isLoading ? <LoadingSpinner /> : "Login"}
             </Button>
           </div>
         </form>
