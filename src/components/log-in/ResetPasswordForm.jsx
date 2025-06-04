@@ -17,8 +17,8 @@ import { initialresetPasswordFormData } from "../../config/formCongif";
 import { toast } from "react-toastify";
 import useLoading from "../../hooks/useLoading";
 import { Link, useSearchParams } from "react-router-dom";
-// import { changePassword } from "../../axios/userAxios";
-// import LoadingSpinner from "../../components/helper/LoadingSpinner";
+import { changePassword } from "../../axios/userAxios";
+import LoadingSpinner from "../helper/LoadingSpinner";
 
 const ChangePasswordForm = () => {
   const { formData, handleOnChange } = useForm(initialresetPasswordFormData); //useform from custom hook
@@ -29,37 +29,32 @@ const ChangePasswordForm = () => {
   const [isSuccess, setIsSuccess] = useState(false);
 
   //get the email and token from the url
-  // const [params] = useSearchParams();
-  // const userEmail = params.get("e");
-  // const token = params.get("id");
+  const [params] = useSearchParams();
+  const email = params.get("e");
+  const token = params.get("id");
 
   // Function to handle reset password submission
   const handleOnSubmit = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      return toast.error("Passwords do not match.");
+      return toast.error("Passwords does not match.");
     }
     startLoading();
     try {
       // api call
-      // const response = await changePassword({ formData, token, userEmail });
+      const response = await changePassword({ formData, token, email });
 
-      // if (response?.status === "error") {
-      //   toast.error(
-      //     response.message || "Password reset failed. Please try again."
-      //   );
-      //   return;
-      // }
-
-      // if (response?.status === "success") {
-      //   toast.success(response.message || "Password reset successfullly.");
-      //   setIsSuccess(true);
-      // }
-
-      alert("Password reset successfullly.");
-      setIsSuccess(true);
+      if (response?.status === "success") {
+        toast.success(response.message || "Password reset successfullly.");
+        setIsSuccess(true);
+      }
     } catch (error) {
       console.error(error);
+      toast.error(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Password reset failed. Please try again."
+      );
     } finally {
       stopLoading();
     }
@@ -187,8 +182,7 @@ const ChangePasswordForm = () => {
               type="submit"
               disabled={isLoading}
             >
-              {/* {isLoading ? <LoadingSpinner /> : "Reset Password"} */}
-              Reset Password
+              {isLoading ? <LoadingSpinner /> : "Reset Password"}
             </Button>
           </form>
         </CardContent>
