@@ -15,7 +15,7 @@ import {
 import FormControl from "../common-Input/FormControl";
 import { loginUser } from "../../axios/userAxios";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import LoadingSpinner from "../helper/LoadingSpinner";
 import { getUserAction } from "../../redux/user/userAction";
 const LoginForm = () => {
@@ -99,7 +99,7 @@ const LoginForm = () => {
                       placeholder={field.placeholder}
                       required
                       id={field.name}
-                      className="pr-10 placeholder:text-gray-200"
+                      className="bg-white dark:text-white block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-green-600 focus-visible:z-10 sm:text-sm/6"
                       autoComplete="current-password"
                     />
                     <div
@@ -174,9 +174,9 @@ const LoginForm = () => {
         {/* Sign up link */}
         <p className="text-center text-sm text-white">
           Don’t have an account?{" "}
-          <a href="/signup" className="text-blue-300 hover:underline">
+          <Link to="/signup" className="text-blue-300 hover:underline">
             Sign Up
-          </a>
+          </Link>
         </p>
       </div>
     </div>

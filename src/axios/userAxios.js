@@ -15,6 +15,24 @@ const USER_API_URL = `${import.meta.env.VITE_APP_API_BASE_URL}/api/v1/auth`;
 //   });
 // };
 
+//CREATE USER | POST |  SIGNUP |  PUBLIC
+export const createUser = (userObj) => {
+  return axiosApiCall({
+    method: "post",
+    url: `${USER_API_URL}/register`,
+    data: userObj,
+  });
+};
+
+// ACTIVATE USER | PATCH | PRIVATE
+export const activateUser = (activationObj) => {
+  return axiosApiCall({
+    method: "patch",
+    url: `${USER_API_URL}/activate-user`,
+    data: activationObj,
+  });
+};
+
 // LOGIN USER | POST | /login  | PUBLIC
 export const loginUser = (loginData) => {
   return axiosApiCall({

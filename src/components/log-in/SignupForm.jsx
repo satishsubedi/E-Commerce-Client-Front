@@ -12,26 +12,60 @@ import { Button } from "@/components/ui/button";
 import { toast } from "react-toastify";
 import useLoading from "../../hooks/useLoading";
 
+import LoadingSpinner from "../helper/LoadingSpinner";
+import { createUser } from "../../axios/userAxios";
+import { Link } from "react-router-dom";
+
 const SignupForm = () => {
   const { formData, handleOnChange, setFormData } = useForm(
     initialSignupFormData
   );
+  const { fName, lName, email, phone, password } = formData;
   const { isLoading, startLoading, stopLoading } = useLoading();
+  const [showPassword, setShowPassword] = useState(false);
+
+  // Function to handle form submission
   const handleOnSubmit = async (e) => {
     e.preventDefault();
+
+    if (formData.password !== formData.confirmPassword) {
+      return toast.error("Password and confirm password do not match");
+    }
+
     startLoading();
+
     try {
-      //api call
-      toast.success("Registration Sucessfully");
+      const response = await createUser({
+        fName,
+        lName,
+        email,
+        phone,
+        password,
+      });
+      console.log("Registration response:", response);
+
+      // Handle error (status === "error")
+      if (response?.status === "error") {
+        toast.error(response?.message || "Registration failed");
+        return;
+      }
+
       setFormData(initialSignupFormData);
+      toast.success(
+        response?.message ||
+          "Registration successful! Please check your email to activate your account"
+      );
     } catch (error) {
-      console.error("Registartion failed:", error);
-      toast.error("Registration failed. Please try again.");
+      console.error("Registration failed:", error);
+      toast.error(
+        error.response?.data?.message ||
+          error?.message ||
+          "Registration failed. Please try again."
+      );
     } finally {
       stopLoading();
     }
   };
-  const [showPassword, setShowPassword] = useState(false);
   return (
     <div className="flex flex-col justify-center px-4 md:px-8 w-full">
       <div className="space-y-6">
@@ -43,8 +77,7 @@ const SignupForm = () => {
         <form onSubmit={handleOnSubmit} className="space-y-4" autoComplete="on">
           {SignupFormControls.map((field, index) => (
             <div key={index}>
-              {field.name === "password" ||
-              field.name === "confirm-password" ? (
+              {field.name === "password" || field.name === "confirmPassword" ? (
                 <div>
                   <Label
                     htmlFor={field.name}
@@ -61,7 +94,7 @@ const SignupForm = () => {
                       placeholder={field.placeholder}
                       required
                       id={field.name}
-                      className="pr-10 placeholder:text-gray-200"
+                      className="bg-white dark:text-white block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-green-600 focus-visible:z-10 sm:text-sm/6"
                       autoComplete="current-password"
                     />
                     <div
@@ -69,9 +102,9 @@ const SignupForm = () => {
                       onClick={() => setShowPassword(!showPassword)}
                     >
                       {showPassword ? (
-                        <EyeOff className="h-4 w-4 text-gray-200" />
+                        <EyeOff className="h-4 w-4 text-gray-500" />
                       ) : (
-                        <Eye className="h-4 w-4 text-gray-200" />
+                        <Eye className="h-4 w-4 text-gray-500" />
                       )}
                     </div>
                   </div>
@@ -93,19 +126,25 @@ const SignupForm = () => {
               )}
             </div>
           ))}
-          {/*Signup button */}
+
           <div className="mt-6">
             <Button
               type="submit"
               className="w-full bg-green-800 hover:bg-green-900"
-              //   disabled={isLoading}
+              disabled={isLoading}
             >
-              Signup
+              {isLoading ? <LoadingSpinner /> : "Sign Up"}
             </Button>
           </div>
         </form>
       </div>
-      {/* button */}
+      {/* Sign up link */}
+      <p className="mt-5 text-center text-sm text-white">
+        Already have an account?{" "}
+        <Link to="/login" className="text-blue-300 hover:underline">
+          Login
+        </Link>
+      </p>
     </div>
   );
 };
