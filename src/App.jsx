@@ -10,10 +10,9 @@ import ForgotPassword from "./pages/Auth/ForgotPassword";
 import Footer from "./components/shared/Footer";
 import { HomePage } from "./pages/Auth/HomePage";
 
-
 import Header from "./components/Header/Header";
 import ChangePasswordForm from "./components/log-in/ResetPasswordForm";
-
+import ActiveUserPage from "./pages/ActiveUserPage";
 
 function App() {
   return (
@@ -26,6 +25,7 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/change-password" element={<ChangePasswordForm />} />
         <Route path="/signup" element={<SignupPage />} />
+        <Route path="/activate-user" element={<ActiveUserPage />} />
 
         {/* private Routes */}
       </Routes>
