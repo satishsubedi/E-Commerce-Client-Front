@@ -18,7 +18,7 @@ const Footer = () => {
         <div className="container mx-auto grid md:grid-cols-4 sm:grid-cols-2 gap-6 px-6">
           {/* Logo / Store Name */}
           <div className="justify-center items-center text-center">
-            <h2 className="text-2xl font-bold text-yellow-400 mb-3">
+            <h2 className="text-2xl font-bold text-slate-100 mb-3">
               Group Store
             </h2>
             <p className="text-sm text-gray-400">

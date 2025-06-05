@@ -20,7 +20,7 @@ const MobileNavbar = () => {
   return (
     <Sheet>
       <SheetTrigger>
-        <RxHamburgerMenu className="text-xl font-medium hove:ring hover:ring-4 hover:ring-black text-black dark:text-white cursor-pointer hover:p-2 hover:rounded hover:text-4xl "></RxHamburgerMenu>
+        <RxHamburgerMenu className="text-xl font-medium hove:ring hover:ring-4 hover:ring-black text-white dark:text-white cursor-pointer hover:p-2 hover:rounded hover:text-4xl "></RxHamburgerMenu>
       </SheetTrigger>
       <SheetContent
         className={

@@ -4,6 +4,8 @@ import ResetPasswordImage from "../assets/resetPasswordImage.jpeg";
 import lb1 from "../assets/lb1.jpg";
 import sbg from "../assets/sbg.jpg";
 import sbg1 from "../assets/sbg1.jpg";
+import h1 from "../assets/h1.jpg";
+import h2 from "../assets/h2.jpg";
 
 export const assets = {
   lb1,
@@ -12,4 +14,6 @@ export const assets = {
   ResetPasswordImage,
   sbg,
   sbg1,
+  h1,
+  h2,
 };
