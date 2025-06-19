@@ -13,6 +13,8 @@ import { HomePage } from "./pages/Auth/HomePage";
 import Header from "./components/Header/Header";
 import ChangePasswordForm from "./components/log-in/ResetPasswordForm";
 import ActiveUserPage from "./pages/ActiveUserPage";
+import LatestProductsPage from "./pages/Products/LatestProductsPage";
+import RecommendationPage from "./pages/Products/RecommendationPage";
 
 function App() {
   return (
@@ -26,6 +28,11 @@ function App() {
         <Route path="/change-password" element={<ChangePasswordForm />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/activate-user" element={<ActiveUserPage />} />
+        <Route path="/latest-products" element={<LatestProductsPage />} />
+        <Route
+          path="/product-recommendation"
+          element={<RecommendationPage />}
+        />
 
         {/* private Routes */}
       </Routes>
