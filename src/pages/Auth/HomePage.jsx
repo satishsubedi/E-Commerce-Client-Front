@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../../components/ui/button";
 import { assets } from "../../assets/asset";
+import CustomCarousel from "../../components/customcarousel/CustomCarousel";
 
 const dummyProducts = [
   {
@@ -54,6 +55,7 @@ const dummyClothes = [
 export const HomePage = () => {
   return (
     <div className="min-h-screen bg-white">
+      <CustomCarousel></CustomCarousel>
       {/* Hero Section */}
       <section className="flex flex-col-reverse md:flex-row items-center justify-between px-6 md:px-20 py-16 bg-zinc-100">
         <div className="space-y-6 md:w-1/2 text-center md:text-left">
