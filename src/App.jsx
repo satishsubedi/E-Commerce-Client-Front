@@ -15,28 +15,33 @@ import ChangePasswordForm from "./components/log-in/ResetPasswordForm";
 import ActiveUserPage from "./pages/ActiveUserPage";
 import LatestProductsPage from "./pages/Products/LatestProductsPage";
 import RecommendationPage from "./pages/Products/RecommendationPage";
+import DefaultLayout from "./components/layout/DefaultLayout";
+import AllProducts from "./pages/Products/AllProducts";
 
 function App() {
   return (
     <>
-      <Header></Header>
+      {/* <Header></Header> */}
       <Routes>
         {/* public Routes */}
-        <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/change-password" element={<ChangePasswordForm />} />
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="/activate-user" element={<ActiveUserPage />} />
-        <Route path="/latest-products" element={<LatestProductsPage />} />
-        <Route
-          path="/product-recommendation"
-          element={<RecommendationPage />}
-        />
+        <Route path="/" element={<DefaultLayout />}>
+          <Route index element={<HomePage />} />
+          <Route path="login" element={<LoginPage />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/change-password" element={<ChangePasswordForm />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/activate-user" element={<ActiveUserPage />} />
+          <Route path="/latest-products" element={<LatestProductsPage />} />
+          <Route
+            path="/product-recommendation"
+            element={<RecommendationPage />}
+          />
+          <Route path="/allproducts" element={<AllProducts />} />
+        </Route>
 
         {/* private Routes */}
       </Routes>
-      <Footer />
+      {/* <Footer /> */}
       <ToastContainer position="top-center" autoClose={2000} />
     </>
   );
