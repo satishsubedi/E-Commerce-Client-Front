@@ -18,7 +18,7 @@ const LatestProductsPage = () => {
   }, []);
 
   return (
-    <section className="space-y-6">
+    <section className="space-y-6 h-[50vh]">
       <h2 className="text-2xl font-bold text-gray-800">Latest Products</h2>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {loading

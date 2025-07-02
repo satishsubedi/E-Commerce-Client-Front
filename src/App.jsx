@@ -28,11 +28,6 @@ function App() {
         <Route path="/change-password" element={<ChangePasswordForm />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/activate-user" element={<ActiveUserPage />} />
-        <Route path="/latest-products" element={<LatestProductsPage />} />
-        <Route
-          path="/product-recommendation"
-          element={<RecommendationPage />}
-        />
 
         {/* private Routes */}
       </Routes>
