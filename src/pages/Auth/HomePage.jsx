@@ -1,9 +1,17 @@
 import CustomCarousel from "../../components/customcarousel/CustomCarousel";
+import LatestProducts from "../../components/Products/LatestProducts";
+import RecommendationProducts from "../../components/Products/RecommendationProducts";
 
 export const HomePage = () => {
   return (
     <div className="min-h-screen bg-white">
       <CustomCarousel />
+      <div className="mb-10">
+        <RecommendationProducts />
+      </div>
+      <div className="mb-10">
+        <LatestProducts />
+      </div>
     </div>
   );
 };

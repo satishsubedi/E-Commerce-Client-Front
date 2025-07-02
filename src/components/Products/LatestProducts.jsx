@@ -104,25 +104,29 @@ const LatestProducts = () => {
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   return (
-    <section className="px-4 space-y-4 mb-8">
-      <h2 className="text-2xl font-bold text-gray-800">Latest Products</h2>
-      <div className="flex overflow-x-auto gap-4 pb-2">
+    <section className="px-8 mb-8 mt-8">
+      <h2 className="text-2xl font-bold text-gray-800 text-center mb-4">
+        Latest Products
+      </h2>
+
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
         {latestProducts.map((product) => (
-          <Card
-            key={product._id}
-            className="min-w-[200px] max-w-[200px] flex-shrink-0"
-          >
-            <CardContent className="p-2">
-              <img
-                src={product.image}
-                alt={product.title}
-                className="w-full h-36 object-cover rounded-lg"
-              />
-              <div className="mt-2 text-sm font-semibold">{product.title}</div>
-              <div className="text-gray-500 text-sm">${product.price}</div>
+          <Card key={product._id} className="w-full h-[300px] p-0">
+            <CardContent className="p-0 flex flex-col h-full">
               <Link to={"/product/" + product.slug}>
-                <Button>View Details</Button>
+                <img
+                  src={product.image}
+                  alt={product.title}
+                  className="w-full h-48 object-cover rounded-t-lg"
+                />
               </Link>
+              <div className="p-2 flex flex-col flex-grow">
+                <div className="text-sm font-semibold">{product.title}</div>
+                <div className="text-gray-500 text-sm">${product.price}</div>
+                <Button className="mt-2 w-full cursor-pointer">
+                  Add to Cart
+                </Button>
+              </div>
             </CardContent>
           </Card>
         ))}

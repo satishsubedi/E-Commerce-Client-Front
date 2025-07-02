@@ -87,104 +87,84 @@ const AllProducts = () => {
     console.log("test");
   };
   return (
-    <>
-      <div className="container mx-auto px-4">
-        {/* top bar stripe */}
-        <div className="flex justify-between bg-gray-100 p-5 mb-4 ">
-          <div className="text-lg  m-3">
-            {/* Breadcrumb  */}
-            <Breadcrumb className="flex flex-wrap list-none items-center space-x-1 text-sm">
-              <BreadcrumbItem>
-                <BreadcrumbLink
-                  href="/"
-                  className="text-foreground hover:text-primary"
-                >
-                  Home
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator className="mx-2">
-                {" "}
-                {">"}{" "}
-              </BreadcrumbSeparator>
-              <BreadcrumbItem>
-                <BreadcrumbLink href="/allproducts" className="text-foreground">
-                  All Products
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-            </Breadcrumb>
-            <div className="text-lg font-bold text-gray-800">Found1(5)</div>
+    <div className="mx-auto px-4">
+      {/* top bar stripe */}
+      <div className="flex justify-between bg-gray-100 p-5 mb-4 ">
+        <div className="text-lg  m-3">
+          {/* Breadcrumb  */}
+          <Breadcrumb className="flex flex-wrap list-none items-center space-x-1 text-sm">
+            <BreadcrumbItem>
+              <BreadcrumbLink
+                href="/"
+                className="text-foreground hover:text-primary"
+              >
+                Home
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator className="mx-2"> {">"} </BreadcrumbSeparator>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/allproducts" className="text-foreground">
+                All Products
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+          </Breadcrumb>
+          <div className="text-lg font-bold text-gray-800">Found1(5)</div>
+        </div>
+        <div className="flex gap-4 justify-end ">
+          <div
+            className="flex p-2 justify-center  mx-2 cursor-pointer"
+            onClick={handleOnDisplayFilter}
+          >
+            <span className="px-3 ">
+              {showfilter ? "Hide Filter" : "Show Filter"}
+            </span>
+            <SlidersHorizontal />
           </div>
-          <div className="flex gap-4 justify-end ">
-            <div
-              className="flex p-2 justify-center  mx-2 cursor-pointer"
-              onClick={handleOnDisplayFilter}
-            >
-              <span className="px-3 ">
-                {showfilter ? "Hide Filter" : "Show Filter"}
-              </span>
-              <SlidersHorizontal />
-            </div>
-            <div
-              className="flex p-2 justify-center  mx-2 cursor-pointer"
-              onClick={handleOnSortOption}
-            >
-              <Collapse
-                feature="Feature"
-                Newest="Newest"
-                phl="Price:High-Low"
-                plh="Price:Low-Highs"
-                title="Sort By"
-              />
-            </div>
+          <div
+            className="flex p-2 justify-center  mx-2 cursor-pointer"
+            onClick={handleOnSortOption}
+          >
+            <Collapse
+              feature="Feature"
+              Newest="Newest"
+              phl="Price:High-Low"
+              plh="Price:Low-Highs"
+              title="Sort By"
+            />
           </div>
         </div>
+      </div>
 
-        {showfilter && (
-          <div className="w-full mb-4">
-            <FilterSidebar />
-          </div>
-        )}
-
-        {/* Recommended Products */}
-        <div className="mb-10">
-          <RecommendationProducts />
+      {showfilter && (
+        <div className="w-full mb-4">
+          <FilterSidebar />
         </div>
-        {/* Latest Products */}
-        <div className="mb-10">
-          <LatestProducts />
-        </div>
+      )}
 
-        {/* sidebar */}
-        <div className="flex flex-col md:flex-row w-full">
-          {/* Left Side */}
-          {/* {showfilter && (
-            <div className="w-full md:w-1/4 mb-4 md:mb-0">
-              <FilterSidebar />
-            </div>
-          )} */}
+      {/* Recommended Products */}
+      <div className="mb-10">
+        <RecommendationProducts />
+      </div>
+      {/* Latest Products */}
+      <div className="mb-10">
+        <LatestProducts />
+      </div>
 
-          {/* Right side */}
-          {/* <div
-            className={`${showfilter ? "w-full md:w-3/4" : "w-full"} transition-all`}
-          > */}
-          <div className="w-full transition-all mb-6">
-            {/* <div className="space-x-2 mt-5">
-              <RecommendationProducts />{" "}
-            </div> */}
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">
-              All Products
-            </h2>
-            <div className="flex justify-center ">
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 max-w-6xl w-full px-4">
-                {products.map((product) => (
-                  <ProductCard key={product.slug} product={product} />
-                ))}
-              </div>
+      <div className="flex flex-col md:flex-row">
+        <div className="w-full transition-all mb-6">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+            All Products
+          </h2>
+          <div className="flex justify-center w-full">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 w-full px-4">
+              {products.map((product) => (
+                <ProductCard key={product.slug} product={product} />
+              ))}
             </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
