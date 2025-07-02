@@ -222,6 +222,7 @@ const Navbar = () => {
           {newcat.map((category) => {
             return (
               <NavigationMenuItem key={category._id}>
+
                 <NavigationMenuTrigger className="bg-slate-900 text-xl hover:underline decoration-blue-600 underline-offset-15 hover:bg-none  delay-300 transition">
                   {category.name}
                 </NavigationMenuTrigger>
