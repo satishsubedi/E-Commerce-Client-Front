@@ -213,14 +213,16 @@ const Navbar = () => {
 
   const newcat = categories.filter((cat) => cat.parent === null);
   return (
-    <nav
-      className={`gap-4  items-center text-xl flex-wrap font-medium text-white dark:text-white justify-center hidden  lg:flex lg:flex-1`}
-    >
+    // <nav
+    //   className={`gap-4  items-center text-xl flex-wrap font-medium text-white dark:text-white justify-center hidden  lg:flex lg:flex-1`}
+    // >
+    <nav className="flex gap-4 items-center text-xl flex-wrap font-medium text-white justify-center">
       <NavigationMenu className="[data-orientation] = horizental">
         <NavigationMenuList className="">
-          {newcat.map((category, i) => {
+          {newcat.map((category) => {
             return (
-              <NavigationMenuItem>
+              <NavigationMenuItem key={category._id}>
+
                 <NavigationMenuTrigger className="bg-slate-900 text-xl hover:underline decoration-blue-600 underline-offset-15 hover:bg-none  delay-300 transition">
                   {category.name}
                 </NavigationMenuTrigger>
