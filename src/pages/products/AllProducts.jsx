@@ -10,8 +10,7 @@ import {
   BreadcrumbSeparator,
 } from "../../components/ui/breadcrumb";
 import FilterSidebar from "../../components/sidebar/FilterSideBar";
-import RecommendationProducts from "../../components/Products/RecommendationProducts";
-import LatestProducts from "../../components/Products/LatestProducts";
+
 const products = [
   {
     title: "Wireless Headphones",
@@ -78,91 +77,84 @@ const products = [
       " https://m.media-amazon.com/images/I/71MBMsR+B4L._AC_SY300_SX300_.jpg",
   },
 ];
+
 const AllProducts = () => {
-  const [showfilter, setShowFilter] = useState(false);
-  const handleOnDisplayFilter = () => {
-    setShowFilter(!showfilter);
+  const [showFilter, setShowFilter] = useState(true);
+
+  const handleToggleFilter = () => {
+    setShowFilter(!showFilter);
   };
-  const handleOnSortOption = () => {
-    console.log("test");
+
+  const handleSortChange = () => {
+    console.log("Sort option selected");
   };
+
   return (
     <div className="mx-auto px-4">
-      {/* top bar stripe */}
-      <div className="flex justify-between bg-gray-100 p-5 mb-4 ">
-        <div className="text-lg  m-3">
-          {/* Breadcrumb  */}
-          <Breadcrumb className="flex flex-wrap list-none items-center space-x-1 text-sm">
-            <BreadcrumbItem>
-              <BreadcrumbLink
-                href="/"
-                className="text-foreground hover:text-primary"
-              >
-                Home
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator className="mx-2"> {">"} </BreadcrumbSeparator>
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/allproducts" className="text-foreground">
-                All Products
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-          </Breadcrumb>
-          <div className="text-lg font-bold text-gray-800">Found1(5)</div>
-        </div>
-        <div className="flex gap-4 justify-end ">
-          <div
-            className="flex p-2 justify-center  mx-2 cursor-pointer"
-            onClick={handleOnDisplayFilter}
-          >
-            <span className="px-3 ">
-              {showfilter ? "Hide Filter" : "Show Filter"}
-            </span>
-            <SlidersHorizontal />
-          </div>
-          <div
-            className="flex p-2 justify-center  mx-2 cursor-pointer"
-            onClick={handleOnSortOption}
-          >
-            <Collapse
-              feature="Feature"
-              Newest="Newest"
-              phl="Price:High-Low"
-              plh="Price:Low-Highs"
-              title="Sort By"
-            />
-          </div>
-        </div>
+      {/* Breadcrumb only at the top */}
+      <div className="bg-gray-100 p-4 mb-6">
+        <Breadcrumb className="flex flex-wrap items-center space-x-1 text-sm">
+          <BreadcrumbItem>
+            <BreadcrumbLink
+              href="/"
+              className="text-foreground hover:text-primary"
+            >
+              Home
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator className="mx-2">{">"}</BreadcrumbSeparator>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/allproducts" className="text-foreground">
+              All Products
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+        </Breadcrumb>
       </div>
 
-      {showfilter && (
-        <div className="w-full mb-4">
-          <FilterSidebar />
-        </div>
-      )}
-
-      {/* Recommended Products */}
-      <div className="mb-10">
-        <RecommendationProducts />
-      </div>
-      {/* Latest Products */}
-      <div className="mb-10">
-        <LatestProducts />
-      </div>
-
-      <div className="flex flex-col md:flex-row">
-        <div className="w-full transition-all mb-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
-            All Products
-          </h2>
-          <div className="flex justify-center w-full">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 w-full px-4">
-              {products.map((product) => (
-                <ProductCard key={product.slug} product={product} />
-              ))}
+      {/* Main layout: sidebar + product grid */}
+      <div className="flex flex-col md:flex-row gap-6">
+        {/* Left Sidebar */}
+        {showFilter && (
+          <aside className="w-full md:w-64 space-y-4 shrink-0">
+            <FilterSidebar />
+            <div className="bg-white p-3 rounded shadow">
+              <h3 className="text-md font-semibold mb-2">Sort By</h3>
+              <Collapse
+                feature="Featured"
+                Newest="Newest"
+                phl="Price: High-Low"
+                plh="Price: Low-High"
+                title="Sort Options"
+              />
             </div>
+          </aside>
+        )}
+
+        {/* Right Product Grid */}
+        <main
+          className={`${showFilter ? "flex-grow" : "w-full"} transition-all duration-300`}
+        >
+          {/* Top row with heading and toggle */}
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl font-bold text-gray-800">
+              All Products ({products.length})
+            </h2>
+            <button
+              className="text-sm text-blue-600 flex items-center gap-1"
+              onClick={() => setShowFilter(!showFilter)}
+            >
+              <SlidersHorizontal className="w-4 h-4" />
+              {showFilter ? "Hide Filters" : "Show Filters"}
+            </button>
           </div>
-        </div>
+
+          {/* Product Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+            {products.map((product) => (
+              <ProductCard key={product.slug} product={product} />
+            ))}
+          </div>
+        </main>
       </div>
     </div>
   );
