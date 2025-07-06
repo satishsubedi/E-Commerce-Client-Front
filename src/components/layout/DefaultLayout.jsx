@@ -15,7 +15,7 @@ const DefaultLayout = () => {
       </main>
 
       {/* footer */}
-      <Footer></Footer>
+      {/* <Footer></Footer> */}
     </div>
   );
 };
