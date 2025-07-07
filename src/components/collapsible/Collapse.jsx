@@ -24,6 +24,7 @@ const collapse = ({
   name,
   product,
   handleOnSortOption,
+  checkboxes = [],
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [range, setRange] = useState([minPrice, maxPrice]);
@@ -147,24 +148,25 @@ const collapse = ({
           </>
         )}
       </div>
-
-      <CollapsibleContent className="absolute top-full right-30 mt-2 w-48 bg-white  shadow z-50">
-        <div className=" px-4 py-0.5  text-sm">{feature}</div>
-        <div className=" px-4 py-0.5  text-sm">{Newest}</div>
-        <div className=" px-4 py-0.5  text-sm">{phl}</div>
-        <div className=" px-4 py-0.5  text-sm">{plh}</div>
-        <div className="flex flex-col gap-2">
-          {checkboxes.map((option) => (
-            <div
-              key={option.id}
-              className="flex items-center space-x-2 ml-6 text-lg"
-            >
-              <Checkbox id={option.id} />
-              <Label htmlFor={option.id}>{option.label}</Label>
-            </div>
-          ))}
-        </div>
-      </CollapsibleContent>
+      <Collapsible>
+        <CollapsibleContent className="absolute top-full right-30 mt-2 w-48 bg-white  shadow z-50">
+          <div className=" px-4 py-0.5  text-sm">{feature}</div>
+          <div className=" px-4 py-0.5  text-sm">{Newest}</div>
+          <div className=" px-4 py-0.5  text-sm">{phl}</div>
+          <div className=" px-4 py-0.5  text-sm">{plh}</div>
+          <div className="flex flex-col gap-2">
+            {checkboxes.map((option) => (
+              <div
+                key={option.id}
+                className="flex items-center space-x-2 ml-6 text-lg"
+              >
+                <Checkbox id={option.id} />
+                <Label htmlFor={option.id}>{option.label}</Label>
+              </div>
+            ))}
+          </div>
+        </CollapsibleContent>
+      </Collapsible>
     </div>
   );
 };

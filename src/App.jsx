@@ -10,8 +10,8 @@ import Header from "./components/Header/Header";
 import ChangePasswordForm from "./components/log-in/ResetPasswordForm";
 import ActiveUserPage from "./pages/ActiveUserPage";
 
-import LatestProductsPage from "./pages/Products/LatestProductsPage";
-import RecommendationPage from "./pages/Products/RecommendationPage";
+// import LatestProductsPage from "./pages/Products/LatestProductsPage";
+// import RecommendationPage from "./pages/Products/RecommendationPage";
 import DefaultLayout from "./components/layout/DefaultLayout";
 import AllProducts from "./pages/Products/AllProducts";
 
@@ -32,12 +32,9 @@ function App() {
           <Route path="/change-password" element={<ChangePasswordForm />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/activate-user" element={<ActiveUserPage />} />
-          <Route path="/latest-products" element={<LatestProductsPage />} />
-          <Route
-            path="/product-recommendation"
-            element={<RecommendationPage />}
-          />
-          <Route path="/allproducts" element={<AllProducts />} />
+          {/* <Route path="/latest-products" element={<LatestProductsPage />} /> */}
+
+          {/* <Route path="/allproducts" element={<AllProducts />} /> */}
         </Route>
 
         <Route path="/" element={<HomePage />} />

@@ -12,7 +12,7 @@ const AllProductList = () => {
   const navigate = useNavigate();
 
   const [wishlist, setWishlist] = useState([]);
-  const { products } = useSelector((state) => state.product);
+  const { products } = useSelector((state) => state.productInfo);
 
   // fetch all products when component mounts
   useEffect(() => {
