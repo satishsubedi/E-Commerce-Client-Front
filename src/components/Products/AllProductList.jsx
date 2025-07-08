@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,6 +13,7 @@ const AllProductList = () => {
 
   const [wishlist, setWishlist] = useState([]);
   const { products } = useSelector((state) => state.product);
+  console.log("Products:", products);
 
   // fetch all products when component mounts
   useEffect(() => {
@@ -74,7 +75,7 @@ const AllProductList = () => {
                     />
                     {discountPercentage > 0 && product.discountPrice > 0 && (
                       <Badge className="absolute top-3 left-3 bg-red-500 hover:bg-red-600">
-                        -{discountPercentage}%
+                        {discountPercentage}% off
                       </Badge>
                     )}
                     <Button
@@ -93,7 +94,7 @@ const AllProductList = () => {
                   <div className="p-4">
                     <div className="mb-2">
                       <Badge variant="secondary" className="text-xs mb-2">
-                        {product.category}
+                        {product.brand}
                       </Badge>
                       <h3 className="font-semibold text-lg mb-1 line-clamp-1">
                         {product.title}
