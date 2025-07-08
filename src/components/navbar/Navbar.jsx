@@ -9,6 +9,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
+import { getAllCategories } from "../../axios/categoryAxios";
 
 const Navbar = () => {
   const [categories, setCategories] = useState([]);
@@ -17,8 +18,8 @@ const Navbar = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await axios.get("http://localhost:8000/api/v1/category/");
-        setCategories(res.data?.payload || []);
+        const response = await getAllCategories();
+        setCategories(response?.payload || []);
       } catch (error) {
         console.error("Error fetching categories", error);
       }
