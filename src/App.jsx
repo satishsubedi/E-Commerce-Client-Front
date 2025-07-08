@@ -13,7 +13,6 @@ import ActiveUserPage from "./pages/ActiveUserPage";
 // import LatestProductsPage from "./pages/Products/LatestProductsPage";
 // import RecommendationPage from "./pages/Products/RecommendationPage";
 import DefaultLayout from "./components/layout/DefaultLayout";
-import AllProducts from "./pages/Products/AllProducts";
 
 import ProductDetailPage from "./pages/products/ProductDetailPage";
 import AllProductsPage from "./pages/products/AllProductsPage";

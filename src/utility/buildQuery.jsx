@@ -5,7 +5,7 @@ export const buildQuery = ({
   maxPrice,
   minPrice,
   sale,
-  color,
+  colors,
   brand,
 }) => {
   let queries = qs.stringify({
@@ -13,7 +13,7 @@ export const buildQuery = ({
     maxPrice,
     minPrice,
     sale,
-    color,
+    colors,
     brand,
   });
 

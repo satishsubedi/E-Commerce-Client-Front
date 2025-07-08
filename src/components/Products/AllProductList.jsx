@@ -4,22 +4,70 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Heart, Star } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllProductsAction } from "../../redux/product/productAction";
+import {
+  getAllProductsAction,
+  getFilterProductAction,
+} from "../../redux/product/productAction";
 import { useNavigate } from "react-router-dom";
+import { useRef } from "react";
+import { buildQuery } from "../../utility/buildQuery";
 
-const AllProductList = () => {
+const AllProductList = ({ productlist, filters, hasActiveFilter }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const [wishlist, setWishlist] = useState([]);
-  const { products } = useSelector((state) => state.productInfo);
-
+  const { products, FilterProduct } = useSelector((state) => state.productInfo);
+  const [productList, setProductList] = useState([]);
+  const ref = useRef(true);
+  const debouncedFetch = useRef(null);
   // fetch all products when component mounts
   useEffect(() => {
-    if (!products || products.length === 0) {
+    if (ref.current) {
       dispatch(getAllProductsAction());
+      ref.current = false;
     }
-  }, [dispatch, products]);
+
+    if (productlist && productlist.length > 0) {
+      setProductList(productlist);
+      return;
+    }
+    if (FilterProduct?.length > 0) {
+      setProductList([...FilterProduct]);
+      return;
+    }
+    if (products && products.length > 0 && !FilterProduct.length > 0) {
+      setProductList([...products]);
+    }
+  }, [dispatch, products, productlist, FilterProduct]);
+
+  // another useEffect
+
+  if (!debouncedFetch.current) {
+    debouncedFetch.current = (function () {
+      let id;
+      return (query) => {
+        clearTimeout(id);
+        id = setTimeout(() => {
+          dispatch(getFilterProductAction(query));
+        }, 2000);
+      };
+    })();
+  }
+
+  useEffect(() => {
+    if (!hasActiveFilter(filters)) {
+      return;
+    }
+    const obj = {
+      ...filters,
+      mainCategory: filters.mainCategory.join(","),
+      brand: filters.brand.join(","),
+      colors: filters.colors.join(","),
+    };
+
+    const query = buildQuery(obj);
+    debouncedFetch.current(query);
+  }, [filters]);
 
   //function to toggle wishlist
   const toggleWishlist = (id) => {
@@ -46,12 +94,12 @@ const AllProductList = () => {
     <div className="min-h-screen py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {products.map((product) => {
+          {productList.map((product) => {
             const discountPercentage = calculateDiscountPercentage(
               product.price,
               product.discountPrice
             );
-            const isWishlisted = isProductWishlisted(product._id);
+            const isWishlisted = isProductWishlisted(productList._id);
 
             return (
               <Card
