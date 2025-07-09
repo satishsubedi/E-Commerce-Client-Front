@@ -1,6 +1,11 @@
 import { toast } from "react-toastify";
-import { getAllProducts } from "../../axios/productAxios";
-import { setProduct, setProducts } from "./productSlice";
+
+import {
+  getAllFilterProductApi,
+  getAllProducts,
+} from "../../axios/productAxios";
+import { setFilteredProduct, setProduct, setProducts } from "./productSlice";
+
 
 //Redux Thunk
 // GET ALL PRODUCTS ACTION
@@ -22,6 +27,16 @@ export const getAllProductsAction = () => async (dispatch) => {
     toast.error("Something went wrong!");
   }
 };
+
+
+export const getFilterProductAction = (query) => async (dispatch) => {
+  const productInfo = await getAllFilterProductApi(query);
+
+  const { payload, status } = productInfo;
+
+  status === "success" && dispatch(setFilteredProduct(payload));
+};
+
 
 // GET PRODUCT BY ID ACTION
 export const getProductByIdAction = (id) => async (dispatch) => {

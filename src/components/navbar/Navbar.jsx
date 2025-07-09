@@ -50,21 +50,39 @@ const Navbar = () => {
   const topLevelCategories = categories.filter((cat) => cat.parent === null);
 
   return (
+
+    // <nav
+    //   className={`gap-4  items-center text-xl flex-wrap font-medium text-white dark:text-white justify-center hidden  lg:flex lg:flex-1`}
+    // >
     <nav className="flex gap-4 items-center text-xl flex-wrap font-medium text-white justify-center">
-      <NavigationMenu viewport={false}>
-        <NavigationMenuList>
-          {topLevelCategories.map((category) => (
-            <NavigationMenuItem key={category._id}>
-              <NavigationMenuTrigger className="bg-slate-900 text-xl">
-                {category.name}
-              </NavigationMenuTrigger>
-              <NavigationMenuContent className="bg-white text-black shadow-md p-4 rounded z-50">
-                <div className="w-[150px] max-h-[400px overflow-y-auto">
-                  {renderSubCategories(category._id)}
-                </div>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-          ))}
+      <NavigationMenu className="[data-orientation] = horizental">
+        <NavigationMenuList className="">
+          {newcat.map((category) => {
+            return (
+              <NavigationMenuItem key={category._id}>
+                <NavigationMenuTrigger className="bg-slate-900 text-xl hover:underline decoration-blue-600 underline-offset-15 hover:bg-none  delay-300 transition">
+                  {category.name}
+                </NavigationMenuTrigger>
+                <NavigationMenuContent className="  ">
+                  <div className=" w-[100%] flex justify-evenly gap-20 px-40 py-10 ">
+                    {categories
+                      .filter((cat) => cat.parent == category._id)
+                      .map((category) => (
+                        <div key={category._id}>
+                          <h2 className="text-gray-500">{category.name}</h2>
+                          {categories
+                            .filter((cat) => cat.parent == category._id)
+                            .map((c) => {
+                              return <div key={c._id}>{c.name}</div>;
+                            })}
+                        </div>
+                      ))}
+                  </div>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+            );
+          })}
+
         </NavigationMenuList>
       </NavigationMenu>
     </nav>
