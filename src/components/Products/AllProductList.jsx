@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
@@ -16,6 +15,7 @@ import { useRef } from "react";
 import { buildQuery } from "../../utility/buildQuery";
 
 const AllProductList = ({ productlist, filters, hasActiveFilter }) => {
+  
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [wishlist, setWishlist] = useState([]);
@@ -58,9 +58,10 @@ const AllProductList = ({ productlist, filters, hasActiveFilter }) => {
   }
 
   useEffect(() => {
-    if (!hasActiveFilter(filters)) {
-      return;
-    }
+    // if (!hasActiveFilter(filters)) {
+    //   return;
+    // }
+    console.log(hasActiveFilter(filters));
     const obj = {
       ...filters,
       mainCategory: filters.mainCategory.join(","),
@@ -71,8 +72,6 @@ const AllProductList = ({ productlist, filters, hasActiveFilter }) => {
     const query = buildQuery(obj);
     debouncedFetch.current(query);
   }, [filters]);
-
-
 
   //function to toggle wishlist
   const toggleWishlist = (id) => {
@@ -99,16 +98,13 @@ const AllProductList = ({ productlist, filters, hasActiveFilter }) => {
     <div className="min-h-screen py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-
           {productList.map((product) => {
-
             const discountPercentage = calculateDiscountPercentage(
               product.price,
               product.discountPrice
             );
 
             const isWishlisted = isProductWishlisted(productList._id);
-
 
             return (
               <Card
@@ -131,9 +127,7 @@ const AllProductList = ({ productlist, filters, hasActiveFilter }) => {
                     />
                     {discountPercentage > 0 && product.discountPrice > 0 && (
                       <Badge className="absolute top-3 left-3 bg-red-500 hover:bg-red-600">
-
                         -{discountPercentage}%
-
                       </Badge>
                     )}
                     <Button
@@ -152,9 +146,7 @@ const AllProductList = ({ productlist, filters, hasActiveFilter }) => {
                   <div className="p-4">
                     <div className="mb-2">
                       <Badge variant="secondary" className="text-xs mb-2">
-
                         {product.brand}
-
                       </Badge>
                       <h3 className="font-semibold text-lg mb-1 line-clamp-1">
                         {product.title}

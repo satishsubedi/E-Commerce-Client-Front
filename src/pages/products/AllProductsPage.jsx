@@ -26,14 +26,16 @@ const AllProductsPage = () => {
     sale: "",
     brand: [],
   });
-  const hasActiveFilters = (f) =>
-    f.mainCategory.length > 0 ||
-    f.minPrice !== "" ||
-    f.maxPrice !== "" ||
-    f.colors.length > 0 ||
-    f.sale !== "" ||
-    f.brand.length > 0;
-
+  const hasActiveFilters = (f) => {
+    return (
+      f.mainCategory.length > 0 ||
+      f.minPrice !== "" ||
+      f.maxPrice !== "" ||
+      f.colors.length > 0 ||
+      f.sale !== "" ||
+      f.brand.length > 0
+    );
+  };
   const handleOnSortOption = (option) => {
     if (option === "Price:Low-High") {
       const sortedProducts = [...products].sort((a, b) => a.price - b.price);
@@ -86,7 +88,7 @@ const AllProductsPage = () => {
     setFilters((prev) => {
       let filters = { ...prev };
       if (name === "price") {
-        (filters.minPrice = value[0]), (filters.maxPrice = value[1]);
+        ((filters.minPrice = value[0]), (filters.maxPrice = value[1]));
       }
       if (name === "colors") {
         const prevColors = Array.isArray(prev?.colors) ? prev.colors : [];
@@ -127,15 +129,12 @@ const AllProductsPage = () => {
         {/* Left Sidebar */}
         {showFilter && (
           <aside className="w-full md:w-64 space-y-4 shrink-0">
-
             <FilterSidebar
               handleOnChecked={handleOnChecked}
               maxPrice={maxPrice}
               handleOnClick={handleOnClick}
               filters={filters}
             />
-
-         
           </aside>
         )}
 
@@ -145,7 +144,6 @@ const AllProductsPage = () => {
         >
           {/* Top row with heading and toggle */}
           <div className="flex items-center justify-between ">
-
             <h3 className="text-2xl font-bold text-gray-800">All Products</h3>
 
             {FilterProduct.length > 0 && hasActiveFilters(filters) && (
@@ -153,7 +151,6 @@ const AllProductsPage = () => {
                 Found {FilterProduct.length} out of {products.length}
               </h4>
             )}
-
 
             <button
               className="text-sm text-blue-600 flex items-center gap-1"
@@ -179,7 +176,6 @@ const AllProductsPage = () => {
             filters={filters}
             hasActiveFilter={hasActiveFilters}
           />
-
         </main>
       </div>
     </div>
