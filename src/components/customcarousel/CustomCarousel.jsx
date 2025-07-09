@@ -11,11 +11,9 @@ import { assets } from "../../assets/asset";
 
 const CustomCarousel = () => {
   const plugin = React.useRef(
-
     Autoplay({ delay: 1000, stopOnInteraction: false })
-
   );
-  console.log(plugin.current);
+  
 
   return (
     <div className="flex justify-center h-[400px] ">
