@@ -6,6 +6,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
 import { Check } from "lucide-react";
@@ -28,6 +29,7 @@ const FilterSection = ({
   // console.log(filters);
   // const isSelected = filters.colors?.includes(colors.value);
 
+
   return (
     <div className="space-y-3">
       <Collapsible open={open} onOpenChange={setOpen}>
@@ -39,23 +41,28 @@ const FilterSection = ({
         </CollapsibleTrigger>
 
         <CollapsibleContent className="pl-2 pt-2 space-y-2">
+
           {/* mainCategory,brand ,sales and offers */}
+
           {options.map((option) => (
             <div
               key={option.id}
               className="flex items-center space-x-2 text-base"
             >
+
               <Checkbox
                 id={option.id}
                 onCheckedChange={() =>
                   handleOnChecked(option.name, option.value)
                 }
               />
+
               <Label htmlFor={option.id} className="text-base">
                 {option.label}
               </Label>
             </div>
           ))}
+
           {/* Price Slider */}
           {typeof maxPrice === "number" && typeof minPrice === "number" && (
             <>
@@ -112,6 +119,7 @@ const FilterSection = ({
               );
             })}
           </div>
+
         </CollapsibleContent>
       </Collapsible>
     </div>
@@ -119,6 +127,7 @@ const FilterSection = ({
 };
 
 //  Sidebar component
+
 const FilterSidebar = ({
   handleOnChecked,
   maxPrice,
@@ -194,6 +203,7 @@ const FilterSidebar = ({
         handleOnChecked={handleOnChecked}
         label={brandOptions}
       />
+
     </div>
   );
 };

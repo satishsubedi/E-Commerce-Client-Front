@@ -1,9 +1,11 @@
 import { toast } from "react-toastify";
+
 import {
   getAllFilterProductApi,
   getAllProducts,
 } from "../../axios/productAxios";
 import { setFilteredProduct, setProduct, setProducts } from "./productSlice";
+
 
 //Redux Thunk
 // GET ALL PRODUCTS ACTION
@@ -26,6 +28,7 @@ export const getAllProductsAction = () => async (dispatch) => {
   }
 };
 
+
 export const getFilterProductAction = (query) => async (dispatch) => {
   const productInfo = await getAllFilterProductApi(query);
 
@@ -33,6 +36,7 @@ export const getFilterProductAction = (query) => async (dispatch) => {
 
   status === "success" && dispatch(setFilteredProduct(payload));
 };
+
 
 // GET PRODUCT BY ID ACTION
 export const getProductByIdAction = (id) => async (dispatch) => {

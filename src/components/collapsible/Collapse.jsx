@@ -1,4 +1,7 @@
+
 import React, { useState } from "react";
+
+
 import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -6,6 +9,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+
 
 export const Collapse = ({
   feature,
@@ -17,6 +21,7 @@ export const Collapse = ({
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
 
+
   return (
     <div className="relative">
       <Collapsible
@@ -25,8 +30,10 @@ export const Collapse = ({
         className="flex w-[350px] flex-col gap-0.5"
       >
         <div className="flex items-center justify-start gap-1 px-0.5">
+
           {/* <h4 className="text-lg bg-amber-300 ">{title}</h4> */}
           <span>{title}</span>
+
           <CollapsibleTrigger asChild>
             <Button variant="ghost" size="icon" className="size-8">
               <ChevronDown
@@ -34,7 +41,10 @@ export const Collapse = ({
                   isOpen ? "rotate-180" : ""
                 }`}
               />
+
               {/* <span className="sr-only">Toggle</span> */}
+
+
             </Button>
           </CollapsibleTrigger>
         </div>
@@ -65,3 +75,4 @@ export const Collapse = ({
     </div>
   );
 };
+

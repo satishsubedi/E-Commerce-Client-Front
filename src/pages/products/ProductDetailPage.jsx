@@ -25,7 +25,9 @@ const ProductDetailPage = () => {
   const [isWishlisted, setIsWishlisted] = useState(false);
 
   const { slug } = useParams();
+
   const { products } = useSelector((state) => state.productInfo);
+
   const product = products.find((product) => product.slug === slug) || {};
 
   // fetch all products when component mounts

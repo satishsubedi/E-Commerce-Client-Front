@@ -6,7 +6,9 @@ const initialState = {
   product: {},
   wishlist: [],
   cart: [],
+
   FilterProduct: [],
+
 };
 //create a slice for product-related state management
 
@@ -28,14 +30,18 @@ const productSlice = createSlice({
     setCart: (state, action) => {
       state.cart = action.payload;
     },
+
     setFilteredProduct: (state, { payload }) => {
       state.FilterProduct = payload;
     },
+
   },
 });
 //export the reducer and actions from the slice
 const { reducer: productReducer, actions } = productSlice;
 
 //destructure actions for easy access
+
 export const { setProducts, setProduct, setFilteredProduct } = actions;
+
 export default productReducer;

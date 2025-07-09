@@ -10,12 +10,14 @@ import Header from "./components/Header/Header";
 import ChangePasswordForm from "./components/log-in/ResetPasswordForm";
 import ActiveUserPage from "./pages/ActiveUserPage";
 
+
 // import LatestProductsPage from "./pages/Products/LatestProductsPage";
 // import RecommendationPage from "./pages/Products/RecommendationPage";
 import DefaultLayout from "./components/layout/DefaultLayout";
 
 import ProductDetailPage from "./pages/products/ProductDetailPage";
 import AllProductsPage from "./pages/products/AllProductsPage";
+
 
 function App() {
   return (

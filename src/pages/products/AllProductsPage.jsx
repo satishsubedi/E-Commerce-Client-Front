@@ -1,5 +1,6 @@
 import { SlidersHorizontal } from "lucide-react";
 import { useState } from "react";
+
 import AllProductList from "../../components/Products/AllProductList";
 
 import {
@@ -9,6 +10,7 @@ import {
   BreadcrumbSeparator,
 } from "../../components/ui/breadcrumb";
 import FilterSidebar from "../../components/sidebar/FilterSideBar";
+
 import { useSelector } from "react-redux";
 import { Collapse } from "../../components/collapsible/Collapse";
 
@@ -97,6 +99,7 @@ const AllProductsPage = () => {
       return filters;
     });
   };
+
   return (
     <div className="mx-auto px-4">
       {/* Breadcrumb only at the top */}
@@ -124,12 +127,15 @@ const AllProductsPage = () => {
         {/* Left Sidebar */}
         {showFilter && (
           <aside className="w-full md:w-64 space-y-4 shrink-0">
+
             <FilterSidebar
               handleOnChecked={handleOnChecked}
               maxPrice={maxPrice}
               handleOnClick={handleOnClick}
               filters={filters}
             />
+
+         
           </aside>
         )}
 
@@ -139,6 +145,7 @@ const AllProductsPage = () => {
         >
           {/* Top row with heading and toggle */}
           <div className="flex items-center justify-between ">
+
             <h3 className="text-2xl font-bold text-gray-800">All Products</h3>
 
             {FilterProduct.length > 0 && hasActiveFilters(filters) && (
@@ -147,6 +154,7 @@ const AllProductsPage = () => {
               </h4>
             )}
 
+
             <button
               className="text-sm text-blue-600 flex items-center gap-1"
               onClick={() => setShowFilter(!showFilter)}
@@ -154,6 +162,7 @@ const AllProductsPage = () => {
               <SlidersHorizontal className="w-4 h-4" />
               {showFilter ? "Hide Filters" : "Show Filters"}
             </button>
+
             <Collapse
               feature="Featured"
               Newest="Newest"
@@ -170,6 +179,7 @@ const AllProductsPage = () => {
             filters={filters}
             hasActiveFilter={hasActiveFilters}
           />
+
         </main>
       </div>
     </div>
