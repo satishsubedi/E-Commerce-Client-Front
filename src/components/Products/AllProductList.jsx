@@ -50,16 +50,16 @@ const AllProductList = ({ productlist, filters, hasActiveFilter }) => {
       return (query) => {
         clearTimeout(id);
         id = setTimeout(() => {
-          dispatch(fetchProductAction(query));
+          dispatch(fetchFilterProductAction(query));
         }, 2000);
       };
     })();
   }
 
   useEffect(() => {
-    // if (!hasActiveFilter(filters)) {
-    //   return;
-    // }
+    if (!hasActiveFilter(filters)) {
+      return;
+    }
     console.log(hasActiveFilter(filters));
     const obj = {
       ...filters,
