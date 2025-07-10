@@ -13,7 +13,7 @@ import { toast } from "react-toastify";
 import useLoading from "../../hooks/useLoading";
 
 import LoadingSpinner from "../helper/LoadingSpinner";
-import { createUser } from "../../axios/userAxios";
+import { createUser } from "../../features/user/userApi";
 import { Link } from "react-router-dom";
 
 const SignupForm = () => {

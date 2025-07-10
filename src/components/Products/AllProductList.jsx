@@ -7,15 +7,14 @@ import { Heart, Star } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
-  getAllProductsAction,
-  getFilterProductAction,
-} from "../../redux/product/productAction";
+  fetchProductAction,
+  fetchFilterProductAction,
+} from "../../features/product/productAction";
 import { useNavigate } from "react-router-dom";
 import { useRef } from "react";
 import { buildQuery } from "../../utility/buildQuery";
 
 const AllProductList = ({ productlist, filters, hasActiveFilter }) => {
-  
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [wishlist, setWishlist] = useState([]);
@@ -26,7 +25,7 @@ const AllProductList = ({ productlist, filters, hasActiveFilter }) => {
   // fetch all products when component mounts
   useEffect(() => {
     if (ref.current) {
-      dispatch(getAllProductsAction());
+      dispatch(fetchProductAction());
       ref.current = false;
     }
 
@@ -51,7 +50,7 @@ const AllProductList = ({ productlist, filters, hasActiveFilter }) => {
       return (query) => {
         clearTimeout(id);
         id = setTimeout(() => {
-          dispatch(getFilterProductAction(query));
+          dispatch(fetchProductAction(query));
         }, 2000);
       };
     })();

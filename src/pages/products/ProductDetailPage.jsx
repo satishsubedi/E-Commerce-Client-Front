@@ -14,7 +14,6 @@ import {
   Check,
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllProductsAction } from "../../redux/product/productAction";
 
 const ProductDetailPage = () => {
   const dispatch = useDispatch();
@@ -25,6 +24,7 @@ const ProductDetailPage = () => {
   const [isWishlisted, setIsWishlisted] = useState(false);
 
   const { slug } = useParams();
+  console.log(slug);
 
   const { products } = useSelector((state) => state.productInfo);
 
@@ -33,7 +33,7 @@ const ProductDetailPage = () => {
   // fetch all products when component mounts
   useEffect(() => {
     if (!products || products.length === 0) {
-      dispatch(getAllProductsAction());
+      // dispatch(getAllProductsAction());
     }
   }, [dispatch, products]);
 

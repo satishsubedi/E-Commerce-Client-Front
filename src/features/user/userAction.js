@@ -1,4 +1,4 @@
-import { getUser, logoutUser } from "../../axios/userAxios";
+import { getUser, logoutUser } from "./userApi";
 import { toast } from "react-toastify";
 import { setUser } from "./userSlice";
 

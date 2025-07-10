@@ -17,7 +17,7 @@ import { initialresetPasswordFormData } from "../../config/formCongif";
 import { toast } from "react-toastify";
 import useLoading from "../../hooks/useLoading";
 import { Link, useSearchParams } from "react-router-dom";
-import { changePassword } from "../../axios/userAxios";
+import { changePassword } from "../../features/user/userApi";
 import LoadingSpinner from "../helper/LoadingSpinner";
 
 const ChangePasswordForm = () => {

@@ -18,7 +18,7 @@ import {
 } from "../../config/formCongif";
 import FormControl from "../../components/common-Input/FormControl";
 import LoadingSpinner from "../../components/helper/LoadingSpinner";
-import { forgetPasswordEmail } from "../../axios/userAxios";
+import { forgetPasswordEmail } from "../../features/user/userApi";
 
 const ForgotPasswordForm = () => {
   const { formData, handleOnChange } = useForm(initialForgotPasswordFormData); //useform from custom hook

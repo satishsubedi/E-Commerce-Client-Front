@@ -13,11 +13,11 @@ import {
   LogInFormControls,
 } from "../../config/formCongif";
 import FormControl from "../common-Input/FormControl";
-import { loginUser } from "../../axios/userAxios";
+import { loginUser } from "../../features/user/userApi";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import LoadingSpinner from "../helper/LoadingSpinner";
-import { getUserAction } from "../../redux/user/userAction";
+import { getUserAction } from "../../features/user/userAction";
 const LoginForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();

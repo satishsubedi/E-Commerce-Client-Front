@@ -14,7 +14,7 @@ const Header = () => {
   const handleOnclick = () => {
     show ? setShow(false) : setShow(true);
   };
-  console.log(show);
+  
 
   return (
     <header className="text-gray-600 body-font flex justify-center  bg-slate-900">
