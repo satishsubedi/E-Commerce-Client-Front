@@ -10,14 +10,12 @@ import Header from "./components/Header/Header";
 import ChangePasswordForm from "./components/log-in/ResetPasswordForm";
 import ActiveUserPage from "./pages/ActiveUserPage";
 
-
 // import LatestProductsPage from "./pages/Products/LatestProductsPage";
 // import RecommendationPage from "./pages/Products/RecommendationPage";
 import DefaultLayout from "./components/layout/DefaultLayout";
 
 import ProductDetailPage from "./pages/products/ProductDetailPage";
 import AllProductsPage from "./pages/products/AllProductsPage";
-
 
 function App() {
   return (
@@ -36,17 +34,16 @@ function App() {
           {/* <Route path="/latest-products" element={<LatestProductsPage />} /> */}
 
           {/* <Route path="/allproducts" element={<AllProducts />} /> */}
+
+          <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/change-password" element={<ChangePasswordForm />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/activate-user" element={<ActiveUserPage />} />
+          <Route path="/allproducts" element={<AllProductsPage />} />
+          <Route path="/product-detail/:slug" element={<ProductDetailPage />} />
         </Route>
-
-        <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/change-password" element={<ChangePasswordForm />} />
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="/activate-user" element={<ActiveUserPage />} />
-        <Route path="/allproducts" element={<AllProductsPage />} />
-        <Route path="/product-detail/:slug" element={<ProductDetailPage />} />
-
         {/* private Routes */}
       </Routes>
       {/* <Footer /> */}

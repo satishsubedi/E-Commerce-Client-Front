@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { Filter } from "lucide-react";
+
 
 const initialState = {
   products: [],

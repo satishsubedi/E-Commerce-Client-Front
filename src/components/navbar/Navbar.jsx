@@ -9,7 +9,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import { getAllCategories } from "../../axios/categoryAxios";
+import { getAllCategories } from "../../features/categories/categoriesApi";
 
 const Navbar = () => {
   const [categories, setCategories] = useState([]);
@@ -61,19 +61,28 @@ const Navbar = () => {
             return (
               <NavigationMenuItem key={category._id}>
                 <NavigationMenuTrigger className="bg-slate-900 text-xl hover:underline decoration-blue-600 underline-offset-15 hover:bg-none  delay-300 transition">
-                  {category.name}
+                  {category.name.charAt(0).toUpperCase() +
+                    category.name.slice(1)}
                 </NavigationMenuTrigger>
-                <NavigationMenuContent className="  ">
-                  <div className=" w-[100%] flex justify-evenly gap-20 px-40 py-10 ">
+                <NavigationMenuContent className="bg-transparent/55  ">
+                  <div className=" bg-transparent w-[100%] flex justify-evenly gap-20 px-40 py-10 ">
                     {categories
                       .filter((cat) => cat.parent == category._id)
                       .map((category) => (
                         <div key={category._id}>
-                          <h2 className="text-gray-500">{category.name}</h2>
+                          <h2 className="text-gray-500">
+                            {category.name.charAt(0).toUpperCase() +
+                              category.name.slice(1)}
+                          </h2>
                           {categories
                             .filter((cat) => cat.parent == category._id)
                             .map((c) => {
-                              return <div key={c._id}>{c.name}</div>;
+                              return (
+                                <div key={c._id}>
+                                  {c.name.charAt(0).toUpperCase() +
+                                    c.name.slice(1)}
+                                </div>
+                              );
                             })}
                         </div>
                       ))}

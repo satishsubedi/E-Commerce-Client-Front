@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { activateUser } from "../axios/userAxios";
+import { activateUser } from "../features/user/userApi.js";
 import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import { Loader2, Check, ArrowRight } from "lucide-react";
