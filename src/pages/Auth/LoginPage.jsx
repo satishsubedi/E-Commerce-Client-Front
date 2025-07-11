@@ -3,17 +3,12 @@ import LoginForm from "../../components/log-in/LoginForm";
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
-      {/* Left section (form) */}
-      <LoginForm />
-
-      {/* Right section (image) */}
-      <div className="hidden md:block relative h-screen">
-        <img
-          src={assets.Auth}
-          alt="Leaf Background"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
+    <div
+      className="min-h-screen bg-cover bg-center flex items-center justify-center"
+      style={{ backgroundImage: `url(${assets.lb1})` }}
+    >
+      <div className="bg-white/150 backdrop-blur-xl p-8 rounded-lg shadow-md w-full max-w-md">
+        <LoginForm />
       </div>
     </div>
   );

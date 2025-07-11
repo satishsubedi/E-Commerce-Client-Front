@@ -17,7 +17,10 @@ const FormControl = (props) => {
   if (inputAttributes.type === "select") {
     return (
       <div className="mb-4">
-        <Label htmlFor={inputAttributes.id} className="block font-bold mb-2">
+        <Label
+          htmlFor={inputAttributes.id}
+          className="block font-bold mb-2 text-white"
+        >
           {label}
         </Label>
         <Select
@@ -63,7 +66,7 @@ const FormControl = (props) => {
     <div className="mb-4 ">
       <Label
         htmlFor={inputAttributes.id}
-        className="block text-sm   font-bold text-gray-900 dark:text-white "
+        className="block text-sm   font-bold text-white dark:text-white "
       >
         {label}
       </Label>
@@ -72,7 +75,7 @@ const FormControl = (props) => {
         {...inputAttributes}
         value={inputAttributes.value || ""}
         onChange={(e) => handleOnChange(e)}
-        className=" dark:text-white block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-600 focus-visible:z-10 sm:text-sm/6"
+        className="bg-white dark:text-white block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-00 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-green-600 focus-visible:z-10 sm:text-sm/6"
       />
     </div>
   );
