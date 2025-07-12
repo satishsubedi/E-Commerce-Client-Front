@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-
+import { useSelector } from "react-redux";
 import { BsSearch } from "react-icons/bs";
 import { FaRegHeart } from "react-icons/fa6";
 import { IoBag } from "react-icons/io5";
@@ -10,11 +10,13 @@ import MobileNavbar from "../navbar/MobileNavbar";
 
 const Header = () => {
   const [show, setShow] = useState(true);
+  const { cartItems } = useSelector((state) => state.cartInfo);
 
   const handleOnclick = () => {
     show ? setShow(false) : setShow(true);
   };
-  
+
+  const cartItemsCount = cartItems?.length || 0;
 
   return (
     <header className="text-gray-600 body-font flex justify-center  bg-slate-900">
@@ -34,8 +36,15 @@ const Header = () => {
           <li>
             <FaRegHeart />
           </li>
-          <li>
-            <IoBag />
+          <li className="relative">
+            <Link to="/cart">
+              <IoBag />
+              {cartItemsCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {cartItemsCount}
+                </span>
+              )}
+            </Link>
           </li>
           <li>
             <Link to="/login">

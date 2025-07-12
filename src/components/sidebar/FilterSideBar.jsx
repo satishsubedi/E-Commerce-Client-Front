@@ -29,7 +29,6 @@ const FilterSection = ({
   // console.log(filters);
   // const isSelected = filters.colors?.includes(colors.value);
 
-
   return (
     <div className="space-y-3">
       <Collapsible open={open} onOpenChange={setOpen}>
@@ -41,7 +40,6 @@ const FilterSection = ({
         </CollapsibleTrigger>
 
         <CollapsibleContent className="pl-2 pt-2 space-y-2">
-
           {/* mainCategory,brand ,sales and offers */}
 
           {options.map((option) => (
@@ -49,7 +47,6 @@ const FilterSection = ({
               key={option.id}
               className="flex items-center space-x-2 text-base"
             >
-
               <Checkbox
                 id={option.id}
                 onCheckedChange={() =>
@@ -119,7 +116,6 @@ const FilterSection = ({
               );
             })}
           </div>
-
         </CollapsibleContent>
       </Collapsible>
     </div>
@@ -203,7 +199,6 @@ const FilterSidebar = ({
         handleOnChecked={handleOnChecked}
         label={brandOptions}
       />
-
     </div>
   );
 };
