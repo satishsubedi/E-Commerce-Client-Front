@@ -24,15 +24,6 @@ const AllProductList = ({ productlist, filters, hasActiveFilter }) => {
   const debouncedFetch = useRef(null);
   // fetch all products when component mounts
   useEffect(() => {
-    if (ref.current) {
-      dispatch(fetchProductAction());
-      ref.current = false;
-    }
-
-    if (productlist && productlist.length > 0) {
-      setProductList(productlist);
-      return;
-    }
     if (FilterProduct?.length > 0) {
       setProductList([...FilterProduct]);
       return;
@@ -40,7 +31,7 @@ const AllProductList = ({ productlist, filters, hasActiveFilter }) => {
     if (products && products.length > 0 && !FilterProduct.length > 0) {
       setProductList([...products]);
     }
-  }, [dispatch, products, productlist, FilterProduct]);
+  }, [dispatch, products, FilterProduct]);
 
   // another useEffect
 
@@ -57,9 +48,9 @@ const AllProductList = ({ productlist, filters, hasActiveFilter }) => {
   }
 
   useEffect(() => {
-    if (!hasActiveFilter(filters)) {
-      return;
-    }
+    // if (!hasActiveFilter(filters)) {
+    //   return;
+    // }
     console.log(hasActiveFilter(filters));
     const obj = {
       ...filters,

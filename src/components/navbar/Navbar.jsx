@@ -13,7 +13,8 @@ import {
 } from "@/components/ui/navigation-menu";
 
 const Navbar = () => {
-  const [categories, setCategories] = useState([]);
+  const { categories } = useSelector((state) => state.categoriesInfo);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -29,7 +30,9 @@ const Navbar = () => {
   }, []);
 
   const renderSubCategories = (parentId) => {
-    const subCategories = categories.filter((cat) => cat.parent === parentId);
+    const subCategories = [...categories]?.filter(
+      (cat) => cat.parent === parentId
+    );
     if (subCategories.length === 0) return null;
 
     return (
@@ -47,8 +50,6 @@ const Navbar = () => {
       </div>
     );
   };
-
-  const topLevelCategories = categories.filter((cat) => cat.parent === null);
 
   return (
     <nav className="flex gap-4 items-center text-xl flex-wrap font-medium text-white justify-center">
