@@ -133,10 +133,10 @@ const FilterSidebar = ({
   const { products } = useSelector((state) => state.productInfo);
 
   const genderOptions = [
-    ...new Set(products.map((product) => product.mainCategory)),
-  ].map((mainCategory) => ({
+    ...new Set(products?.map((product) => product.mainCategory)),
+  ]?.map((mainCategory) => ({
     id: mainCategory,
-    label: mainCategory.charAt(0).toUpperCase() + mainCategory.slice(1),
+    label: mainCategory?.charAt(0).toUpperCase() + mainCategory?.slice(1),
     value: mainCategory,
     name: "mainCategory",
   }));
