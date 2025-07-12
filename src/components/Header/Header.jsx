@@ -14,7 +14,6 @@ const Header = () => {
   const handleOnclick = () => {
     show ? setShow(false) : setShow(true);
   };
-  
 
   return (
     <header className="text-gray-600 body-font flex justify-center  bg-slate-900">
@@ -24,7 +23,9 @@ const Header = () => {
           Group Store
         </Link>
         {/* navbar */}
-        <Navbar />
+        <div className="hidden lg:flex">
+          <Navbar />
+        </div>
 
         {/* icons */}
         <ul className="text-base  font-medium text-white dark:text-white flex flex-row items-center justify-center gap-6 md:gap-4 flex-1 lg:flex-initial ">
@@ -44,7 +45,7 @@ const Header = () => {
           </li>
         </ul>
         {/* mobile navbar */}
-        <div className="lg:hidden">
+        <div className="flex lg:hidden">
           <MobileNavbar></MobileNavbar>
         </div>
       </div>
