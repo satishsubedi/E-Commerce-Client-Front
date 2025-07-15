@@ -6,7 +6,7 @@ import { MdPeopleAlt } from "react-icons/md";
 import Navbar from "../navbar/Navbar";
 import { useEffect, useRef, useState } from "react";
 import MobileNavbar from "../navbar/MobileNavbar";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { fetctCategoriesAction } from "../../features/categories/categoriesAction";
 import { setCategoires } from "../../features/categories/categoriesSlice";
 import { fetchProductAction } from "../../features/product/productAction";
@@ -16,19 +16,15 @@ const Header = () => {
   const [show, setShow] = useState(true);
   const dispatch = useDispatch();
   const categories = useSelector((state) => state.categoriesInfo);
-<<<<<<< HEAD
   // Get cart item count (sum of quantities)
   const cartItemsCount = useSelector((state) =>
     state.cartInfo.cartItems.reduce((sum, item) => sum + item.quantity, 0)
   );
-=======
-  const { cartItems } = useSelector((state) => state.cartInfo);
->>>>>>> 0f9a361 (Working on placing order)
 
   const handleOnclick = () => {
     show ? setShow(false) : setShow(true);
   };
-  const cartItemsCount = cartItems?.length || 0;
+
   useEffect(() => {
     ref.current &&
       dispatch(fetctCategoriesAction()) &&
