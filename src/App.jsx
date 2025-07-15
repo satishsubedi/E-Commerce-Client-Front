@@ -17,6 +17,7 @@ import DefaultLayout from "./components/layout/DefaultLayout";
 import ProductDetailPage from "./pages/products/ProductDetailPage";
 import AllProductsPage from "./pages/products/AllProductsPage";
 import CartPage from "./pages/cart/CartPage";
+import SuccessPage from "./pages/payment/SuccessPage";
 
 function App() {
   return (
@@ -46,6 +47,7 @@ function App() {
           <Route path="/product-detail/:slug" element={<ProductDetailPage />} />
           <Route path="/activate-user" element={<ActiveUserPage />} />
           <Route path="/cart" element={<CartPage />} />
+          <Route path="/order-success" element={<SuccessPage />} />
         </Route>
         {/* private Routes */}
       </Routes>

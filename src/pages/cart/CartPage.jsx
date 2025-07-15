@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import axios from "axios";
 import { Minus, Plus, Trash2, ShoppingBag, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +12,7 @@ import {
   fetchCartFromStorage,
   updateCartItemQuantity,
 } from "../../features/cart/cartAction";
+import { getOrCreateGuestId } from "../../utils/guestId";
 
 const CartPage = () => {
   const navigate = useNavigate();
@@ -46,6 +48,35 @@ const CartPage = () => {
   const discount = isPromoApplied ? subtotal * 0.1 : 0;
   const shipping = subtotal > 150 ? 0 : 7.99;
   const total = subtotal - discount + shipping;
+  console.log("Cart item sample:", cartItems[0]);
+  //this is sample for the checkout
+  const handleOnCheckout = async () => {
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_APP_API_BASE_URL}/api/v1/order/placeOrder`,
+        {
+          cart: cartItems.map((item) => ({
+            productId: item.product_id,
+            quantity: item.quantity,
+          })),
+          paymentMethod: "Card",
+          guestId: getOrCreateGuestId(),
+          guestInfo: {
+            name: "Dinesh Budhathoki",
+            email: "abc@gmail.com",
+            phone: "12345",
+          },
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      window.location.href = response.data.url;
+    } catch (error) {
+      console.error("Checkout error:", error);
+      toast.error("Failed to initiate checkout.");
+    }
+  };
 
   if (cartItems.length === 0) {
     return (
@@ -289,6 +320,7 @@ const CartPage = () => {
                 <Button
                   className="w-full bg-black hover:bg-gray-800 text-white py-4 rounded-full text-base font-medium"
                   size="lg"
+                  onClick={handleOnCheckout}
                 >
                   Checkout
                 </Button>
