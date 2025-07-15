@@ -1,6 +1,5 @@
 // Navbar.jsx
-import { use, useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   NavigationMenu,
@@ -10,20 +9,25 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { getAllCategories } from "../../features/categories/categoriesApi";
-// import { getAllCategories } from "../../axios/categoryAxios";
-import { useSelector } from "react-redux";
-import { RxLetterCaseCapitalize } from "react-icons/rx";
-import { capitalize } from "../../utility/buldCapital";
 
 const Navbar = () => {
-  const { categories } = useSelector((state) => state.categoriesInfo);
-
+  const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await getAllCategories();
+        setCategories(response?.payload || []);
+      } catch (error) {
+        console.error("Error fetching categories", error);
+      }
+    };
+    fetchCategories();
+  }, []);
+
   const renderSubCategories = (parentId) => {
-    const subCategories = [...categories]?.filter(
-      (cat) => cat.parent === parentId
-    );
+    const subCategories = categories.filter((cat) => cat.parent === parentId);
     if (subCategories.length === 0) return null;
 
     return (
@@ -42,41 +46,24 @@ const Navbar = () => {
     );
   };
 
+  const topLevelCategories = categories.filter((cat) => cat.parent === null);
+
   return (
     <nav className="flex gap-4 items-center text-xl flex-wrap font-medium text-white justify-center">
-      <NavigationMenu className="[data-orientation] = horizental">
-        <NavigationMenuList className="">
-          {categories
-            ?.filter((category) => category.parent === null)
-            ?.map((category) => {
-              return (
-                <NavigationMenuItem key={category._id}>
-                  <NavigationMenuTrigger className="bg-slate-900 text-xl hover:underline decoration-blue-600 underline-offset-15 hover:bg-none  delay-300 transition">
-                    {capitalize(category.name)}
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent className="  ">
-                    <div className=" w-[100%] flex justify-evenly gap-20 px-40 py-10 ">
-                      {categories
-                        .filter((cat) => cat.parent == category._id)
-                        .map((category) => (
-                          <div key={category._id}>
-                            <h2 className="text-gray-500">
-                              {capitalize(category.name)}
-                            </h2>
-                            {categories
-                              .filter((cat) => cat.parent == category._id)
-                              .map((c) => {
-                                return (
-                                  <div key={c._id}>{capitalize(c.name)}</div>
-                                );
-                              })}
-                          </div>
-                        ))}
-                    </div>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-              );
-            })}
+      <NavigationMenu viewport={false}>
+        <NavigationMenuList>
+          {topLevelCategories.map((category) => (
+            <NavigationMenuItem key={category._id}>
+              <NavigationMenuTrigger className="bg-slate-900 text-xl">
+                {category.name}
+              </NavigationMenuTrigger>
+              <NavigationMenuContent className="bg-white text-black shadow-md p-4 rounded z-50">
+                <div className="w-[150px] max-h-[400px overflow-y-auto">
+                  {renderSubCategories(category._id)}
+                </div>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+          ))}
         </NavigationMenuList>
       </NavigationMenu>
     </nav>
