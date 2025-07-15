@@ -28,7 +28,7 @@ const Header = () => {
       dispatch(fetchProductAction());
     ref.current = false;
   }, []);
-  console.log(categories);
+  
   return (
     <header className="text-gray-600 body-font flex justify-center  bg-slate-900">
       <div className="container  h-20 flex-wrap p-2  flex justify-between items-center md:p-6 lg:justify-between gap-10  ">

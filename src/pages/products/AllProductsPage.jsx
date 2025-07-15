@@ -13,11 +13,15 @@ import FilterSidebar from "../../components/sidebar/FilterSideBar";
 
 import { useSelector } from "react-redux";
 import { Collapse } from "../../components/collapsible/Collapse";
+import { useSearchParams } from "react-router-dom";
 
 const AllProductsPage = () => {
   const [showFilter, setShowFilter] = useState(true);
   const { products, FilterProduct } = useSelector((state) => state.productInfo);
-  const [productLists, setProductList] = useState([]);
+  const [productList, setProductList] = useState([]);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const p = searchParams.get("men");
+  console.log(p);
   const [filters, setFilters] = useState({
     mainCategory: [],
     maxPrice: "",
@@ -25,29 +29,29 @@ const AllProductsPage = () => {
     colors: [],
     sale: "",
     brand: [],
+    slug: "",
   });
+
   const hasActiveFilters = (f) => {
     return (
-      f.mainCategory.length > 0 ||
-      f.minPrice !== "" ||
-      f.maxPrice !== "" ||
-      f.colors.length > 0 ||
-      f.sale !== "" ||
-      f.brand.length > 0
+      f?.mainCategory.length > 0 ||
+      f?.minPrice !== "" ||
+      f?.maxPrice !== "" ||
+      f?.colors.length > 0 ||
+      f?.sale !== "" ||
+      f?.brand.length > 0 ||
+      f?.slug
     );
   };
   const handleOnSortOption = (option) => {
     if (option === "Price:Low-High") {
-      const sortedProducts = [...products].sort((a, b) => a.price - b.price);
-      console.log(sortedProducts);
-      setProductList(sortedProducts);
+      setProductList([...productList?.sort((a, b) => a.price - b.price)]);
     }
     if (option === "Price:High-Low") {
-      const sortedProducts = [...products].sort((a, b) => b.price - a.price);
-      setProductList(sortedProducts);
+      setProductList([...productList?.sort((a, b) => b.price - a.price)]);
     }
     if (option === "Newest") {
-      const sortedProducts = [...products].sort(
+      const sortedProducts = productList?.sort(
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
       );
       setProductList(sortedProducts);
@@ -172,9 +176,10 @@ const AllProductsPage = () => {
 
           {/* AllProductList Component */}
           <AllProductList
-            productlist={productLists}
             filters={filters}
-            hasActiveFilter={hasActiveFilters}
+            hasActiveFilters={hasActiveFilters}
+            setProductList={setProductList}
+            productList={productList}
           />
         </main>
       </div>

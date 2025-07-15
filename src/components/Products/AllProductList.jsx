@@ -6,28 +6,35 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Heart, Star } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 
-import {
-  fetchProductAction,
-  fetchFilterProductAction,
-} from "../../features/product/productAction";
+import { fetchFilterProductAction } from "../../features/product/productAction";
 import { useNavigate } from "react-router-dom";
 import { useRef } from "react";
 import { buildQuery } from "../../utility/buildQuery";
 
-const AllProductList = ({ productlist, filters, hasActiveFilter }) => {
+const AllProductList = ({
+  setProductList,
+  productList,
+
+  filters,
+  hasActiveFilters,
+}) => {
+  
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [wishlist, setWishlist] = useState([]);
   const { products, FilterProduct } = useSelector((state) => state.productInfo);
-  const [productList, setProductList] = useState([]);
+
   const ref = useRef(true);
   const debouncedFetch = useRef(null);
   // fetch all products when component mounts
   useEffect(() => {
+    console.log("useeffect");
+
     if (FilterProduct?.length > 0) {
       setProductList([...FilterProduct]);
       return;
     }
+
     if (products && products.length > 0 && !FilterProduct.length > 0) {
       setProductList([...products]);
     }
@@ -48,10 +55,6 @@ const AllProductList = ({ productlist, filters, hasActiveFilter }) => {
   }
 
   useEffect(() => {
-    // if (!hasActiveFilter(filters)) {
-    //   return;
-    // }
-    console.log(hasActiveFilter(filters));
     const obj = {
       ...filters,
       mainCategory: filters.mainCategory.join(","),
@@ -88,7 +91,7 @@ const AllProductList = ({ productlist, filters, hasActiveFilter }) => {
     <div className="min-h-screen py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {productList.map((product) => {
+          {productList?.map((product) => {
             const discountPercentage = calculateDiscountPercentage(
               product.price,
               product.discountPrice

@@ -40,9 +40,9 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/change-password" element={<ChangePasswordForm />} />
           <Route path="/signup" element={<SignupPage />} />
-          <Route path="/activate-user" element={<ActiveUserPage />} />
-          <Route path="/allproducts" element={<AllProductsPage />} />
           <Route path="/product-detail/:slug" element={<ProductDetailPage />} />
+          <Route path="/activate-user" element={<ActiveUserPage />} />
+          <Route path="/allproducts/*" element={<AllProductsPage />} />
         </Route>
         {/* private Routes */}
       </Routes>
