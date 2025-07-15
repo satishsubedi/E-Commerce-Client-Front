@@ -2,21 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Heart,
-  Star,
-  Truck,
-  Shield,
-  RotateCcw,
-  Plus,
-  Minus,
-  ShoppingCart,
-  Check,
-} from "lucide-react";
+import { Heart, Star, Plus, Minus, ShoppingCart, Check } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProductAction } from "../../features/product/productAction";
-import { addToLocalCart } from "../../utils/cartLocalStorage";
 import { toast } from "react-toastify";
+import { addItemToCart } from "../../features/cart/cartAction";
 
 const ProductDetailPage = () => {
   const dispatch = useDispatch();
@@ -30,7 +20,7 @@ const ProductDetailPage = () => {
 
   const { products } = useSelector((state) => state.productInfo);
   const product = products.find((product) => product.slug === slug) || {};
-  console.log("product", product);
+  // console.log("product", product);
 
   // fetch all products when component mounts
   useEffect(() => {
@@ -42,18 +32,7 @@ const ProductDetailPage = () => {
   //function to handle add to cart
   const handleAddToCart = (product) => {
     try {
-      const cartObj = {
-        product_id: product?._id,
-        product_title: product?.title,
-        color: selectedColor,
-        size: selectedSize,
-        discountPrice: product?.discountPrice,
-        price: product?.price,
-        quantity: quantity,
-        thumbnail: product?.thumbnail,
-        mainCategory: product?.mainCategory,
-      };
-      const updatedCart = addToLocalCart(cartObj);
+      dispatch(addItemToCart(product, selectedColor, selectedSize, quantity));
       toast.success(`${product.title} is added to cart`);
     } catch (error) {
       console.error("Error adding item to local cart:", error);
