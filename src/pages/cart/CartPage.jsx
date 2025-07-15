@@ -3,51 +3,40 @@ import { Minus, Plus, Trash2, ShoppingBag, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import {
-  getCartFromLocalStorage,
-  updateLocalCartItemQuantity,
-  removeFromLocalCart,
-} from "../../utils/cartLocalStorage";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  deleteCartItem,
+  fetchCartFromStorage,
+  updateCartItemQuantity,
+} from "../../features/cart/cartAction";
 
 const CartPage = () => {
   const navigate = useNavigate();
-  const [cartItems, setCartItems] = useState([]);
+  const dispatch = useDispatch();
+
+  // const [cartItems, setCartItems] = useState([]);
   const [promoCode, setPromoCode] = useState("");
   const [isPromoApplied, setIsPromoApplied] = useState(false);
 
+  const { cartItems } = useSelector((state) => state.cartInfo);
+
   // Load cart items from localStorage on component mount
   useEffect(() => {
-    const loadCartItems = () => {
-      const items = getCartFromLocalStorage();
-      setCartItems(items);
-    };
+    dispatch(fetchCartFromStorage());
+  }, [dispatch]);
 
-    loadCartItems();
-  }, []);
-
-  const updateQuantity = (itemId, newQuantity) => {
-    if (newQuantity < 1) return;
-
-    try {
-      const updatedCart = updateLocalCartItemQuantity(itemId, newQuantity);
-      setCartItems(updatedCart);
-    } catch (error) {
-      console.error("Error updating quantity:", error);
-      toast.error("Failed to update quantity");
-    }
+  // delete item from cart
+  const handleDelete = (itemId) => {
+    dispatch(deleteCartItem(itemId));
+    toast.success("Item removed from cart");
   };
 
-  const removeItem = (itemId) => {
-    try {
-      const updatedCart = removeFromLocalCart(itemId);
-      setCartItems(updatedCart);
-      toast.success("Item removed from cart");
-    } catch (error) {
-      console.error("Error removing item:", error);
-      toast.error("Failed to remove item");
-    }
+  //update quantity
+  const handleUpdateQuantity = (itemId, newQuantity) => {
+    if (newQuantity < 1) return; // Prevent going below 1
+    dispatch(updateCartItemQuantity(itemId, newQuantity));
   };
 
   const subtotal = cartItems.reduce(
@@ -101,9 +90,9 @@ const CartPage = () => {
             <div className="space-y-8">
               {cartItems.map((item, index) => (
                 <div key={item.id || item._id}>
-                  <div className="flex gap-6">
+                  <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
                     {/* Product Image */}
-                    <div className="flex-shrink-0">
+                    <div className="flex-shrink-0 mx-auto sm:mx-0">
                       <div className="w-36 h-36 bg-gray-50 rounded-lg overflow-hidden">
                         <img
                           src={item.thumbnail || "/placeholder.svg"}
@@ -115,110 +104,98 @@ const CartPage = () => {
                       </div>
                     </div>
 
-                    {/* Product Details */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex justify-between items-start mb-2">
-                        <div className="flex-1 pr-4">
-                          <h3 className="text-base font-medium text-black leading-tight mb-1">
-                            {item.product_title}
-                          </h3>
-                          <p className="text-gray-500 text-sm mb-1">
-                            {item.mainCategory}
-                          </p>
-                          <p className="text-gray-500 text-sm mb-3">
-                            Color:{" "}
-                            <span className="font-medium text-black">
-                              {item.color}
-                            </span>
-                          </p>
-
-                          {/* size */}
-                          <div className="flex items-center gap-6 text-sm text-gray-500 mb-4">
-                            <div className="flex items-center gap-2">
-                              <span>Size</span>
-                              <span className="font-medium text-black">
-                                {item.size}
-                              </span>
-                            </div>
-
-                            {/* quantity */}
-                            <div className="flex items-center gap-2">
-                              <span>Quantity</span>
-                              <div className="flex items-center gap-2">
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() =>
-                                    updateQuantity(
-                                      item.id || item._id,
-                                      item.quantity - 1
-                                    )
-                                  }
-                                  disabled={item.quantity <= 1}
-                                  className="h-6 w-6 p-0 hover:bg-gray-100"
-                                >
-                                  <Minus className="h-3 w-3" />
-                                </Button>
-                                <span className="font-medium text-black w-6 text-center">
-                                  {item.quantity}
-                                </span>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() =>
-                                    updateQuantity(
-                                      item.id || item._id,
-                                      item.quantity + 1
-                                    )
-                                  }
-                                  className="h-6 w-6 p-0 hover:bg-gray-100"
-                                >
-                                  <Plus className="h-3 w-3" />
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
+                    {/* Product Details & Actions */}
+                    <div className="flex-1 min-w-0 flex flex-col gap-2">
+                      {/* Product Title */}
+                      <h3 className="text-base font-medium text-black leading-tight mb-1">
+                        {item.product_title}
+                      </h3>
+                      {/* mainCategory */}
+                      <p className="text-gray-500 text-sm mb-0">
+                        {item.mainCategory}
+                      </p>
+                      {/* color */}
+                      <p className="text-gray-500 text-sm mb-0">
+                        Color:{" "}
+                        <span className="font-medium text-black">
+                          {item.color}
+                        </span>
+                      </p>
+                      {/* size */}
+                      <div className="flex items-center gap-2 text-sm text-gray-500 mb-0">
+                        <span>Size</span>
+                        <span className="font-medium text-black">
+                          {item.size}
+                        </span>
+                      </div>
+                      {/* quantity */}
+                      <div className="flex items-center gap-2 text-sm text-gray-500 mb-0">
+                        <span>Quantity</span>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() =>
+                              handleUpdateQuantity(item._id, item.quantity - 1)
+                            }
+                            disabled={item.quantity <= 1}
+                            className="h-6 w-6 p-0 hover:bg-gray-100"
+                          >
+                            <Minus className="h-3 w-3" />
+                          </Button>
+                          <span className="font-medium text-black w-6 text-center">
+                            {item.quantity}
+                          </span>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() =>
+                              handleUpdateQuantity(item._id, item.quantity + 1)
+                            }
+                            className="h-6 w-6 p-0 hover:bg-gray-100"
+                          >
+                            <Plus className="h-3 w-3" />
+                          </Button>
                         </div>
-
-                        {/* delete & wishlist button */}
-                        <div className="text-right">
-                          <div className="flex items-center gap-3 mb-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="p-1 hover:bg-gray-100"
-                            >
-                              <Heart className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="p-1 hover:bg-gray-100"
-                              onClick={() => removeItem(item.id || item._id)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                          <div>
-                            {item.discountPrice &&
-                            item.discountPrice < item.price ? (
-                              <>
-                                <p className="text-sm text-gray-400 line-through mb-1">
-                                  ${(item.price * item.quantity).toFixed(2)}
-                                </p>
-                                <p className="font-medium text-black">
-                                  $
-                                  {(item.discountPrice * item.quantity).toFixed(
-                                    2
-                                  )}
-                                </p>
-                              </>
-                            ) : (
-                              <p className="font-medium text-black">
+                      </div>
+                      {/* delete & wishlist button and price - stack on mobile, row on desktop */}
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mt-2">
+                        <div className="flex items-center gap-3 order-2 sm:order-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="p-1 hover:bg-gray-100"
+                          >
+                            <Heart className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="p-1 hover:bg-gray-100"
+                            onClick={() => handleDelete(item.id || item._id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        <div className="order-1 sm:order-2 text-left sm:text-right">
+                          {item.discountPrice &&
+                          item.discountPrice < item.price ? (
+                            <>
+                              <p className="text-sm text-gray-400 line-through mb-1">
                                 ${(item.price * item.quantity).toFixed(2)}
                               </p>
-                            )}
-                          </div>
+                              <p className="font-medium text-black">
+                                $
+                                {(item.discountPrice * item.quantity).toFixed(
+                                  2
+                                )}
+                              </p>
+                            </>
+                          ) : (
+                            <p className="font-medium text-black">
+                              ${(item.price * item.quantity).toFixed(2)}
+                            </p>
+                          )}
                         </div>
                       </div>
                     </div>

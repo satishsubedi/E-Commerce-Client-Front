@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
 import { BsSearch } from "react-icons/bs";
 import { FaRegHeart } from "react-icons/fa6";
 import { IoBag } from "react-icons/io5";
@@ -17,6 +16,10 @@ const Header = () => {
   const [show, setShow] = useState(true);
   const dispatch = useDispatch();
   const categories = useSelector((state) => state.categoriesInfo);
+  // Get cart item count (sum of quantities)
+  const cartItemsCount = useSelector((state) =>
+    state.cartInfo.cartItems.reduce((sum, item) => sum + item.quantity, 0)
+  );
 
   const handleOnclick = () => {
     show ? setShow(false) : setShow(true);

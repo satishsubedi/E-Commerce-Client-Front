@@ -1,6 +1,4 @@
 // Navbar.jsx
-import { getAllCategories } from "../../features/categories/categoriesApi";
-// Navbar.jsx
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -11,10 +9,10 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
+import { getAllCategories } from "../../features/categories/categoriesApi";
 
 const Navbar = () => {
-  const { categories } = useSelector((state) => state.categoriesInfo);
-
+  const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -30,9 +28,7 @@ const Navbar = () => {
   }, []);
 
   const renderSubCategories = (parentId) => {
-    const subCategories = [...categories]?.filter(
-      (cat) => cat.parent === parentId
-    );
+    const subCategories = categories.filter((cat) => cat.parent === parentId);
     if (subCategories.length === 0) return null;
 
     return (
@@ -50,6 +46,8 @@ const Navbar = () => {
       </div>
     );
   };
+
+  const topLevelCategories = categories.filter((cat) => cat.parent === null);
 
   return (
     <nav className="flex gap-4 items-center text-xl flex-wrap font-medium text-white justify-center">
