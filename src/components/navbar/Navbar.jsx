@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -46,9 +47,13 @@ const Navbar = () => {
       </div>
     );
   };
+<<<<<<< HEAD
 
   const topLevelCategories = categories.filter((cat) => cat.parent === null);
 
+=======
+  const topLevelCategories = categories.filter((cat) => cat.parent === null);
+>>>>>>> 0f9a361 (Working on placing order)
   return (
     <nav className="flex gap-4 items-center text-xl flex-wrap font-medium text-white justify-center">
       <NavigationMenu viewport={false}>
