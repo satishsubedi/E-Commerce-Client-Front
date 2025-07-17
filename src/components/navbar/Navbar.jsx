@@ -8,11 +8,29 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import { getAllCategories } from "../../features/categories/categoriesApi";
 
+import { useDispatch, useSelector } from "react-redux";
+import { capitalize } from "../../utility/buldCapital";
+import { setFiltered } from "../../features/filters/filterSlice";
+const Navbar = () => {
+  const { categories } = useSelector((state) => state.categoriesInfo);
+  const { filtered } = useSelector((state) => state.filterInfo);
+  const dispatch = useDispatch();
+ 
+import { getAllCategories } from "../../features/categories/categoriesApi";
 const Navbar = () => {
   const [categories, setCategories] = useState([]);
+
   const navigate = useNavigate();
+  const handleOnCategoryClick = (categoryPath) => {
+    navigate(`/allproducts${categoryPath}`);
+    let p = {
+      ...filtered,
+      mainCategory: [categoryPath.split("/")[1]],
+      productPath: categoryPath,
+    };
+    dispatch(setFiltered(p));
+  };
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -50,20 +68,56 @@ const Navbar = () => {
 
   return (
     <nav className="flex gap-4 items-center text-xl flex-wrap font-medium text-white justify-center">
-      <NavigationMenu viewport={false}>
-        <NavigationMenuList>
-          {topLevelCategories.map((category) => (
-            <NavigationMenuItem key={category._id}>
-              <NavigationMenuTrigger className="bg-slate-900 text-xl">
-                {category.name}
-              </NavigationMenuTrigger>
-              <NavigationMenuContent className="bg-white text-black shadow-md p-4 rounded z-50">
-                <div className="w-[150px] max-h-[400px overflow-y-auto">
-                  {renderSubCategories(category._id)}
-                </div>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-          ))}
+
+      <NavigationMenu className="[data-orientation] = horizental">
+        <NavigationMenuList className="">
+          {categories
+            ?.filter((category) => category.parent === null)
+            ?.map((category) => {
+              return (
+                <NavigationMenuItem key={category._id}>
+                  <NavigationMenuTrigger
+                    className="bg-slate-900 text-xl hover:underline decoration-blue-600 underline-offset-15 hover:bg-none  delay-300 transition"
+                    onClick={() => handleOnCategoryClick(category.path)}
+                  >
+                    {capitalize(category.name)}
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent className="  ">
+                    <div className=" w-[100%] flex justify-evenly gap-20 px-40 py-10 ">
+                      {categories
+                        .filter((cat) => cat.parent == category._id)
+                        .map((category) => (
+                          <div key={category._id}>
+                            <h2
+                              onClick={() =>
+                                handleOnCategoryClick(category.path)
+                              }
+                              className="text-gray-500"
+                            >
+                              {capitalize(category.name)}
+                            </h2>
+                            {categories
+                              .filter((cat) => cat.parent == category._id)
+                              .map((c) => {
+                                return (
+                                  <div
+                                    key={c._id}
+                                    onClick={() =>
+                                      handleOnCategoryClick(c.path)
+                                    }
+                                  >
+                                    {capitalize(c.name)}
+                                  </div>
+                                );
+                              })}
+                          </div>
+                        ))}
+                    </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+              );
+            })}
+
         </NavigationMenuList>
       </NavigationMenu>
     </nav>

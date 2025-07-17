@@ -46,15 +46,15 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/change-password" element={<ChangePasswordForm />} />
           <Route path="/signup" element={<SignupPage />} />
-          <Route path="/activate-user" element={<ActiveUserPage />} />
-          <Route path="/allproducts" element={<AllProductsPage />} />
           <Route path="/product-detail/:slug" element={<ProductDetailPage />} />
           <Route path="/activate-user" element={<ActiveUserPage />} />
+          <Route path="/allproducts/*" element={<AllProductsPage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/address" element={<AddressPage />} />
           <Route path="/order-summary" element={<OrderSummaryPage />} />
           <Route path="/order-success" element={<SuccessPage />} />
           <Route path="/cancel" element={<CancelPage />} />
+
         </Route>
         {/* private Routes */}
       </Routes>
