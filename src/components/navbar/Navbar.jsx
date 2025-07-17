@@ -35,7 +35,7 @@ const Navbar = () => {
         {subCategories.map((subCat) => (
           <div
             key={subCat._id}
-            className="mb-2 cursor-pointer hover:underline hover:shadow-xs hover:text-slate-800"
+            className="mb-2 cursor-pointer hover:shadow-xs hover:text-slate-800"
             onClick={() => navigate(`/allproducts?category=${subCat.slug}`)}
           >
             {subCat.name}

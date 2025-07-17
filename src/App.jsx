@@ -20,6 +20,8 @@ import CartPage from "./pages/cart/CartPage";
 import SuccessPage from "./pages/payment/SuccessPage";
 import AddressPage from "./pages/user/AddressPage";
 import OrderSummaryPage from "./pages/order/OrderSummaryPage";
+import CancelPage from "./pages/payment/CancelPage";
+
 
 function App() {
   return (
@@ -52,6 +54,7 @@ function App() {
           <Route path="/address" element={<AddressPage />} />
           <Route path="/order-summary" element={<OrderSummaryPage />} />
           <Route path="/order-success" element={<SuccessPage />} />
+          <Route path="/cancel" element={<CancelPage />} />
         </Route>
         {/* private Routes */}
       </Routes>
