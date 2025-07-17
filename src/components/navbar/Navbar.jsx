@@ -9,16 +9,27 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import { getAllCategories } from "../../features/categories/categoriesApi";
-// import { getAllCategories } from "../../axios/categoryAxios";
-import { useSelector } from "react-redux";
-import { RxLetterCaseCapitalize } from "react-icons/rx";
+
+import { useDispatch, useSelector } from "react-redux";
+
 import { capitalize } from "../../utility/buldCapital";
+import { setFiltered } from "../../features/filters/filterSlice";
 
 const Navbar = () => {
   const { categories } = useSelector((state) => state.categoriesInfo);
-
+  const { filtered } = useSelector((state) => state.filterInfo);
+  const dispatch = useDispatch();
+  
   const navigate = useNavigate();
+  const handleOnCategoryClick = (categoryPath) => {
+    navigate(`/allproducts${categoryPath}`);
+    let p = {
+      ...filtered,
+      mainCategory: [categoryPath.split("/")[1]],
+      productPath: categoryPath,
+    };
+    dispatch(setFiltered(p));
+  };
 
   const renderSubCategories = (parentId) => {
     const subCategories = [...categories]?.filter(
@@ -51,7 +62,10 @@ const Navbar = () => {
             ?.map((category) => {
               return (
                 <NavigationMenuItem key={category._id}>
-                  <NavigationMenuTrigger className="bg-slate-900 text-xl hover:underline decoration-blue-600 underline-offset-15 hover:bg-none  delay-300 transition">
+                  <NavigationMenuTrigger
+                    className="bg-slate-900 text-xl hover:underline decoration-blue-600 underline-offset-15 hover:bg-none  delay-300 transition"
+                    onClick={() => handleOnCategoryClick(category.path)}
+                  >
                     {capitalize(category.name)}
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="  ">
@@ -60,14 +74,26 @@ const Navbar = () => {
                         .filter((cat) => cat.parent == category._id)
                         .map((category) => (
                           <div key={category._id}>
-                            <h2 className="text-gray-500">
+                            <h2
+                              onClick={() =>
+                                handleOnCategoryClick(category.path)
+                              }
+                              className="text-gray-500"
+                            >
                               {capitalize(category.name)}
                             </h2>
                             {categories
                               .filter((cat) => cat.parent == category._id)
                               .map((c) => {
                                 return (
-                                  <div key={c._id}>{capitalize(c.name)}</div>
+                                  <div
+                                    key={c._id}
+                                    onClick={() =>
+                                      handleOnCategoryClick(c.path)
+                                    }
+                                  >
+                                    {capitalize(c.name)}
+                                  </div>
                                 );
                               })}
                           </div>

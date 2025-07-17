@@ -17,6 +17,6 @@ export const getAllFilterProductApi = (query) => {
     url: `${productApiEndPoint}/filterProduct?${query}`,
     method: "get",
   };
-  console.log(obj.url);
+  
   return axiosApiCall(obj);
 };

@@ -8,11 +8,12 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 
 import { Button } from "@/components/ui/button";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Circle } from "lucide-react";
 import { Check } from "lucide-react";
 import { useState } from "react";
 import { Slider } from "@/components/ui/slider";
 import { useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
 //  Reusable collapsible section
 const FilterSection = ({
   title,
@@ -29,7 +30,6 @@ const FilterSection = ({
   // console.log(filters);
   // const isSelected = filters.colors?.includes(colors.value);
 
-
   return (
     <div className="space-y-3">
       <Collapsible open={open} onOpenChange={setOpen}>
@@ -41,7 +41,6 @@ const FilterSection = ({
         </CollapsibleTrigger>
 
         <CollapsibleContent className="pl-2 pt-2 space-y-2">
-
           {/* mainCategory,brand ,sales and offers */}
 
           {options.map((option) => (
@@ -49,11 +48,11 @@ const FilterSection = ({
               key={option.id}
               className="flex items-center space-x-2 text-base"
             >
-
               <Checkbox
                 id={option.id}
-                onCheckedChange={() =>
-                  handleOnChecked(option.name, option.value)
+                checked={option.checked}
+                onCheckedChange={(checked) =>
+                  handleOnChecked(option.name, option.value, checked)
                 }
               />
 
@@ -94,7 +93,7 @@ const FilterSection = ({
           {/* sales and Offer */}
           {name == "sales" && (
             <div className="flex gap-2">
-              <Checkbox onCheckedChange={(e) => handleOnChecked(name, e)} />
+              <Checkbox  onCheckedChange={(e) => handleOnChecked(name, e,)} />
               <Label className="text-base">{"Sales"}</Label>
             </div>
           )}
@@ -104,14 +103,15 @@ const FilterSection = ({
             {colors.map((color) => {
               return (
                 <div key={color.id}>
-                  <Button
-                    size="sm"
-                    className={`rounded-full text-white text-sm px-4 py-1 border border-gray-300 cursor-pointer`}
+                  <Checkbox
+                    className={`rounded-full size-10 }`}
                     style={{ backgroundColor: color.value }}
-                    onClick={() => handleOnClick(color.name, color.value)}
-                  >
-                    {/* {isSelected && <Check size={14} className="ml-1" />} */}
-                  </Button>
+                    onCheckedChange={(checked) => {
+                      handleOnChecked(color.name, color.value, checked);
+                    }}
+                  />
+                  {/* {isSelected && <Check size={14} className="ml-1" />} */}
+
                   <Label htmlFor={color.id} className="text-base">
                     {color.label}
                   </Label>
@@ -119,7 +119,6 @@ const FilterSection = ({
               );
             })}
           </div>
-
         </CollapsibleContent>
       </Collapsible>
     </div>
@@ -128,22 +127,35 @@ const FilterSection = ({
 
 //  Sidebar component
 
-const FilterSidebar = ({
-  handleOnChecked,
-  maxPrice,
-  handleOnClick,
-  filters,
-}) => {
-  const { products } = useSelector((state) => state.productInfo);
+const FilterSidebar = ({ handleOnChecked, maxPrice, handleOnClick }) => {
+  const location = useLocation();
+  const { products, FilterProduct } = useSelector((state) => state.productInfo);
+  const path = location.pathname.replace("/allproducts", "");
+  const { filtered } = useSelector((state) => state.filterInfo);
+
+  const gender = path.split("/")[1] || "";
 
   const genderOptions = [
     ...new Set(products.map((product) => product.mainCategory)),
-  ].map((mainCategory) => ({
-    id: mainCategory,
-    label: mainCategory.charAt(0).toUpperCase() + mainCategory.slice(1),
-    value: mainCategory,
-    name: "mainCategory",
-  }));
+  ].map((Category) => {
+    if (filtered?.mainCategory.includes(Category)) {
+      return {
+        id: Category,
+        label: Category?.charAt(0)?.toUpperCase() + Category.slice(1),
+        value: Category,
+        name: "mainCategory",
+        checked: true,
+      };
+    } else {
+      return {
+        id: Category,
+        label: Category?.charAt(0)?.toUpperCase() + Category.slice(1),
+        value: Category,
+        name: "mainCategory",
+        checked: "",
+      };
+    }
+  });
 
   const saleOptions = [{ id: "sale", label: "Sale", name: "sales", value: "" }];
 
@@ -156,7 +168,7 @@ const FilterSidebar = ({
     name: "colors",
     value: color.toLowerCase(),
     label: color.charAt(0).toUpperCase() + color.slice(1),
-    filters: { filters },
+    filters: { filtered },
   }));
 
   const brandOptions = [
@@ -188,13 +200,13 @@ const FilterSidebar = ({
       <FilterSection
         title="Sale and Offers"
         name="sales"
-        handleOnChecked={handleOnChecked}
+        handleOnChecked={ handleOnChecked}
       />
       <Separator />
       <FilterSection
         title="Colour"
         colors={colorsOptions}
-        handleOnClick={handleOnClick}
+        handleOnChecked={handleOnChecked}
       />
       <Separator />
       <FilterSection
@@ -203,7 +215,6 @@ const FilterSidebar = ({
         handleOnChecked={handleOnChecked}
         label={brandOptions}
       />
-
     </div>
   );
 };

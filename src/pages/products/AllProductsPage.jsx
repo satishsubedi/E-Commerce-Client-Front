@@ -1,5 +1,5 @@
 import { SlidersHorizontal } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import AllProductList from "../../components/Products/AllProductList";
 
@@ -13,36 +13,21 @@ import FilterSidebar from "../../components/sidebar/FilterSideBar";
 
 import { useSelector } from "react-redux";
 import { Collapse } from "../../components/collapsible/Collapse";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { filtsrActions } from "../../features/filters/filtersAction";
+import { setFiltered } from "../../features/filters/filterSlice";
 
 const AllProductsPage = () => {
   const [showFilter, setShowFilter] = useState(true);
   const { products, FilterProduct } = useSelector((state) => state.productInfo);
-  const [productList, setProductList] = useState([]);
-  const [searchParams, setSearchParams] = useSearchParams();
-  const p = searchParams.get("men");
-  console.log(p);
-  const [filters, setFilters] = useState({
-    mainCategory: [],
-    maxPrice: "",
-    minPrice: "",
-    colors: [],
-    sale: "",
-    brand: [],
-    slug: "",
-  });
 
-  const hasActiveFilters = (f) => {
-    return (
-      f?.mainCategory.length > 0 ||
-      f?.minPrice !== "" ||
-      f?.maxPrice !== "" ||
-      f?.colors.length > 0 ||
-      f?.sale !== "" ||
-      f?.brand.length > 0 ||
-      f?.slug
-    );
-  };
+  const [productList, setProductList] = useState([]);
+  const location = useLocation();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { filtered } = useSelector((state) => state.filterInfo);
+
   const handleOnSortOption = (option) => {
     if (option === "Price:Low-High") {
       setProductList([...productList?.sort((a, b) => a.price - b.price)]);
@@ -58,52 +43,67 @@ const AllProductsPage = () => {
     }
   };
   const maxPrice = Math.max(...products.map((product) => product.price));
-  const handleOnChecked = (name, value) => {
-    setFilters((prev) => {
-      let filters = { ...prev };
-      console.log(prev);
-      if (name === "mainCategory") {
-        const prevMainCategories = Array.isArray(prev?.mainCategory)
-          ? prev.mainCategory
-          : [];
-        const alreadySelected = prevMainCategories.includes(value);
-        const nextCategories = alreadySelected
-          ? prevMainCategories.filter((item) => item !== value)
-          : [...prevMainCategories, value];
-        filters.mainCategory = nextCategories;
-      }
-      if (name === "brand") {
-        const prevBrand = Array.isArray(prev?.brand) ? prev.brand : [];
-        const alreadySelectedBrand = prev.brand.includes(value);
-        const nextBrand = alreadySelectedBrand
-          ? prevBrand.filter((brand) => brand != value)
-          : [...prevBrand, value];
-        filters.brand = nextBrand;
-      }
-      if (name === "sales") {
-        filters.sale = value;
-      }
 
-      return filters;
-    });
+  const handleOnChecked = (name, value, checked) => {
+    // Deep clone (shallow works here because mainCategory is a 1-level array)
+    console.log(name, value, checked);
+    const p = {
+      ...filtered,
+      mainCategory: [...filtered.mainCategory],
+      colors: [...filtered.colors],
+      brand: [...filtered.brand],
+    };
+    console.log(p);
+    if (name == "mainCategory") {
+      if (checked) {
+        if (!p[name].includes(value)) {
+          p[name].push(value);
+          p.productPath = "";
+          navigate(
+            `/allproducts${p.mainCategory ? "/" + p.mainCategory.join("-") : ""}`
+          );
+        }
+      } else {
+        p[name] = p[name].filter((item) => item !== value);
+        navigate(
+          `/allproducts${p.mainCategory ? "/" + p.mainCategory.join("-") : ""}`
+        );
+      }
+    }
+    if (name == "sales") {
+      if (value) {
+        p.sale = true;
+      } else {
+        p.sale = false;
+      }
+    }
+    if (name == "brand") {
+      if (checked) {
+        if (!p[name].includes(value)) {
+          p[name].push(value);
+        }
+      } else {
+        p[name] = p[name].filter((item) => item !== value);
+      }
+    }
+    if (name == "colors") {
+      if (checked) {
+        if (!p[name].includes(value)) {
+          p[name].push(value); // ✅ safe now
+        }
+      } else {
+        p[name] = p[name].filter((item) => item !== value);
+      }
+    }
+
+    dispatch(setFiltered(p));
   };
+
   const handleOnClick = (name, value) => {
-    console.log(name, value);
-    setFilters((prev) => {
-      let filters = { ...prev };
-      if (name === "price") {
-        ((filters.minPrice = value[0]), (filters.maxPrice = value[1]));
-      }
-      if (name === "colors") {
-        const prevColors = Array.isArray(prev?.colors) ? prev.colors : [];
-        const alreadyClicked = prevColors.includes(value);
-        const nextColors = alreadyClicked
-          ? prevColors.filter((color) => color != value)
-          : [...prevColors, value];
-        filters.colors = nextColors;
-      }
-      return filters;
-    });
+    const p = { ...filtered };
+    p.minPrice = value[0];
+    p.maxPrice = value[1];
+    dispatch(setFiltered(p));
   };
 
   return (
@@ -137,7 +137,8 @@ const AllProductsPage = () => {
               handleOnChecked={handleOnChecked}
               maxPrice={maxPrice}
               handleOnClick={handleOnClick}
-              filters={filters}
+
+              // genderOptions={genderOptions}
             />
           </aside>
         )}
@@ -150,7 +151,7 @@ const AllProductsPage = () => {
           <div className="flex items-center justify-between ">
             <h3 className="text-2xl font-bold text-gray-800">All Products</h3>
 
-            {FilterProduct.length > 0 && hasActiveFilters(filters) && (
+            {FilterProduct.length > 0 && (
               <h4 className="text-2xl font-bold text-gray-800">
                 Found {FilterProduct.length} out of {products.length}
               </h4>
@@ -173,13 +174,10 @@ const AllProductsPage = () => {
               handleOnSortOption={handleOnSortOption}
             />
           </div>
-
-          {/* AllProductList Component */}
+          {/* AllProductList Component */}{" "}
           <AllProductList
-            filters={filters}
-            hasActiveFilters={hasActiveFilters}
             setProductList={setProductList}
-            productList={productList}
+            productList={productList.length > 0 ? productList : []}
           />
         </main>
       </div>

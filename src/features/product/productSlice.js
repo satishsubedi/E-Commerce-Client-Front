@@ -14,6 +14,7 @@ export const productsSlice = createSlice({
       state.products = payload;
     },
     setFilteredProduct: (state, { payload }) => {
+      console.log(payload)
       state.FilterProduct = payload;
     },
   },
