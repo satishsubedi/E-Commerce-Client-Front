@@ -18,6 +18,7 @@ import ProductDetailPage from "./pages/products/ProductDetailPage";
 import AllProductsPage from "./pages/products/AllProductsPage";
 import CartPage from "./pages/cart/CartPage";
 import SuccessPage from "./pages/payment/SuccessPage";
+import CancelPage from "./pages/payment/CancelPage";
 
 function App() {
   return (
@@ -48,6 +49,7 @@ function App() {
           <Route path="/activate-user" element={<ActiveUserPage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/order-success" element={<SuccessPage />} />
+          <Route path="/cancel" element={<CancelPage />} />
         </Route>
         {/* private Routes */}
       </Routes>
