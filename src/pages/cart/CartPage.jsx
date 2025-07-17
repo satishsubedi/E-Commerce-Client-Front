@@ -320,8 +320,10 @@ const CartPage = () => {
                 <Button
                   className="w-full bg-black hover:bg-gray-800 text-white py-4 rounded-full text-base font-medium"
                   size="lg"
-                  onClick={handleOnCheckout}
+                  // onClick={handleOnCheckout}
+                  onClick={() => navigate("/address")}
                 >
+                  {/* Checkout */}
                   Checkout
                 </Button>
               </div>
