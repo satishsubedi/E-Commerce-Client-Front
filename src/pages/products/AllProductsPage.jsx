@@ -1,8 +1,9 @@
 import { SlidersHorizontal } from "lucide-react";
+
 import { useEffect, useState } from "react";
 
-import AllProductList from "../../components/Products/AllProductList";
 
+import AllProductList from "../../components/Products/AllProductList";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,7 +11,6 @@ import {
   BreadcrumbSeparator,
 } from "../../components/ui/breadcrumb";
 import FilterSidebar from "../../components/sidebar/FilterSideBar";
-
 import { useSelector } from "react-redux";
 import { Collapse } from "../../components/collapsible/Collapse";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -100,10 +100,12 @@ const AllProductsPage = () => {
   };
 
   const handleOnClick = (name, value) => {
+
     const p = { ...filtered };
     p.minPrice = value[0];
     p.maxPrice = value[1];
     dispatch(setFiltered(p));
+
   };
 
   return (

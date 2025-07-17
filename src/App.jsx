@@ -16,6 +16,12 @@ import DefaultLayout from "./components/layout/DefaultLayout";
 
 import ProductDetailPage from "./pages/products/ProductDetailPage";
 import AllProductsPage from "./pages/products/AllProductsPage";
+import CartPage from "./pages/cart/CartPage";
+import SuccessPage from "./pages/payment/SuccessPage";
+import AddressPage from "./pages/user/AddressPage";
+import OrderSummaryPage from "./pages/order/OrderSummaryPage";
+import CancelPage from "./pages/payment/CancelPage";
+
 
 function App() {
   return (
@@ -43,6 +49,12 @@ function App() {
           <Route path="/product-detail/:slug" element={<ProductDetailPage />} />
           <Route path="/activate-user" element={<ActiveUserPage />} />
           <Route path="/allproducts/*" element={<AllProductsPage />} />
+          <Route path="/cart" element={<CartPage />} />
+          <Route path="/address" element={<AddressPage />} />
+          <Route path="/order-summary" element={<OrderSummaryPage />} />
+          <Route path="/order-success" element={<SuccessPage />} />
+          <Route path="/cancel" element={<CancelPage />} />
+
         </Route>
         {/* private Routes */}
       </Routes>

@@ -1,6 +1,5 @@
 // Navbar.jsx
-import { use, useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   NavigationMenu,
@@ -11,15 +10,17 @@ import {
 } from "@/components/ui/navigation-menu";
 
 import { useDispatch, useSelector } from "react-redux";
-
 import { capitalize } from "../../utility/buldCapital";
 import { setFiltered } from "../../features/filters/filterSlice";
-
 const Navbar = () => {
   const { categories } = useSelector((state) => state.categoriesInfo);
   const { filtered } = useSelector((state) => state.filterInfo);
   const dispatch = useDispatch();
-  
+ 
+import { getAllCategories } from "../../features/categories/categoriesApi";
+const Navbar = () => {
+  const [categories, setCategories] = useState([]);
+
   const navigate = useNavigate();
   const handleOnCategoryClick = (categoryPath) => {
     navigate(`/allproducts${categoryPath}`);
@@ -31,10 +32,20 @@ const Navbar = () => {
     dispatch(setFiltered(p));
   };
 
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await getAllCategories();
+        setCategories(response?.payload || []);
+      } catch (error) {
+        console.error("Error fetching categories", error);
+      }
+    };
+    fetchCategories();
+  }, []);
+
   const renderSubCategories = (parentId) => {
-    const subCategories = [...categories]?.filter(
-      (cat) => cat.parent === parentId
-    );
+    const subCategories = categories.filter((cat) => cat.parent === parentId);
     if (subCategories.length === 0) return null;
 
     return (
@@ -42,7 +53,7 @@ const Navbar = () => {
         {subCategories.map((subCat) => (
           <div
             key={subCat._id}
-            className="mb-2 cursor-pointer hover:underline hover:shadow-xs hover:text-slate-800"
+            className="mb-2 cursor-pointer hover:shadow-xs hover:text-slate-800"
             onClick={() => navigate(`/allproducts?category=${subCat.slug}`)}
           >
             {subCat.name}
@@ -53,8 +64,11 @@ const Navbar = () => {
     );
   };
 
+  const topLevelCategories = categories.filter((cat) => cat.parent === null);
+
   return (
     <nav className="flex gap-4 items-center text-xl flex-wrap font-medium text-white justify-center">
+
       <NavigationMenu className="[data-orientation] = horizental">
         <NavigationMenuList className="">
           {categories
@@ -103,6 +117,7 @@ const Navbar = () => {
                 </NavigationMenuItem>
               );
             })}
+
         </NavigationMenuList>
       </NavigationMenu>
     </nav>

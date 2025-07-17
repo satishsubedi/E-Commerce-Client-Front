@@ -136,6 +136,7 @@ const FilterSidebar = ({ handleOnChecked, maxPrice, handleOnClick }) => {
   const gender = path.split("/")[1] || "";
 
   const genderOptions = [
+
     ...new Set(products.map((product) => product.mainCategory)),
   ].map((Category) => {
     if (filtered?.mainCategory.includes(Category)) {
@@ -156,6 +157,7 @@ const FilterSidebar = ({ handleOnChecked, maxPrice, handleOnClick }) => {
       };
     }
   });
+
 
   const saleOptions = [{ id: "sale", label: "Sale", name: "sales", value: "" }];
 

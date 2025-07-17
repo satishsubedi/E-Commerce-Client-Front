@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-
 import { BsSearch } from "react-icons/bs";
 import { FaRegHeart } from "react-icons/fa6";
 import { IoBag } from "react-icons/io5";
@@ -17,6 +16,10 @@ const Header = () => {
   const [show, setShow] = useState(true);
   const dispatch = useDispatch();
   const categories = useSelector((state) => state.categoriesInfo);
+  // Get cart item count (sum of quantities)
+  const cartItemsCount = useSelector((state) =>
+    state.cartInfo.cartItems.reduce((sum, item) => sum + item.quantity, 0)
+  );
 
   const handleOnclick = () => {
     show ? setShow(false) : setShow(true);
@@ -48,8 +51,15 @@ const Header = () => {
           <li>
             <FaRegHeart />
           </li>
-          <li>
-            <IoBag />
+          <li className="relative">
+            <Link to="/cart">
+              <IoBag />
+              {cartItemsCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {cartItemsCount}
+                </span>
+              )}
+            </Link>
           </li>
           <li>
             <Link to="/login">
