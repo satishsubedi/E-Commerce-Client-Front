@@ -321,7 +321,7 @@ const CartPage = () => {
                   className="w-full bg-black hover:bg-gray-800 text-white py-4 rounded-full text-base font-medium"
                   size="lg"
                   // onClick={handleOnCheckout}
-                  onClick={() => navigate("/address")}
+                  onClick={() => navigate("/checkout/option")}
                 >
                   {/* Checkout */}
                   Checkout
