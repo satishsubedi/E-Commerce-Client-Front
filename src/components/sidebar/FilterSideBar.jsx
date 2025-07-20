@@ -93,7 +93,7 @@ const FilterSection = ({
           {/* sales and Offer */}
           {name == "sales" && (
             <div className="flex gap-2">
-              <Checkbox  onCheckedChange={(e) => handleOnChecked(name, e,)} />
+              <Checkbox onCheckedChange={(e) => handleOnChecked(name, e)} />
               <Label className="text-base">{"Sales"}</Label>
             </div>
           )}
@@ -136,7 +136,6 @@ const FilterSidebar = ({ handleOnChecked, maxPrice, handleOnClick }) => {
   const gender = path.split("/")[1] || "";
 
   const genderOptions = [
-
     ...new Set(products.map((product) => product.mainCategory)),
   ].map((Category) => {
     if (filtered?.mainCategory.includes(Category)) {
@@ -150,14 +149,13 @@ const FilterSidebar = ({ handleOnChecked, maxPrice, handleOnClick }) => {
     } else {
       return {
         id: Category,
-        label: Category?.charAt(0)?.toUpperCase() + Category.slice(1),
+        label: Category?.charAt(0)?.toUpperCase() + Category?.slice(1),
         value: Category,
         name: "mainCategory",
         checked: "",
       };
     }
   });
-
 
   const saleOptions = [{ id: "sale", label: "Sale", name: "sales", value: "" }];
 
@@ -202,7 +200,7 @@ const FilterSidebar = ({ handleOnChecked, maxPrice, handleOnClick }) => {
       <FilterSection
         title="Sale and Offers"
         name="sales"
-        handleOnChecked={ handleOnChecked}
+        handleOnChecked={handleOnChecked}
       />
       <Separator />
       <FilterSection

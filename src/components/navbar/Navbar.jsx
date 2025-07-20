@@ -12,13 +12,11 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { capitalize } from "../../utility/buldCapital";
 import { setFiltered } from "../../features/filters/filterSlice";
+import { getAllCategories } from "../../features/categories/categoriesApi";
+
 const Navbar = () => {
-  const { categories } = useSelector((state) => state.categoriesInfo);
   const { filtered } = useSelector((state) => state.filterInfo);
   const dispatch = useDispatch();
- 
-import { getAllCategories } from "../../features/categories/categoriesApi";
-const Navbar = () => {
   const [categories, setCategories] = useState([]);
 
   const navigate = useNavigate();
@@ -68,7 +66,6 @@ const Navbar = () => {
 
   return (
     <nav className="flex gap-4 items-center text-xl flex-wrap font-medium text-white justify-center">
-
       <NavigationMenu className="[data-orientation] = horizental">
         <NavigationMenuList className="">
           {categories
@@ -117,7 +114,6 @@ const Navbar = () => {
                 </NavigationMenuItem>
               );
             })}
-
         </NavigationMenuList>
       </NavigationMenu>
     </nav>

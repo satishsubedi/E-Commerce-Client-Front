@@ -55,7 +55,7 @@ const CartPage = () => {
       const response = await axios.post(
         `${import.meta.env.VITE_APP_API_BASE_URL}/api/v1/order/placeOrder`,
         {
-          cart: cartItems.map((item) => ({
+          cart: cartItems?.map((item) => ({
             productId: item.product_id,
             quantity: item.quantity,
           })),
