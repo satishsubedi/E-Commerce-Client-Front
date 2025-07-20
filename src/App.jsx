@@ -10,18 +10,16 @@ import Header from "./components/Header/Header";
 import ChangePasswordForm from "./components/log-in/ResetPasswordForm";
 import ActiveUserPage from "./pages/ActiveUserPage";
 
-// import LatestProductsPage from "./pages/Products/LatestProductsPage";
-// import RecommendationPage from "./pages/Products/RecommendationPage";
 import DefaultLayout from "./components/layout/DefaultLayout";
 
 import ProductDetailPage from "./pages/products/ProductDetailPage";
 import AllProductsPage from "./pages/products/AllProductsPage";
 import CartPage from "./pages/cart/CartPage";
 import SuccessPage from "./pages/payment/SuccessPage";
-import AddressPage from "./pages/user/AddressPage";
-import OrderSummaryPage from "./pages/order/OrderSummaryPage";
-import CancelPage from "./pages/payment/CancelPage";
 
+import CancelPage from "./pages/payment/CancelPage";
+import CheckoutPage from "./pages/checkout/CheckoutPage.jsx";
+import CheckoutOptionPage from "./pages/checkout/CheckoutOptionPage";
 
 function App() {
   return (
@@ -50,8 +48,12 @@ function App() {
           <Route path="/activate-user" element={<ActiveUserPage />} />
           <Route path="/allproducts/*" element={<AllProductsPage />} />
           <Route path="/cart" element={<CartPage />} />
-          <Route path="/address" element={<AddressPage />} />
-          <Route path="/order-summary" element={<OrderSummaryPage />} />
+          {/* <Route path="/address" element={<AddressPage />} />
+          <Route path="/order-summary" element={<OrderSummaryPage />} /> */}
+
+          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/checkout/option" element={<CheckoutOptionPage />} />
+
           <Route path="/order-success" element={<SuccessPage />} />
           <Route path="/cancel" element={<CancelPage />} />
 
