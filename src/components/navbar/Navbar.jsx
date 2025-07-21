@@ -1,4 +1,3 @@
-// Navbar.jsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -13,13 +12,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { capitalize } from "../../utility/buldCapital";
 import { setFiltered } from "../../features/filters/filterSlice";
 import { getAllCategories } from "../../features/categories/categoriesApi";
+import { fetchFilteredProducts } from "../../features/filters/fetchFilteredProducts";
 
 const Navbar = () => {
   const { filtered } = useSelector((state) => state.filterInfo);
   const dispatch = useDispatch();
   const [categories, setCategories] = useState([]);
-
+  const [menuKey, setMenuKey] = useState(0);
   const navigate = useNavigate();
+
   const handleOnCategoryClick = (categoryPath) => {
     navigate(`/allproducts${categoryPath}`);
     let p = {
@@ -28,6 +29,8 @@ const Navbar = () => {
       productPath: categoryPath,
     };
     dispatch(setFiltered(p));
+    dispatch(fetchFilteredProducts(p));
+    setMenuKey((prev) => prev + 1);
   };
 
   useEffect(() => {
@@ -66,47 +69,52 @@ const Navbar = () => {
 
   return (
     <nav className="flex gap-4 items-center text-xl flex-wrap font-medium text-white justify-center">
-      <NavigationMenu className="[data-orientation] = horizental">
-        <NavigationMenuList className="">
+      <NavigationMenu viewport={false} key={menuKey}>
+        <NavigationMenuList>
           {categories
             ?.filter((category) => category.parent === null)
             ?.map((category) => {
               return (
                 <NavigationMenuItem key={category._id}>
                   <NavigationMenuTrigger
-                    className="bg-slate-900 text-xl hover:underline decoration-blue-600 underline-offset-15 hover:bg-none  delay-300 transition"
+                    className="bg-slate-900 text-xl  decoration-blue-600 transition"
                     onClick={() => handleOnCategoryClick(category.path)}
                   >
                     {capitalize(category.name)}
                   </NavigationMenuTrigger>
-                  <NavigationMenuContent className="  ">
-                    <div className=" w-[100%] flex justify-evenly gap-20 px-40 py-10 ">
+                  <NavigationMenuContent className="bg-white text-black p-4 w-80 shadow-md rounded z-100">
+                    <div className="flex flex-col gap-1">
                       {categories
-                        .filter((cat) => cat.parent == category._id)
-                        .map((category) => (
-                          <div key={category._id}>
-                            <h2
-                              onClick={() =>
-                                handleOnCategoryClick(category.path)
-                              }
-                              className="text-gray-500"
+                        .filter((cat) => cat.parent === category._id)
+                        .map((subCat) => (
+                          <div key={subCat._id} className="ml-1 w-60">
+                            <div
+                              onClick={() => handleOnCategoryClick(subCat.path)}
+                              className="cursor-pointer hover:shadow-sm text-md"
                             >
-                              {capitalize(category.name)}
-                            </h2>
-                            {categories
-                              .filter((cat) => cat.parent == category._id)
-                              .map((c) => {
-                                return (
-                                  <div
-                                    key={c._id}
-                                    onClick={() =>
-                                      handleOnCategoryClick(c.path)
-                                    }
-                                  >
-                                    {capitalize(c.name)}
-                                  </div>
-                                );
-                              })}
+                              {capitalize(subCat.name)}
+                            </div>
+
+                            {/* Render nested sub-subcategories if any */}
+                            {categories.some(
+                              (c) => c.parent === subCat._id
+                            ) && (
+                              <div className="ml-4 mt-1">
+                                {categories
+                                  .filter((c) => c.parent === subCat._id)
+                                  .map((childCat) => (
+                                    <div
+                                      key={childCat._id}
+                                      onClick={() =>
+                                        handleOnCategoryClick(childCat.path)
+                                      }
+                                      className="cursor-pointer hover:shadow-sm text-sm text-gray-600"
+                                    >
+                                      {capitalize(childCat.name)}
+                                    </div>
+                                  ))}
+                              </div>
+                            )}
                           </div>
                         ))}
                     </div>

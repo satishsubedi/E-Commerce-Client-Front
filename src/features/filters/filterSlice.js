@@ -3,7 +3,6 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   filtered: {
     mainCategory: [],
-
     maxPrice: "",
     minPrice: "",
     colors: [],

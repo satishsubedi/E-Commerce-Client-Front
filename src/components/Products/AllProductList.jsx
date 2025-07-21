@@ -15,7 +15,6 @@ import { setProducts } from "../../features/product/productSlice";
 const AllProductList = ({
   setProductList,
   productList,
-
   filters,
   hasActiveFilters,
 }) => {

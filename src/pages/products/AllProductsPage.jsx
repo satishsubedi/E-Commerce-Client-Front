@@ -1,8 +1,5 @@
 import { SlidersHorizontal } from "lucide-react";
-
-import { useEffect, useState } from "react";
-
-
+import { useEffect, useState, useRef } from "react";
 import AllProductList from "../../components/Products/AllProductList";
 import {
   Breadcrumb,
@@ -11,17 +8,15 @@ import {
   BreadcrumbSeparator,
 } from "../../components/ui/breadcrumb";
 import FilterSidebar from "../../components/sidebar/FilterSideBar";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Collapse } from "../../components/collapsible/Collapse";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { filtsrActions } from "../../features/filters/filtersAction";
 import { setFiltered } from "../../features/filters/filterSlice";
+import { fetchFilteredProducts } from "../../features/filters/fetchFilteredProducts";
 
 const AllProductsPage = () => {
   const [showFilter, setShowFilter] = useState(true);
   const { products, FilterProduct } = useSelector((state) => state.productInfo);
-
   const [productList, setProductList] = useState([]);
   const location = useLocation();
   const dispatch = useDispatch();
@@ -29,88 +24,119 @@ const AllProductsPage = () => {
   const { filtered } = useSelector((state) => state.filterInfo);
 
   const handleOnSortOption = (option) => {
+    const sortedList = [...productList];
     if (option === "Price:Low-High") {
-      setProductList([...productList?.sort((a, b) => a.price - b.price)]);
+      sortedList.sort((a, b) => a.price - b.price);
+    } else if (option === "Price:High-Low") {
+      sortedList.sort((a, b) => b.price - a.price);
+    } else if (option === "Newest") {
+      sortedList.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     }
-    if (option === "Price:High-Low") {
-      setProductList([...productList?.sort((a, b) => b.price - a.price)]);
-    }
-    if (option === "Newest") {
-      const sortedProducts = productList?.sort(
-        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-      );
-      setProductList(sortedProducts);
-    }
+    setProductList(sortedList);
   };
-  const maxPrice = Math.max(...products.map((product) => product.price));
+
+  const maxPrice =
+    products.length > 0 ? Math.max(...products.map((p) => p.price)) : 0;
 
   const handleOnChecked = (name, value, checked) => {
-    // Deep clone (shallow works here because mainCategory is a 1-level array)
-    console.log(name, value, checked);
     const p = {
       ...filtered,
       mainCategory: [...filtered.mainCategory],
       colors: [...filtered.colors],
       brand: [...filtered.brand],
     };
-    console.log(p);
-    if (name == "mainCategory") {
-      if (checked) {
-        if (!p[name].includes(value)) {
-          p[name].push(value);
-          p.productPath = "";
-          navigate(
-            `/allproducts${p.mainCategory ? "/" + p.mainCategory.join("-") : ""}`
-          );
-        }
-      } else {
-        p[name] = p[name].filter((item) => item !== value);
-        navigate(
-          `/allproducts${p.mainCategory ? "/" + p.mainCategory.join("-") : ""}`
-        );
-      }
-    }
-    if (name == "sales") {
-      if (value) {
-        p.sale = true;
-      } else {
-        p.sale = false;
-      }
-    }
-    if (name == "brand") {
-      if (checked) {
-        if (!p[name].includes(value)) {
-          p[name].push(value);
-        }
-      } else {
+    //this is for synchronizing the productpath
+    const pathname = location.pathname;
+    const match = pathname.match(/\/allproducts\/(.+)/);
+    p.productPath = match && match[1] ? match[1] : "";
+    if (name === "mainCategory") {
+      // Only update the URL — don't dispatch fetch manually here
+      if (checked && !p[name].includes(value)) {
+        p[name].push(value);
+      } else if (!checked) {
         p[name] = p[name].filter((item) => item !== value);
       }
-    }
-    if (name == "colors") {
-      if (checked) {
-        if (!p[name].includes(value)) {
-          p[name].push(value); // ✅ safe now
-        }
-      } else {
-        p[name] = p[name].filter((item) => item !== value);
-      }
+
+      // Clear productPath for mainCategory changes, since it will come from URL
+
+      dispatch(setFiltered(p));
+      // Navigate to new path; fetch will be triggered in useEffect based on pathname
+      navigate(
+        `/allproducts${p.mainCategory.length ? "/" + p.mainCategory.join("-") : ""}`
+      );
+      return;
     }
 
+    // ✅ For all other filters (not mainCategory)
+    if (name === "sales") {
+      p.sale = value;
+    } else if (name === "brand") {
+      p[name] = checked
+        ? [...p[name], value]
+        : p[name].filter((item) => item !== value);
+    } else if (name === "colors") {
+      p[name] = checked
+        ? [...p[name], value]
+        : p[name].filter((item) => item !== value);
+    }
+
+    // ✅ Dispatch only when other filters (not mainCategory) are changed
     dispatch(setFiltered(p));
+    dispatch(fetchFilteredProducts(p));
   };
 
   const handleOnClick = (name, value) => {
-
     const p = { ...filtered };
+    const pathname = location.pathname;
+    const match = pathname.match(/\/allproducts\/(.+)/);
+    p.productPath = match && match[1] ? match[1] : "";
     p.minPrice = value[0];
     p.maxPrice = value[1];
     dispatch(setFiltered(p));
-
+    dispatch(fetchFilteredProducts(p));
   };
+
+  // Runs on page load and URL changes
+  useEffect(() => {
+    const pathname = location.pathname;
+    const match = pathname.match(/\/allproducts\/(.+)/);
+
+    if (match && match[1]) {
+      const path = match[1];
+      const categoryList = path.split("/");
+
+      const newFilter = {
+        productPath: path,
+        mainCategory: categoryList,
+        colors: [],
+        brand: [],
+        sale: false,
+      };
+
+      dispatch(setFiltered(newFilter));
+      dispatch(fetchFilteredProducts(newFilter));
+    } else if (pathname === "/allproducts") {
+      // ✅ No category selected — show all
+      const defaultFilter = {
+        productPath: "",
+        mainCategory: [],
+        colors: [],
+        brand: [],
+        sale: false,
+      };
+
+      dispatch(setFiltered(defaultFilter));
+      dispatch(fetchFilteredProducts(defaultFilter));
+    }
+  }, [location.pathname, dispatch]);
+
+  // Keeps product list in sync with filtered products
+  useEffect(() => {
+    setProductList(FilterProduct);
+  }, [FilterProduct]);
 
   return (
     <div className="mx-auto px-4">
-      {/* Breadcrumb only at the top */}
       <div className="bg-gray-100 p-4 mb-6">
         <Breadcrumb className="flex flex-wrap items-center space-x-1 text-sm">
           <BreadcrumbItem>
@@ -130,26 +156,20 @@ const AllProductsPage = () => {
         </Breadcrumb>
       </div>
 
-      {/* Main layout: sidebar + product grid */}
       <div className="flex flex-col md:flex-row gap-6">
-        {/* Left Sidebar */}
         {showFilter && (
           <aside className="w-full md:w-64 space-y-4 shrink-0">
             <FilterSidebar
               handleOnChecked={handleOnChecked}
               maxPrice={maxPrice}
               handleOnClick={handleOnClick}
-
-              // genderOptions={genderOptions}
             />
           </aside>
         )}
 
-        {/* Right Product Grid */}
         <main
           className={`${showFilter ? "flex-grow" : "w-full"} transition-all duration-300`}
         >
-          {/* Top row with heading and toggle */}
           <div className="flex items-center justify-between ">
             <h3 className="text-2xl font-bold text-gray-800">All Products</h3>
 
@@ -176,10 +196,10 @@ const AllProductsPage = () => {
               handleOnSortOption={handleOnSortOption}
             />
           </div>
-          {/* AllProductList Component */}{" "}
+
           <AllProductList
             setProductList={setProductList}
-            productList={productList.length > 0 ? productList : []}
+            productList={productList}
           />
         </main>
       </div>
