@@ -55,7 +55,7 @@ const CartPage = () => {
       const response = await axios.post(
         `${import.meta.env.VITE_APP_API_BASE_URL}/api/v1/order/placeOrder`,
         {
-          cart: cartItems.map((item) => ({
+          cart: cartItems?.map((item) => ({
             productId: item.product_id,
             quantity: item.quantity,
           })),
@@ -320,8 +320,10 @@ const CartPage = () => {
                 <Button
                   className="w-full bg-black hover:bg-gray-800 text-white py-4 rounded-full text-base font-medium"
                   size="lg"
-                  onClick={handleOnCheckout}
+                  // onClick={handleOnCheckout}
+                  onClick={() => navigate("/checkout/option")}
                 >
+                  {/* Checkout */}
                   Checkout
                 </Button>
               </div>
