@@ -14,9 +14,9 @@ export const getAllProductApi = () => {
 // /filterProduct?categories=men&colors=White,Grey
 export const getAllFilterProductApi = (query) => {
   const obj = {
-    url: `${productApiEndPoint}/filterProduct?${query}`,
+    url: `${productApiEndPoint}/filterProduct${query}`,
     method: "get",
   };
-  console.log(obj.url);
+
   return axiosApiCall(obj);
 };

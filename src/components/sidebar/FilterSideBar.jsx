@@ -10,9 +10,11 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
 import { Check } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Slider } from "@/components/ui/slider";
 import { useSelector } from "react-redux";
+import { useSearchParams } from "react-router-dom";
+
 //  Reusable collapsible section
 const FilterSection = ({
   title,
@@ -25,15 +27,19 @@ const FilterSection = ({
   colors = [],
 }) => {
   const [open, setOpen] = useState(false);
-  const [range, setRange] = useState([0, maxPrice]);
-  // console.log(filters);
-  // const isSelected = filters.colors?.includes(colors.value);
+
+  const [range, setRange] = useState([100, 800]);
 
   return (
     <div className="space-y-3">
       <Collapsible open={open} onOpenChange={setOpen}>
         <CollapsibleTrigger className="flex justify-between items-center w-full py-2 text-xl font-medium">
           {title}
+          {options.filter((opt) => opt.checked).length > 0 && (
+            <span className="text-lg text-gray-500">
+              ({options.filter((opt) => opt.checked).length})
+            </span>
+          )}
           <ChevronDown
             className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`}
           />
@@ -49,8 +55,9 @@ const FilterSection = ({
             >
               <Checkbox
                 id={option.id}
-                onCheckedChange={() =>
-                  handleOnChecked(option.name, option.value)
+                checked={option.checked}
+                onCheckedChange={(checked) =>
+                  handleOnChecked(option.name, option.value, checked)
                 }
               />
 
@@ -101,14 +108,13 @@ const FilterSection = ({
             {colors.map((color) => {
               return (
                 <div key={color.id}>
-                  <Button
-                    size="sm"
-                    className={`rounded-full text-white text-sm px-4 py-1 border border-gray-300 cursor-pointer`}
+                  <Checkbox
+                    className={`rounded-full size-10 }`}
                     style={{ backgroundColor: color.value }}
-                    onClick={() => handleOnClick(color.name, color.value)}
-                  >
-                    {/* {isSelected && <Check size={14} className="ml-1" />} */}
-                  </Button>
+                    onCheckedChange={(checked) => {
+                      handleOnChecked(color.name, color.value, checked);
+                    }}
+                  />
                   <Label htmlFor={color.id} className="text-base">
                     {color.label}
                   </Label>
@@ -124,24 +130,32 @@ const FilterSection = ({
 
 //  Sidebar component
 
-const FilterSidebar = ({
-  handleOnChecked,
-  maxPrice,
-  handleOnClick,
-  filters,
-}) => {
+const FilterSidebar = ({ handleOnChecked, maxPrice, handleOnClick }) => {
   const { products } = useSelector((state) => state.productInfo);
+  const [searchParams] = useSearchParams();
+  const selectedMainCategories = (searchParams.get("mainCategory") || "")
+    .split(",")
+    .filter(Boolean);
+  const productPath = searchParams.get("productPath") || ""; //men/sho/casual
+  const mainCategoryFromPath = productPath.split("/")[0]; // men
+
+  //useEffect
+  useEffect(() => {
+    if (mainCategoryFromPath) {
+      handleOnChecked("mainCategory", mainCategoryFromPath, true);
+    }
+  }, [mainCategoryFromPath]);
+  //end useEffect
 
   const genderOptions = [
-    ...new Set(products?.map((product) => product.mainCategory)),
-  ]?.map((mainCategory) => ({
+    ...new Set(products.map((product) => product.mainCategory)),
+  ].map((mainCategory) => ({
     id: mainCategory,
-    label: mainCategory?.charAt(0).toUpperCase() + mainCategory?.slice(1),
+    label: mainCategory?.charAt(0)?.toUpperCase() + mainCategory?.slice(1),
     value: mainCategory,
     name: "mainCategory",
+    checked: selectedMainCategories.includes(mainCategory),
   }));
-
-  const saleOptions = [{ id: "sale", label: "Sale", name: "sales", value: "" }];
 
   const colorSet = new Set(
     products.flatMap((product) => product.colors.map((c) => c.toLowerCase()))
@@ -152,7 +166,6 @@ const FilterSidebar = ({
     name: "colors",
     value: color.toLowerCase(),
     label: color.charAt(0).toUpperCase() + color.slice(1),
-    filters: { filters },
   }));
 
   const brandOptions = [
@@ -165,7 +178,7 @@ const FilterSidebar = ({
   }));
 
   return (
-    <div className=" p-4 space-y-4 border rounded-md bg-white shadow-sm ">
+    <div className="p-4 border rounded-md bg-white shadow-sm max-h-[80vh] overflow-y-auto space-y-4">
       <FilterSection
         title="Gender"
         options={genderOptions}
@@ -190,7 +203,7 @@ const FilterSidebar = ({
       <FilterSection
         title="Colour"
         colors={colorsOptions}
-        handleOnClick={handleOnClick}
+        handleOnChecked={handleOnChecked}
       />
       <Separator />
       <FilterSection
