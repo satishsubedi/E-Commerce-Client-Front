@@ -5,6 +5,6 @@ export const fetctCategoriesAction = () => async (disptach) => {
   const categoriesInfo = await getAllCategories();
 
   const { payload, status } = categoriesInfo;
-
+  console.log(payload);
   status === "success" && disptach(setCategoires(payload));
 };

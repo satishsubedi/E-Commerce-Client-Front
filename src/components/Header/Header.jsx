@@ -21,16 +21,12 @@ const Header = () => {
     state.cartInfo.cartItems.reduce((sum, item) => sum + item.quantity, 0)
   );
 
-  const handleOnclick = () => {
-    show ? setShow(false) : setShow(true);
-  };
-
   useEffect(() => {
     ref.current &&
       dispatch(fetctCategoriesAction()) &&
       dispatch(fetchProductAction());
     ref.current = false;
-  }, []);
+  }, [dispatch]);
   console.log(categories);
   return (
     <header className="text-gray-600 body-font flex justify-center  bg-slate-900">

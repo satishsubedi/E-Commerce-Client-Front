@@ -1,6 +1,8 @@
 import { SlidersHorizontal } from "lucide-react";
 import { useState } from "react";
+
 import AllProductList from "../../components/Products/AllProductList";
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,95 +10,115 @@ import {
   BreadcrumbSeparator,
 } from "../../components/ui/breadcrumb";
 import FilterSidebar from "../../components/sidebar/FilterSideBar";
+
 import { useSelector } from "react-redux";
 import { Collapse } from "../../components/collapsible/Collapse";
+import { useSearchParams } from "react-router-dom";
 
 const AllProductsPage = () => {
   const [showFilter, setShowFilter] = useState(true);
   const { products, FilterProduct } = useSelector((state) => state.productInfo);
-  const [productLists, setProductList] = useState([]);
-  const [filters, setFilters] = useState({
-    mainCategory: [],
-    maxPrice: "",
-    minPrice: "",
-    colors: [],
-    sale: "",
-    brand: [],
-  });
-  const hasActiveFilters = (f) => {
-    return (
-      f.mainCategory.length > 0 ||
-      f.minPrice !== "" ||
-      f.maxPrice !== "" ||
-      f.colors.length > 0 ||
-      f.sale !== "" ||
-      f.brand.length > 0
-    );
-  };
+  const [productList, setProductList] = useState([]);
+
   const handleOnSortOption = (option) => {
     if (option === "Price:Low-High") {
-      const sortedProducts = [...products].sort((a, b) => a.price - b.price);
-      console.log(sortedProducts);
-      setProductList(sortedProducts);
+      setProductList([...productList.sort((a, b) => a.price - b.price)]);
     }
     if (option === "Price:High-Low") {
-      const sortedProducts = [...products].sort((a, b) => b.price - a.price);
-      setProductList(sortedProducts);
+      setProductList([...productList.sort((a, b) => b.price - a.price)]);
     }
     if (option === "Newest") {
-      const sortedProducts = [...products].sort(
+      const sortedProducts = productList?.sort(
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
       );
       setProductList(sortedProducts);
     }
   };
   const maxPrice = Math.max(...products.map((product) => product.price));
-  const handleOnChecked = (name, value) => {
-    setFilters((prev) => {
-      let filters = { ...prev };
-      console.log(prev);
-      if (name === "mainCategory") {
-        const prevMainCategories = Array.isArray(prev?.mainCategory)
-          ? prev.mainCategory
-          : [];
-        const alreadySelected = prevMainCategories.includes(value);
-        const nextCategories = alreadySelected
-          ? prevMainCategories.filter((item) => item !== value)
-          : [...prevMainCategories, value];
-        filters.mainCategory = nextCategories;
-      }
-      if (name === "brand") {
-        const prevBrand = Array.isArray(prev?.brand) ? prev.brand : [];
-        const alreadySelectedBrand = prev.brand.includes(value);
-        const nextBrand = alreadySelectedBrand
-          ? prevBrand.filter((brand) => brand != value)
-          : [...prevBrand, value];
-        filters.brand = nextBrand;
-      }
-      if (name === "sales") {
-        filters.sale = value;
+  const [searchParams, setSearchParams] = useSearchParams();
+  let newParams = new URLSearchParams(searchParams);
+  let mainCategoryFromPath = searchParams.get("productPath");
+  let mainCategory =
+    searchParams.get("mainCategory")?.split(",").filter(Boolean) || [];
+  let brand = searchParams.get("brand")?.split(",").filter(Boolean) || [];
+  let colors = searchParams.get("colors")?.split(",").filter(Boolean) || [];
+  if (mainCategory.includes(mainCategoryFromPath)) {
+    console.log("checked");
+  }
+  const handleOnChecked = (name, value, checked) => {
+    //maincategory
+    if (name == "mainCategory") {
+      if (checked) {
+        if (!mainCategory.includes(value)) {
+          mainCategory.push(value);
+        }
+      } else {
+        mainCategory = [...new Set(mainCategory)];
+        mainCategory = mainCategory.filter((category) => category !== value);
+        if (mainCategoryFromPath.startsWith(value)) {
+          newParams.delete("productPath");
+        }
       }
 
-      return filters;
-    });
+      if (mainCategory.length > 0) {
+        newParams.set("mainCategory", mainCategory.join(","));
+      } else {
+        newParams.delete("productPath");
+        newParams.delete("mainCategory");
+      }
+
+      setSearchParams(newParams);
+    }
+
+    //brand
+    if (name === "brand") {
+      if (checked) {
+        if (!brand.includes(value)) {
+          brand.push(value);
+        }
+      } else {
+        brand = [...new Set(brand)];
+        brand = brand.filter((brnd) => brnd !== value);
+      }
+
+      if (brand.length > 0) {
+        newParams.set("brand", brand.join(","));
+      } else {
+        newParams.delete("brand");
+      }
+      setSearchParams(newParams);
+    }
+    if (name === "colors") {
+      if (checked) {
+        if (!colors.includes(value)) {
+          colors.push(value);
+        }
+      } else {
+        colors = [...new Set(colors)];
+        colors = colors.filter((color) => color !== value);
+      }
+
+      if (colors.length > 0) {
+        newParams.set("colors", colors.join(","));
+      } else {
+        newParams.delete("colors");
+      }
+      setSearchParams(newParams);
+    }
+    if (name === "sales") {
+      if (value) {
+        newParams.set("sale", value);
+      } else {
+        newParams.delete("sale");
+      }
+      setSearchParams(newParams);
+    }
   };
   const handleOnClick = (name, value) => {
     console.log(name, value);
-    setFilters((prev) => {
-      let filters = { ...prev };
-      if (name === "price") {
-        (filters.minPrice = value[0]), (filters.maxPrice = value[1]);
-      }
-      if (name === "colors") {
-        const prevColors = Array.isArray(prev?.colors) ? prev.colors : [];
-        const alreadyClicked = prevColors.includes(value);
-        const nextColors = alreadyClicked
-          ? prevColors.filter((color) => color != value)
-          : [...prevColors, value];
-        filters.colors = nextColors;
-      }
-      return filters;
-    });
+    newParams.set("minPrice", value[0]);
+    newParams.set("maxPrice", value[1]);
+    setSearchParams(newParams);
   };
 
   return (
@@ -130,7 +152,6 @@ const AllProductsPage = () => {
               handleOnChecked={handleOnChecked}
               maxPrice={maxPrice}
               handleOnClick={handleOnClick}
-              filters={filters}
             />
           </aside>
         )}
@@ -143,7 +164,7 @@ const AllProductsPage = () => {
           <div className="flex items-center justify-between ">
             <h3 className="text-2xl font-bold text-gray-800">All Products</h3>
 
-            {FilterProduct.length > 0 && hasActiveFilters(filters) && (
+            {FilterProduct.length > 0 && (
               <h4 className="text-2xl font-bold text-gray-800">
                 Found {FilterProduct.length} out of {products.length}
               </h4>
@@ -169,9 +190,8 @@ const AllProductsPage = () => {
 
           {/* AllProductList Component */}
           <AllProductList
-            productlist={productLists}
-            filters={filters}
-            hasActiveFilter={hasActiveFilters}
+            setProductList={setProductList}
+            productList={productList}
           />
         </main>
       </div>
