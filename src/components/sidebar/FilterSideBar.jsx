@@ -136,8 +136,8 @@ const FilterSidebar = ({ handleOnChecked, maxPrice, handleOnClick }) => {
   const selectedMainCategories = (searchParams.get("mainCategory") || "")
     .split(",")
     .filter(Boolean);
-  const productPath = searchParams.get("productPath") || "";
-  const mainCategoryFromPath = productPath.split("/")[0];
+  const productPath = searchParams.get("productPath") || ""; //men/sho/casual
+  const mainCategoryFromPath = productPath.split("/")[0]; // men
 
   //useEffect
   useEffect(() => {
@@ -151,7 +151,7 @@ const FilterSidebar = ({ handleOnChecked, maxPrice, handleOnClick }) => {
     ...new Set(products.map((product) => product.mainCategory)),
   ].map((mainCategory) => ({
     id: mainCategory,
-    label: mainCategory.charAt(0).toUpperCase() + mainCategory.slice(1),
+    label: mainCategory?.charAt(0)?.toUpperCase() + mainCategory?.slice(1),
     value: mainCategory,
     name: "mainCategory",
     checked: selectedMainCategories.includes(mainCategory),
