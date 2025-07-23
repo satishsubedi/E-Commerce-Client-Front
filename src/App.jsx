@@ -20,6 +20,7 @@ import SuccessPage from "./pages/payment/SuccessPage";
 import CancelPage from "./pages/payment/CancelPage";
 import CheckoutPage from "./pages/checkout/CheckoutPage.jsx";
 import CheckoutOptionPage from "./pages/checkout/CheckoutOptionPage";
+import PaymentPage from "./pages/payment/PaymentPage.jsx";
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
           <Route path="/cart" element={<CartPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/checkout/option" element={<CheckoutOptionPage />} />
+          <Route path="/payment" element={<PaymentPage />} />
           <Route path="/order-success" element={<SuccessPage />} />
           <Route path="/cancel" element={<CancelPage />} />
         </Route>
