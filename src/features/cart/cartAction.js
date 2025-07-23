@@ -3,7 +3,7 @@ import {
   getCartFromLocalStorage,
   saveCartToLocalStorage,
 } from "../../utils/cartLocalStorage";
-import { setCarts } from "./cartSlice";
+import { setCarts, updatePricing } from "./cartSlice";
 
 //Add item to cart
 export const addItemToCart =
@@ -47,30 +47,71 @@ export const addItemToCart =
 
     dispatch(setCarts(updatedCartItems));
     saveCartToLocalStorage(updatedCartItems);
+
+    // Recalculate pricing
+    const { isPromoApplied } = getState().cartInfo;
+    const pricing = calculatePricing(updatedCartItems, isPromoApplied);
+    dispatch(updatePricing(pricing));
   };
 
 // delete a cart product
-export const deleteCartItem = (itemId) => (dispatch) => {
+export const deleteCartItem = (itemId) => (dispatch, getState) => {
   const existingCartItems = getCartFromLocalStorage();
   const updatedCartItems = existingCartItems.filter(
     (item) => item._id !== itemId
   );
   dispatch(setCarts(updatedCartItems));
   saveCartToLocalStorage(updatedCartItems);
+
+  // Recalculate pricing
+  const { isPromoApplied } = getState().cartInfo;
+  const pricing = calculatePricing(updatedCartItems, isPromoApplied);
+  dispatch(updatePricing(pricing));
+};
+
+// Update pricing when promo is applied
+export const updatePricingOnPromoChange = () => (dispatch, getState) => {
+  const { cartItems, isPromoApplied } = getState().cartInfo;
+  const pricing = calculatePricing(cartItems, isPromoApplied);
+  dispatch(updatePricing(pricing));
 };
 
 //update a quantity in cart
-export const updateCartItemQuantity = (itemId, quantity) => (dispatch) => {
-  const existingCartItems = getCartFromLocalStorage();
-  const updatedCartItems = existingCartItems.map((item) =>
-    item._id === itemId ? { ...item, quantity } : item
+export const updateCartItemQuantity =
+  (itemId, quantity) => (dispatch, getState) => {
+    const existingCartItems = getCartFromLocalStorage();
+    const updatedCartItems = existingCartItems.map((item) =>
+      item._id === itemId ? { ...item, quantity } : item
+    );
+    dispatch(setCarts(updatedCartItems));
+    saveCartToLocalStorage(updatedCartItems);
+
+    // Recalculate pricing
+    const { isPromoApplied } = getState().cartInfo;
+    const pricing = calculatePricing(updatedCartItems, isPromoApplied);
+    dispatch(updatePricing(pricing));
+  };
+
+// Calculate pricing based on cart items and promo status
+const calculatePricing = (cartItems, isPromoApplied) => {
+  const subtotal = cartItems.reduce(
+    (sum, item) => sum + (item.discountPrice || item.price) * item.quantity,
+    0
   );
-  dispatch(setCarts(updatedCartItems));
-  saveCartToLocalStorage(updatedCartItems);
+  const discount = isPromoApplied ? subtotal * 0.1 : 0;
+  const shipping = subtotal > 80 ? 0 : 7.99;
+  const total = subtotal - discount + shipping;
+
+  return { subtotal, discount, shipping, total };
 };
 
 // Load cart from localStorage
-export const fetchCartFromStorage = () => (dispatch) => {
+export const fetchCartFromStorage = () => (dispatch, getState) => {
   const cartItems = getCartFromLocalStorage();
   dispatch(setCarts(cartItems));
+
+  // Calculate and update pricing
+  const { isPromoApplied } = getState().cartInfo;
+  const pricing = calculatePricing(cartItems, isPromoApplied);
+  dispatch(updatePricing(pricing));
 };

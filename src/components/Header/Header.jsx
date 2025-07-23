@@ -21,6 +21,8 @@ const Header = () => {
     state.cartInfo?.cartItems?.reduce((sum, item) => sum + item.quantity, 0)
   );
 
+  const { user } = useSelector((state) => state.user);
+
   // const handleOnclick = () => {
   //   show ? setShow(false) : setShow(true);
   // };
@@ -66,6 +68,11 @@ const Header = () => {
               <MdPeopleAlt />
             </Link>
           </li>
+          {user._id && (
+            <li>
+              <p className="text-sm font-light">hi, {user?.fName}</p>
+            </li>
+          )}
         </ul>
         {/* mobile navbar */}
         <div className="flex lg:hidden">

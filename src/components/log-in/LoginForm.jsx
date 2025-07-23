@@ -15,12 +15,17 @@ import {
 import FormControl from "../common-Input/FormControl";
 import { loginUser } from "../../features/user/userApi";
 import { useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import LoadingSpinner from "../helper/LoadingSpinner";
 import { getUserAction } from "../../features/user/userAction";
 const LoginForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const location = useLocation();
+
+  const params = new URLSearchParams(location.search);
+  const redirectPath = params.get("redirect") || "/";
 
   //useform from custom hook
   const { formData, handleOnChange, setFormData } =
@@ -63,6 +68,9 @@ const LoginForm = () => {
 
       toast.success(response?.message || "Login successful!");
       setFormData(initialLoginFormData);
+
+      // Go to intended page
+      navigate(redirectPath);
     } catch (error) {
       console.error("Login failed.", error);
       toast.error(error?.response?.data?.message || error?.message);
