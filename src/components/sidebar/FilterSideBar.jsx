@@ -8,11 +8,11 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Slider } from "@/components/ui/slider";
 import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
-
+import { useSearchParams } from "react-router-dom";
 // Reusable collapsible section
 const FilterSection = ({
   title,
@@ -25,13 +25,18 @@ const FilterSection = ({
   colors = [],
 }) => {
   const [open, setOpen] = useState(false);
-  const [range, setRange] = useState([0, maxPrice ?? 1000]);
+  const [range, setRange] = useState([100, 800]);
 
   return (
     <div className="space-y-3">
       <Collapsible open={open} onOpenChange={setOpen}>
         <CollapsibleTrigger className="flex justify-between items-center w-full py-2 text-xl font-medium">
           {title}
+          {options.filter((opt) => opt.checked).length > 0 && (
+            <span className="text-lg text-gray-500">
+              ({options.filter((opt) => opt.checked).length})
+            </span>
+          )}
           <ChevronDown
             className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`}
           />
@@ -113,58 +118,55 @@ const FilterSection = ({
     </div>
   );
 };
-
+//Sidebar compoents
 const FilterSidebar = ({ handleOnChecked, maxPrice, handleOnClick }) => {
-  const location = useLocation();
   const { products } = useSelector((state) => state.productInfo);
-  const { filtered } = useSelector((state) => state.filterInfo);
+  // const { filtered } = useSelector((state) => state.filterInfo);
+  const [searchParams] = useSearchParams();
 
-  const path = location.pathname.replace("/allproducts", "");
-  const gender = path.split("/")[1] || "";
+  const selectedMainCategories = (searchParams.get("mainCategory") || "")
+    .split(",")
+    .filter(Boolean);
+  const productPath = searchParams.get("productPath") || ""; //men/sho/casual
+  const mainCategoryFromPath = productPath.split("/")[0]; // men
 
+  //useEffect
+  useEffect(() => {
+    if (mainCategoryFromPath) {
+      handleOnChecked("mainCategory", mainCategoryFromPath, true);
+    }
+  }, [mainCategoryFromPath]);
   // Gender filter
-  const genderOptions = useMemo(() => {
-    const mainCategories = [
-      ...new Set(products.map((p) => p.mainCategory).filter(Boolean)),
-    ];
-    return mainCategories.map((category) => ({
-      id: category,
-      label: category.charAt(0).toUpperCase() + category.slice(1),
-      value: category,
-      name: "mainCategory",
-      checked: filtered.mainCategory?.includes(category) ?? false,
-    }));
-  }, [products, filtered]);
+  const genderOptions = [
+    ...new Set(products.map((product) => product.mainCategory)),
+  ].map((mainCategory) => ({
+    id: mainCategory,
+    label: mainCategory?.charAt(0)?.toUpperCase() + mainCategory?.slice(1),
+    value: mainCategory,
+    name: "mainCategory",
+    checked: selectedMainCategories.includes(mainCategory),
+  }));
 
   // Color filter
-  const colorsOptions = useMemo(() => {
-    const colorSet = new Set();
-    products.forEach((product) => {
-      (product.colors || []).forEach((color) => {
-        colorSet.add(color.toLowerCase());
-      });
-    });
-    return [...colorSet].map((color) => ({
-      id: color,
-      name: "colors",
-      value: color,
-      label: color.charAt(0).toUpperCase() + color.slice(1),
-    }));
-  }, [products]);
+  const colorSet = new Set(
+    products.flatMap((product) => product.colors.map((c) => c.toLowerCase()))
+  );
+  const colorsOptions = [...colorSet].map((color) => ({
+    id: color,
+    name: "colors",
+    value: color.toLowerCase(),
+    label: color.charAt(0).toUpperCase() + color.slice(1),
+  }));
 
   // Brand filter
-  const brandOptions = useMemo(() => {
-    const brandSet = new Set(
-      products.map((p) => p.brand?.toLowerCase()).filter(Boolean)
-    );
-    return [...brandSet].map((brand) => ({
-      id: brand,
-      label: brand.charAt(0).toUpperCase() + brand.slice(1),
-      value: brand,
-      name: "brand",
-      checked: filtered.brand?.includes(brand) ?? false,
-    }));
-  }, [products, filtered]);
+  const brandOptions = [
+    ...new Set(products.map((product) => product.brand.toLowerCase())),
+  ].map((brand) => ({
+    id: brand,
+    label: brand.charAt(0).toUpperCase() + brand.slice(1),
+    value: brand,
+    name: "brand",
+  }));
 
   return (
     <div className="p-4 space-y-4 border rounded-md bg-white shadow-sm">

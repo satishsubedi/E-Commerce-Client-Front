@@ -21,17 +21,17 @@ const Header = () => {
     state.cartInfo?.cartItems?.reduce((sum, item) => sum + item.quantity, 0)
   );
 
-  const handleOnclick = () => {
-    show ? setShow(false) : setShow(true);
-  };
+  // const handleOnclick = () => {
+  //   show ? setShow(false) : setShow(true);
+  // };
 
   useEffect(() => {
     ref.current &&
       dispatch(fetctCategoriesAction()) &&
       dispatch(fetchProductAction());
     ref.current = false;
-  }, []);
-
+  }, [dispatch]);
+  console.log(categories);
   return (
     <header className="text-gray-600 body-font flex justify-center  bg-slate-900">
       <div className="container  h-20 flex-wrap p-2  flex justify-between items-center md:p-6 lg:justify-between gap-10  ">

@@ -1,5 +1,5 @@
 import { SlidersHorizontal } from "lucide-react";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import AllProductList from "../../components/Products/AllProductList";
 import {
   Breadcrumb,
@@ -13,7 +13,7 @@ import { Collapse } from "../../components/collapsible/Collapse";
 import { useLocation, useNavigate } from "react-router-dom";
 import { setFiltered } from "../../features/filters/filterSlice";
 import { fetchFilteredProducts } from "../../features/filters/fetchFilteredProducts";
-
+import { useSearchParams } from "react-router-dom";
 const AllProductsPage = () => {
   const [showFilter, setShowFilter] = useState(true);
   const { products, FilterProduct } = useSelector((state) => state.productInfo);
@@ -23,117 +23,152 @@ const AllProductsPage = () => {
   const navigate = useNavigate();
   const { filtered } = useSelector((state) => state.filterInfo);
 
+  //This is for sorting the products
   const handleOnSortOption = (option) => {
-    const sortedList = [...productList];
     if (option === "Price:Low-High") {
-      sortedList.sort((a, b) => a.price - b.price);
-    } else if (option === "Price:High-Low") {
-      sortedList.sort((a, b) => b.price - a.price);
-    } else if (option === "Newest") {
-      sortedList.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      setProductList([...productList.sort((a, b) => a.price - b.price)]);
     }
-    setProductList(sortedList);
+    if (option === "Price:High-Low") {
+      setProductList([...productList.sort((a, b) => b.price - a.price)]);
+    }
+    if (option === "Newest") {
+      const sortedProducts = productList?.sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      );
+      setProductList(sortedProducts);
+    }
   };
 
   const maxPrice =
     products.length > 0 ? Math.max(...products.map((p) => p.price)) : 0;
 
+  const [searchParams, setSearchParams] = useSearchParams();
+  let newParams = new URLSearchParams(searchParams);
+  let mainCategoryFromPath = searchParams.get("productPath");
+  let mainCategory =
+    searchParams.get("mainCategory")?.split(",").filter(Boolean) || [];
+  let brand = searchParams.get("brand")?.split(",").filter(Boolean) || [];
+  let colors = searchParams.get("colors")?.split(",").filter(Boolean) || [];
+  if (mainCategory.includes(mainCategoryFromPath)) {
+    console.log("checked");
+  }
+
   const handleOnChecked = (name, value, checked) => {
-    const p = {
-      ...filtered,
-      mainCategory: [...filtered.mainCategory],
-      colors: [...filtered.colors],
-      brand: [...filtered.brand],
-    };
-    //this is for synchronizing the productpath
-    const pathname = location.pathname;
-    const match = pathname.match(/\/allproducts\/(.+)/);
-    p.productPath = match && match[1] ? match[1] : "";
-    if (name === "mainCategory") {
-      // Only update the URL — don't dispatch fetch manually here
-      if (checked && !p[name].includes(value)) {
-        p[name].push(value);
-      } else if (!checked) {
-        p[name] = p[name].filter((item) => item !== value);
+    //maincategory
+    console.log(name, value, checked, "Shekhar");
+    if (name == "mainCategory") {
+      if (checked) {
+        if (!mainCategory.includes(value)) {
+          mainCategory.push(value);
+        }
+      } else {
+        mainCategory = [...new Set(mainCategory)];
+        mainCategory = mainCategory.filter((category) => category !== value);
+        if (mainCategoryFromPath?.startsWith(value)) {
+          newParams.delete("productPath");
+        }
       }
 
-      // Clear productPath for mainCategory changes, since it will come from URL
+      if (mainCategory.length > 0) {
+        newParams.set("mainCategory", mainCategory.join(","));
+      } else {
+        newParams.delete("productPath");
+        newParams.delete("mainCategory");
+      }
 
-      dispatch(setFiltered(p));
-      // Navigate to new path; fetch will be triggered in useEffect based on pathname
-      navigate(
-        `/allproducts${p.mainCategory.length ? "/" + p.mainCategory.join("-") : ""}`
-      );
-      return;
+      setSearchParams(newParams);
     }
 
-    // ✅ For all other filters (not mainCategory)
+    //brand
+    if (name === "brand") {
+      if (checked) {
+        if (!brand.includes(value)) {
+          brand.push(value);
+        }
+      } else {
+        brand = [...new Set(brand)];
+        brand = brand.filter((brnd) => brnd !== value);
+      }
+
+      if (brand.length > 0) {
+        newParams.set("brand", brand.join(","));
+      } else {
+        newParams.delete("brand");
+      }
+      setSearchParams(newParams);
+    }
+    if (name === "colors") {
+      if (checked) {
+        if (!colors.includes(value)) {
+          colors.push(value);
+        }
+      } else {
+        colors = [...new Set(colors)];
+        colors = colors.filter((color) => color !== value);
+      }
+
+      if (colors.length > 0) {
+        newParams.set("colors", colors.join(","));
+      } else {
+        newParams.delete("colors");
+      }
+      setSearchParams(newParams);
+    }
     if (name === "sales") {
-      p.sale = value;
-    } else if (name === "brand") {
-      p[name] = checked
-        ? [...p[name], value]
-        : p[name].filter((item) => item !== value);
-    } else if (name === "colors") {
-      p[name] = checked
-        ? [...p[name], value]
-        : p[name].filter((item) => item !== value);
+      if (value) {
+        newParams.set("sale", value);
+      } else {
+        newParams.delete("sale");
+      }
+      setSearchParams(newParams);
     }
-
-    // ✅ Dispatch only when other filters (not mainCategory) are changed
-    dispatch(setFiltered(p));
-    dispatch(fetchFilteredProducts(p));
   };
 
   const handleOnClick = (name, value) => {
-    const p = { ...filtered };
-    const pathname = location.pathname;
-    const match = pathname.match(/\/allproducts\/(.+)/);
-    p.productPath = match && match[1] ? match[1] : "";
-    p.minPrice = value[0];
-    p.maxPrice = value[1];
-    dispatch(setFiltered(p));
-    dispatch(fetchFilteredProducts(p));
+    console.log(name, value);
+    newParams.set("minPrice", value[0]);
+    newParams.set("maxPrice", value[1]);
+    setSearchParams(newParams);
   };
 
   // Runs on page load and URL changes
-  useEffect(() => {
-    const pathname = location.pathname;
-    const match = pathname.match(/\/allproducts\/(.+)/);
+  // useEffect(() => {
+  //   const pathname = location.pathname;
+  //   const match = pathname.match(/\/allproducts\/(.+)/);
 
-    if (match && match[1]) {
-      const path = match[1];
-      const categoryList = path.split("/");
+  //   if (match && match[1]) {
+  //     const path = match[1];
+  //     const categoryList = path.split("/");
 
-      const newFilter = {
-        productPath: path,
-        mainCategory: categoryList,
-        colors: [],
-        brand: [],
-        sale: false,
-      };
+  //     const newFilter = {
+  //       productPath: path,
+  //       mainCategory: categoryList,
+  //       colors: [],
+  //       brand: [],
+  //       sale: false,
+  //     };
 
-      dispatch(setFiltered(newFilter));
-      dispatch(fetchFilteredProducts(newFilter));
-    } else if (pathname === "/allproducts") {
-      // ✅ No category selected — show all
-      const defaultFilter = {
-        productPath: "",
-        mainCategory: [],
-        colors: [],
-        brand: [],
-        sale: false,
-      };
+  //     dispatch(setFiltered(newFilter));
+  //     dispatch(fetchFilteredProducts(newFilter));
+  //   } else if (pathname === "/allproducts") {
+  //     // ✅ No category selected — show all
+  //     const defaultFilter = {
+  //       productPath: "",
+  //       mainCategory: [],
+  //       colors: [],
+  //       brand: [],
+  //       sale: false,
+  //     };
 
-      dispatch(setFiltered(defaultFilter));
-      dispatch(fetchFilteredProducts(defaultFilter));
-    }
-  }, [location.pathname, dispatch]);
+  //     dispatch(setFiltered(defaultFilter));
+  //     dispatch(fetchFilteredProducts(defaultFilter));
+  //   }
+  // }, [location.pathname, dispatch]);
 
   // Keeps product list in sync with filtered products
-  useEffect(() => {
-    setProductList(FilterProduct);
-  }, [FilterProduct]);
+  // useEffect(() => {
+  //   setProductList(FilterProduct);
+  // }, [FilterProduct]);
 
   return (
     <div className="mx-auto px-4">
