@@ -1,57 +1,78 @@
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { Card, CardContent } from "@/components/ui/card";
+import { Link } from "react-router-dom";
 
 const CheckoutOptionPage = () => {
-  const navigate = useNavigate();
-  const handleLogin = () => navigate("/login");
-  const handleSignup = () => navigate("/signup");
-  const handleGuestCheckout = () => navigate("/checkout");
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
-      <div className="max-w-4xl w-full flex flex-col items-center text-center">
-        <h1 className="text-2xl font-medium mb-10">
-          Choose How You Would Like To Check Out
-        </h1>
+    <div className=" bg-gray-50 flex flex-col">
+      {/* Main Content */}
+      <main className="flex-1 flex items-center justify-center px-4 py-12">
+        <div className="max-w-4xl w-full">
+          {/* Title */}
+          <h1 className="text-3xl md:text-4xl font-medium text-center text-gray-900 mb-16">
+            Choose How You Would Like To Check Out
+          </h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
-          {/* Member Checkout */}
-          <div className="border-r md:pr-6">
-            <h2 className="text-lg font-semibold mb-2">
-              Check out as a Member
-            </h2>
-            <p className="text-sm text-gray-600 mb-6">
-              {/* Use your Nike Member sign-in for Nike.com, NRC, NTC, SNKRS or the
-              Nike App. */}
-              Free delivery on orders over $150
-            </p>
-            <div className="flex flex-col gap-4 items-center">
-              <Button onClick={handleLogin} className="w-80 rounded-full">
-                Log in
-              </Button>
-              <Button
-                onClick={handleSignup}
-                className="w-80 rounded-full"
-                variant="secondary"
-              >
-                Sign Up
-              </Button>
-            </div>
-          </div>
+          {/* Checkout Options */}
+          <div className="grid md:grid-cols-2 gap-8 md:gap-12">
+            {/* Member Checkout */}
+            <Card className="border-0 shadow-sm">
+              <CardContent className="p-8 text-center">
+                <h2 className="text-xl font-medium text-gray-900 mb-2">
+                  Check out as a Member for free
+                </h2>
+                <h3 className="text-xl font-medium text-gray-900 mb-6">
+                  delivery on orders over $80
+                </h3>
 
-          {/* Guest Checkout */}
-          <div className="md:pl-6">
-            <h2 className="text-lg font-semibold mb-2">Check Out as Guest</h2>
-            <p className="text-sm text-gray-600 mb-6">
-              {/* You can create a free Nike Member Profile at any point during the
-              checkout process. */}
-              Free delivery on orders over $150.
-            </p>
-            <Button onClick={handleGuestCheckout} className="w-80 rounded-full">
-              Guest Checkout
-            </Button>
+                <p className="text-gray-600 mb-8 leading-relaxed">
+                  Use your Member sign-in for our store,
+                </p>
+
+                <div className="flex flex-col gap-4">
+                  <Button
+                    asChild
+                    className="w-full h-auto bg-black hover:bg-gray-800 text-white py-4 rounded-full text-base font-medium"
+                    size="lg"
+                  >
+                    <Link to="/login?redirect=/checkout">Login</Link>
+                  </Button>
+                  <Button
+                    asChild
+                    className="w-full h-auto bg-black hover:bg-gray-800 text-white py-4 rounded-full text-base font-medium"
+                    size="lg"
+                  >
+                    <Link to="/signup">Sign Up</Link>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Guest Checkout */}
+            <Card className="border-0 shadow-sm">
+              <CardContent className="p-8 text-center">
+                <h2 className="text-xl font-medium text-gray-900 mb-8">
+                  Check Out as Guest
+                </h2>
+
+                <p className="text-gray-600 mb-8 leading-relaxed">
+                  You can create a free account or log in
+                  <br />
+                  any point during the checkout process.
+                </p>
+
+                <Button
+                  asChild
+                  className="w-full h-auto bg-black hover:bg-gray-800 text-white py-4 px-8  rounded-full text-base font-medium"
+                  size="lg"
+                >
+                  <Link to="/checkout">Guest Checkout</Link>
+                </Button>
+              </CardContent>
+            </Card>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 };

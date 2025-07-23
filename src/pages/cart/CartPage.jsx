@@ -1,28 +1,35 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { Minus, Plus, Trash2, ShoppingBag, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   deleteCartItem,
   fetchCartFromStorage,
   updateCartItemQuantity,
+  updatePricingOnPromoChange,
 } from "../../features/cart/cartAction";
-import { getOrCreateGuestId } from "../../utils/guestId";
+import { setPromoApplied } from "../../features/cart/cartSlice";
 
 const CartPage = () => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  // const [cartItems, setCartItems] = useState([]);
-  const [promoCode, setPromoCode] = useState("");
-  const [isPromoApplied, setIsPromoApplied] = useState(false);
+  const {
+    cartItems,
+    isPromoApplied,
+    promoCode,
+    subtotal,
+    discount,
+    shipping,
+    total,
+  } = useSelector((state) => state.cartInfo);
 
-  const { cartItems } = useSelector((state) => state.cartInfo);
+  const { user } = useSelector((state) => state.user);
+  console.log("user", user);
 
   // Load cart items from localStorage on component mount
   useEffect(() => {
@@ -41,43 +48,6 @@ const CartPage = () => {
     dispatch(updateCartItemQuantity(itemId, newQuantity));
   };
 
-  const subtotal = cartItems.reduce(
-    (sum, item) => sum + (item.discountPrice || item.price) * item.quantity,
-    0
-  );
-  const discount = isPromoApplied ? subtotal * 0.1 : 0;
-  const shipping = subtotal > 150 ? 0 : 7.99;
-  const total = subtotal - discount + shipping;
-  console.log("Cart item sample:", cartItems[0]);
-  //this is sample for the checkout
-  const handleOnCheckout = async () => {
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_APP_API_BASE_URL}/api/v1/order/placeOrder`,
-        {
-          cart: cartItems?.map((item) => ({
-            productId: item.product_id,
-            quantity: item.quantity,
-          })),
-          paymentMethod: "Card",
-          guestId: getOrCreateGuestId(),
-          guestInfo: {
-            name: "Dinesh Budhathoki",
-            email: "abc@gmail.com",
-            phone: "12345",
-          },
-        },
-        {
-          withCredentials: true,
-        }
-      );
-      window.location.href = response.data.url;
-    } catch (error) {
-      console.error("Checkout error:", error);
-      toast.error("Failed to initiate checkout.");
-    }
-  };
-
   if (cartItems.length === 0) {
     return (
       <div className="min-h-screen bg-white">
@@ -92,11 +62,10 @@ const CartPage = () => {
               get started?
             </p>
             <Button
-              size="lg"
-              className="bg-black hover:bg-gray-800 text-white px-8 py-3 rounded-full"
-              onClick={() => navigate("/allProducts")}
+              asChild
+              className="bg-black hover:bg-gray-800 text-white px-8 py-6 rounded-full"
             >
-              Get Started
+              <Link to="/allProducts"> Get Started</Link>
             </Button>
           </div>
         </div>
@@ -293,7 +262,14 @@ const CartPage = () => {
                   <Input
                     placeholder="Promo Code"
                     value={promoCode}
-                    onChange={(e) => setPromoCode(e.target.value)}
+                    onChange={(e) =>
+                      dispatch(
+                        setPromoApplied({
+                          isPromoApplied,
+                          promoCode: e.target.value,
+                        })
+                      )
+                    }
                     className="flex-1 border-gray-200 focus:border-black"
                   />
                   <Button
@@ -301,7 +277,10 @@ const CartPage = () => {
                     className="border-gray-200 hover:border-black bg-transparent"
                     onClick={() => {
                       if (promoCode.trim()) {
-                        setIsPromoApplied(true);
+                        dispatch(
+                          setPromoApplied({ isPromoApplied: true, promoCode })
+                        );
+                        dispatch(updatePricingOnPromoChange());
                         toast.success("Promo code applied successfully!");
                       }
                     }}
@@ -318,12 +297,15 @@ const CartPage = () => {
 
               <div className="space-y-3">
                 <Button
-                  className="w-full bg-black hover:bg-gray-800 text-white py-4 rounded-full text-base font-medium"
-                  size="lg"
-                  // onClick={handleOnCheckout}
-                  onClick={() => navigate("/checkout/option")}
+                  className="w-full bg-black hover:bg-gray-800 text-white py-6 px-6 rounded-full text-base font-medium"
+                  onClick={() => {
+                    if (user && user._id) {
+                      navigate("/checkout");
+                    } else {
+                      navigate("/checkout/option");
+                    }
+                  }}
                 >
-                  {/* Checkout */}
                   Checkout
                 </Button>
               </div>

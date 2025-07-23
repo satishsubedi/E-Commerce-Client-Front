@@ -1,276 +1,243 @@
-import { useEffect, useState } from "react";
-import { Input } from "../../components/ui/input";
+import { useEffect } from "react";
 import { Button } from "../../components/ui/button";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
-import axios from "axios";
 import { getOrCreateGuestId } from "../../utils/guestId";
-import { saveGuestAddress } from "../../utils/guestUtils/guestAddress";
+import { Link, useNavigate } from "react-router-dom";
+import FormControl from "../../components/common-Input/FormControl";
+import {
+  initialShippingFormData,
+  ShippingFormControls,
+} from "../../config/formCongif";
+import useForm from "../../hooks/useForm";
+import {
+  fetchCartFromStorage,
+  updatePricingOnPromoChange,
+} from "../../features/cart/cartAction";
+import CheckOutSummary from "./CheckOutSummary";
 
 const CheckoutPage = () => {
-  const { cartItems } = useSelector((state) => state.cartInfo);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const { user } = useSelector((state) => state.user);
-  const [isLoading, setIsLoading] = useState(false);
-  const [address, setAddress] = useState({
-    fullName: user?.name || "",
-    email: user?.email || "",
-    phone: "",
-    street: "",
-    city: "",
-    state: "",
-    postalCode: "",
-    country: "",
-  });
+  const { formData, handleOnChange, setFormData } = useForm(
+    initialShippingFormData
+  ); //useform from custom hook
 
-  const subtotal = cartItems.reduce(
-    (sum, item) => sum + (item.discountPrice || item.price) * item.quantity,
-    0
-  );
-  const shipping = subtotal > 150 ? 0 : 7.99;
-  const total = subtotal + shipping;
+  useEffect(() => {
+    dispatch(fetchCartFromStorage());
+  }, [dispatch]);
 
-  const handleChange = (e) => {
-    setAddress({ ...address, [e.target.name]: e.target.value });
+  // Initialize form data with user info if available
+  useEffect(() => {
+    if (user?._id) {
+      // If user has address data, use it
+      if (user?.address) {
+        setFormData({
+          ...formData,
+          email: user.email || "",
+          firstName: user.fName,
+          lastName: user.lName,
+          street: user.address.street || "",
+          city: user.address.city || "",
+          state: user.address.state || "",
+          postalCode: user.address.postalCode || "",
+          country: user.address.country || "",
+          phoneNumber: user.address.phone || "",
+        });
+      } else {
+        // Just fill basic user info
+        setFormData({
+          ...formData,
+          email: user.email || "",
+          firstName: user.fName || "",
+          lastName: user.lName || "",
+        });
+      }
+    } else {
+      // For guest users, always set guestId in formData
+      const guestId = getOrCreateGuestId();
+      const storedAddress = localStorage.getItem(`guestAddress_${guestId}`);
+      if (storedAddress) {
+        const guestAddress = JSON.parse(storedAddress);
+        setFormData({
+          ...formData,
+          ...guestAddress,
+          guestId,
+        });
+      }
+    }
+  }, [user]);
+
+  // Recalculate pricing when component mounts
+  useEffect(() => {
+    dispatch(updatePricingOnPromoChange());
+  }, [dispatch]);
+
+  // Helper function to group  form fields for layout | form layout
+  const getFormLayout = () => {
+    const layout = [];
+
+    // Tracks which fields user has  already processed
+    const processedFields = new Set();
+
+    ShippingFormControls.forEach((field) => {
+      // Skip if user have  already processed this field
+      if (processedFields.has(field.name)) return;
+
+      if (field.layout === "grid") {
+        // Find all fields that belong to the same grid group
+        const groupFields = ShippingFormControls.filter(
+          (f) => f.gridGroup === field.gridGroup
+        );
+        // Add this group to layout
+        layout.push({
+          type: "grid",
+          fields: groupFields,
+        });
+        // then Mark all fields in this group as processed
+        groupFields.forEach((f) => processedFields.add(f.name));
+      } else {
+        layout.push({
+          type: "single",
+          field: field,
+        });
+        processedFields.add(field.name);
+      }
+    });
+
+    return layout;
   };
 
   const validateForm = () => {
-    const requiredFields = [
-      "fullName",
-      "email",
-      "phone",
-      "street",
-      "city",
-      "state",
-      "postalCode",
-      "country",
-    ];
+    const requiredFields = Object.keys(initialShippingFormData);
     for (const field of requiredFields) {
-      if (!address[field]) {
-        toast.error(`Please fill in the ${field} field.`);
+      if (!formData[field]) {
+        toast.error(`Please fill in all fields.`);
         return false;
       }
     }
     return true;
   };
 
-  const handlePlaceOrder = async () => {
-    if (!validateForm() || isLoading) return; //Prevents multiple clicks
-    setIsLoading(true);
-    try {
-      // Save address first
-      if (user._id) {
-        await axios.put(
-          `${import.meta.env.VITE_APP_API_BASE_URL}/api/v1/address/${user._id}`,
-          { address },
-          { withCredentials: true }
-        );
-      } else {
-        saveGuestAddress(address);
-      }
-
-      // Then place order
-      const response = await axios.post(
-        `${import.meta.env.VITE_APP_API_BASE_URL}/api/v1/order/placeOrder`,
-        {
-          cart: cartItems.map((item) => ({
-            productId: item.product_id,
-            quantity: item.quantity,
-          })),
-          paymentMethod: "Card",
-          guestId: user._id ? undefined : getOrCreateGuestId(),
-          guestInfo: user._id
-            ? undefined
-            : {
-                name: address.fullName,
-                email: address.email,
-                phone: address.phone,
-                address: address,
-              },
-        },
-        {
-          withCredentials: true,
-        }
-      );
-
-      window.location.href = response.data.url;
-    } catch (error) {
-      console.error("Order placement failed:", error);
-      toast.error(error.response?.data?.message || "Order failed.");
-    } finally {
-      setIsLoading(false);
+  const handleContinueOrder = async (e) => {
+    e.preventDefault();
+    if (!validateForm()) {
+      return;
     }
+
+    // Save form data to localStorage
+    if (user && user._id) {
+      // Logged-in user: save with user ID and isGuest: false
+      const formDataWithUserId = {
+        ...formData,
+        userId: user._id,
+        isGuest: false,
+      };
+      localStorage.setItem(
+        `checkoutAddress_${user._id}`,
+        JSON.stringify(formDataWithUserId)
+      );
+    } else {
+      // Guest: save with guest ID and isGuest: true
+      const guestId = getOrCreateGuestId();
+      const formDataWithGuestId = { ...formData, guestId, isGuest: true };
+      localStorage.setItem(
+        `guestAddress_${guestId}`,
+        JSON.stringify(formDataWithGuestId)
+      );
+    }
+
+    navigate("/payment");
   };
 
-  useEffect(() => {
-    // Load user or guest address
-    if (user?._id && user?.address) {
-      setAddress((prev) => ({
-        ...user.address,
-        ...prev,
-
-        fullName: user.name || prev.fullName,
-        email: user.email || prev.email,
-      }));
-    } else {
-      const guestId = getOrCreateGuestId();
-      const storedAddress = localStorage.getItem(`guestAddress_${guestId}`);
-      if (storedAddress) {
-        setAddress((prev) => ({
-          ...prev,
-          ...JSON.parse(storedAddress),
-        }));
-      }
-    }
-  }, [user]);
-
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <h1 className="text-2xl text-center mb-7">Checkout</h1>
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-3">
-        {/* Delivery Details */}
-        <div className="lg:col-span-2 space-y-6">
-          <h2 className="text-xl font-semibold text-gray-900">
-            Delivery Information
-          </h2>
-
-          <div className="p-4 space-y-4">
-            <Input
-              name="fullName"
-              placeholder="Full Name"
-              className="w-full rounded-full"
-              value={address.fullName}
-              onChange={handleChange}
-              required
-            />
-            <Input
-              name="email"
-              placeholder="Email Address"
-              type="email"
-              className="w-full rounded-full"
-              value={address.email}
-              onChange={handleChange}
-              required
-            />
-            <Input
-              name="phone"
-              placeholder="Phone Number"
-              type="tel"
-              className="w-full rounded-full"
-              value={address.phone}
-              onChange={handleChange}
-              required
-            />
-            <Input
-              name="street"
-              placeholder="Street Name"
-              className="w-full rounded-full"
-              value={address.street}
-              onChange={handleChange}
-              required
-            />
-            <Input
-              name="city"
-              placeholder="City"
-              className="w-full rounded-full"
-              value={address.city}
-              onChange={handleChange}
-              required
-            />
-            <Input
-              name="state"
-              placeholder="State / Province"
-              className="w-full rounded-full"
-              value={address.state}
-              onChange={handleChange}
-              required
-            />
-            <Input
-              name="postalCode"
-              placeholder="Postal Code"
-              className="w-full rounded-full"
-              value={address.postalCode}
-              onChange={handleChange}
-              required
-            />
-            <Input
-              name="country"
-              placeholder="Country"
-              className="w-full rounded-full"
-              value={address.country}
-              onChange={handleChange}
-              required
-            />
-          </div>
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-2xl font-medium text-gray-900">Checkout</h1>
         </div>
 
-        {/* Order Summary */}
-        <div className="space-y-6">
-          <div className="bg-gray-100 rounded-2xl p-2 border-0 lg:sticky lg:top-8">
-            <h2 className="text-xl font-semibold text-gray-900">
-              Order Summary
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Left Column - Delivery Options */}
+          <div className="lg:col-span-2">
+            <h2 className="text-xl font-medium text-gray-900 mb-6">
+              Delivery Options
             </h2>
 
-            <div className="p-4 space-y-4">
-              {cartItems.map((item) => (
-                <div
-                  key={item.product_id}
-                  className="flex flex-col sm:flex-row gap-1 sm:gap-6"
-                >
-                  {/* Product Image */}
-                  <div className="flex-shrink-0 mx-auto sm:mx-0">
-                    <div className="w-36 h-36 bg-gray-50 rounded-lg overflow-hidden">
-                      <img
-                        src={item.thumbnail || "/placeholder.svg"}
-                        alt={item.product_title}
-                        width={144}
-                        height={144}
-                        className="w-full h-full object-cover"
-                      />
+            <form className="space-y-4">
+              {getFormLayout().map((item, index) => (
+                <div key={index}>
+                  {/* show if layout is grid 2 col side by side */}
+                  {item.type === "grid" ? (
+                    <div className="grid grid-cols-2 gap-4">
+                      {item.fields.map((field, fieldIndex) => (
+                        <FormControl
+                          key={fieldIndex}
+                          handleOnChange={handleOnChange}
+                          inputAttributes={{
+                            type: field.type,
+                            name: field.name,
+                            value: formData[field.name],
+                            placeholder: field.placeholder,
+                            autoComplete: field.autoComplete,
+                            required: true,
+                            id: field.name,
+                          }}
+                          className="w-full px-6 py-6 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                        />
+                      ))}
                     </div>
-                  </div>
-                  <div className="text-sm">
-                    <span>
-                      {item.product_title} x {item.quantity}
-                    </span>{" "}
-                    <br />
-                    <span>
-                      $
-                      {(
-                        (item.discountPrice || item.price) * item.quantity
-                      ).toFixed(2)}
-                    </span>
-                  </div>
+                  ) : (
+                    // show if layout is single
+                    <FormControl
+                      handleOnChange={handleOnChange}
+                      inputAttributes={{
+                        type: item.field.type,
+                        name: item.field.name,
+                        value: formData[item.field.name],
+                        placeholder: item.field.placeholder,
+                        autoComplete: item.field.autoComplete,
+                        required: true,
+                        id: item.field.name,
+                      }}
+                      className={`w-full px-6 py-6 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent ${
+                        item.field.className || ""
+                      }`}
+                    />
+                  )}
                 </div>
               ))}
-              <hr />
-              <div className="flex justify-between text-base">
-                <span>Subtotal</span>
-                <span>${subtotal.toFixed(2)}</span>
+
+              {/* Save & Continue Button */}
+              <div className="pt-6 flex justify-center items-center">
+                <button
+                  className=" bg-black hover:bg-gray-800 text-white py-4 px-8  rounded-full text-base font-medium"
+                  onClick={handleContinueOrder}
+                >
+                  Save & Continue
+                </button>
               </div>
-              <div className="flex justify-between text-base">
-                <span>Shipping</span>
-                <span>
-                  {shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}
-                </span>
-              </div>
-              <hr />
-              <div className="flex justify-between font-semibold text-lg">
-                <span>Total</span>
-                <span>${total.toFixed(2)}</span>
-              </div>
+            </form>
+          </div>
+
+          {/* Right Column - In Your Bag */}
+          <div className="lg:col-span-1">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-medium text-gray-900">In Your Bag</h2>
+              <Button
+                asChild
+                variant="link"
+                className="text-gray-600 underline text-sm hover:text-gray-800 "
+              >
+                <Link to="/cart">Edit</Link>
+              </Button>
             </div>
+            <CheckOutSummary />
           </div>
         </div>
-      </div>
-      <div className="space-y-3 flex justify-center mt-4">
-        <Button
-          disabled={isLoading}
-          className="bg-black hover:bg-gray-800 text-white py-4 rounded-full text-base font-medium"
-          size="lg"
-          onClick={handlePlaceOrder}
-        >
-          {isLoading ? "Processing..." : "Save and Continue"}
-        </Button>
       </div>
     </div>
   );
