@@ -1,56 +1,38 @@
 import React, { useEffect, useState } from "react";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Heart, Star } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-
+import { useLocation } from "react-router-dom";
 import { fetchFilterProductAction } from "../../features/product/productAction";
 import { useNavigate } from "react-router-dom";
 import { useRef } from "react";
-import { buildQuery } from "../../utility/buildQuery";
-import { setProducts } from "../../features/product/productSlice";
 
-const AllProductList = ({
-  setProductList,
-  productList,
-
-  filters,
-  hasActiveFilters,
-}) => {
+const AllProductList = ({ setProductList, productList }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [wishlist, setWishlist] = useState([]);
   const { products, FilterProduct } = useSelector((state) => state.productInfo);
-  const { filtered } = useSelector((state) => state.filterInfo);
-
-  const debouncedFetch = useRef(null);
+  const location = useLocation();
   const ref = useRef(true);
+  const debouncedFetch = useRef(null);
+
   // fetch all products when component mounts
   useEffect(() => {
-    console.log("useeffect");
-
     if (FilterProduct?.length > 0) {
       setProductList([...FilterProduct]);
-
       return;
     }
 
-    if (
-      products &&
-      products.length > 0 &&
-      ref.current
-      // !filtered.productPath
-    ) {
-      return setProductList([...products]);
+    if (products && products.length > 0 && ref.current) {
+      setProductList([...products]);
     }
-
-    ref.current = false;
     if (!FilterProduct.length) {
       setProductList([]);
     }
-  }, [dispatch, products, FilterProduct]);
+    ref.current = false;
+  }, [dispatch, products, FilterProduct, setProductList]);
 
   // another useEffect
 
@@ -61,22 +43,14 @@ const AllProductList = ({
         clearTimeout(id);
         id = setTimeout(() => {
           dispatch(fetchFilterProductAction(query));
-        }, 1000);
+        }, 2000);
       };
     })();
   }
 
   useEffect(() => {
-    const obj = {
-      ...filtered,
-      mainCategory: filtered.mainCategory.join(","),
-      brand: filtered.brand.join(","),
-      colors: filtered.colors.join(","),
-    };
-    console.log("filter userfeerd");
-    const query = buildQuery(obj);
-    debouncedFetch.current(query);
-  }, [filtered]);
+    debouncedFetch.current(location.search);
+  }, [location.search]);
 
   //function to toggle wishlist
   const toggleWishlist = (id) => {
@@ -220,11 +194,12 @@ const AllProductList = ({
             })}
           </div>
         ) : (
-          <div>No product found</div>
+          <div className="text-center font-semibold text-2xl text-gray-600 py-10">
+            Loading......
+          </div>
         )}
       </div>
     </div>
   );
 };
-
 export default AllProductList;
