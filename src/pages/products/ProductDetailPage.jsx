@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchProductAction } from "../../features/product/productAction";
 import { toast } from "react-toastify";
 import { addItemToCart } from "../../features/cart/cartAction";
+import ReviewPage from "../review/ReviewPage";
 
 const ProductDetailPage = () => {
   const dispatch = useDispatch();
@@ -253,6 +254,10 @@ const ProductDetailPage = () => {
                 />
                 Wishlist
               </Button>
+              <ReviewPage
+                image={product?.images[0]}
+                title={product.title}
+              ></ReviewPage>
             </div>
           </div>
         </div>

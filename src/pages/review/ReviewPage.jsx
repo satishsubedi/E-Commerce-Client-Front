@@ -8,14 +8,29 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { FaStar } from "react-icons/fa";
+import { useState } from "react";
+import { FaRegStar } from "react-icons/fa6";
+import useForm from "../../hooks/useForm";
 
-const ReviewPage = () => {
-  const fullstar = 2;
-  const emptsatr = 5 - fullstar;
+const ReviewPage = ({ image, title }) => {
+  const [stars, setStars] = useState(0);
+
+  const { handleOnChange, setFormData, formData } = useForm();
+  console.log(formData);
+  const maxstar = 5;
+
+  const emptystar = maxstar - stars;
+  const handleOnSubmit = (e) => {
+    e.preventDefault();
+    formData.rating = stars;
+    console.log(formData);
+  };
 
   return (
     <Dialog className>
-      <DialogTrigger>Open</DialogTrigger>
+      <DialogTrigger className="underline underline-offset-4">
+        Write a Review
+      </DialogTrigger>
       <DialogContent className="max-h-screen px-5 mt-10 overflow-y-auto ">
         <DialogHeader>
           <DialogTitle className="">
@@ -28,11 +43,12 @@ const ReviewPage = () => {
             <div className="wrapper text-[20px]   text-black flex flex-col gap-10 mb-7">
               <div className="flex gap-10">
                 <div>
-                  <img src="" alt="product image" />
+                  <img src={image} className="h-20 w-20" alt="product image" />
                 </div>
-                <div>product title</div>
+                <div>{title}</div>
               </div>
               <form
+                onSubmit={handleOnSubmit}
                 className="flex flex-col  gap-6"
                 action="
             
@@ -41,11 +57,15 @@ const ReviewPage = () => {
                 <div>
                   Overall rating <span className="text-red-700">*</span>
                   <div className="flex">
-                     <FaStar></FaStar>
-                    <FaStar></FaStar>
-                    <FaStar></FaStar>
-                    <FaStar></FaStar>
-                    <FaStar></FaStar>
+                    {Array.from({ length: maxstar }).map((_, index) => (
+                      <FaStar
+                        onClick={() => setStars(index + 1)}
+                        key={index}
+                        className={
+                          index < stars ? "text-yellow-500" : "text-gray-300"
+                        }
+                      />
+                    ))}
                   </div>
                 </div>
                 <hr />
@@ -53,7 +73,13 @@ const ReviewPage = () => {
                   <label>
                     Your Review <span className="text-red-700">*</span>
                   </label>
-                  <textarea className="border" rows={6}></textarea>
+                  <textarea
+                    name="comment"
+                    className="border"
+                    rows={6}
+                    onChange={handleOnChange}
+                    required 
+                  ></textarea>
                   <small className="text-muted-foreground">
                     Describe what you liked, what you didn't like and other key
                     things shoppers should know. Minimum 30 characters.
@@ -63,7 +89,13 @@ const ReviewPage = () => {
                   <label>
                     Review title <span className="text-red-700">*</span>
                   </label>
-                  <textarea className="border" rows={3}></textarea>
+                  <textarea
+                    className="border"
+                    rows={2}
+                    name="reviewTitle"
+                    onChange={handleOnChange}
+                    required
+                  ></textarea>
                   <small className="text-muted-foreground">
                     Summarise your review in 150 characters or less.
                   </small>
@@ -80,6 +112,8 @@ const ReviewPage = () => {
                       name="productFitting"
                       value="Runs Small"
                       className="size-5.5 bg-gray-900"
+                      onChange={handleOnChange}
+                      required
                     />
                     Runs Small
                   </label>
@@ -90,6 +124,7 @@ const ReviewPage = () => {
                       name="productFitting"
                       value="True to Size"
                       className="size-5.5"
+                      onChange={handleOnChange}
                     />
                     True to Size
                   </label>
@@ -100,6 +135,7 @@ const ReviewPage = () => {
                       name="productFitting"
                       value="Runs Big"
                       className="size-5.5"
+                      onChange={handleOnChange}
                     />
                     Runs Big
                   </label>
@@ -116,6 +152,7 @@ const ReviewPage = () => {
                       name="productComforatability"
                       value="Uncomforable"
                       className="size-5.5"
+                      onChange={handleOnChange}
                     />
                     Uncomforable
                   </label>
@@ -126,6 +163,7 @@ const ReviewPage = () => {
                       name="productComforatability"
                       value="avrage"
                       className="size-5.5"
+                      onChange={handleOnChange}
                     />
                     average
                   </label>
@@ -136,6 +174,7 @@ const ReviewPage = () => {
                       name="productComforatability"
                       value="Very Comfortable"
                       className="size-5.5"
+                      onChange={handleOnChange}
                     />
                     Very Comfortable
                   </label>
@@ -152,6 +191,7 @@ const ReviewPage = () => {
                       name="productRecommendation"
                       value="Yes"
                       className="size-5.5"
+                      onChange={handleOnChange}
                     />
                     Yes
                   </label>
@@ -162,6 +202,7 @@ const ReviewPage = () => {
                       name="productRecommendation"
                       value="No"
                       className="size-5.5"
+                      onChange={handleOnChange}
                     />
                     No
                   </label>
