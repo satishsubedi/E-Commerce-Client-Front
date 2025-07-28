@@ -71,6 +71,7 @@ const AllProductsPage = () => {
 
       if (mainCategory.length > 0) {
         newParams.set("mainCategory", mainCategory.join(","));
+        // newParams.delete("productPath");
       } else {
         newParams.delete("productPath");
         newParams.delete("mainCategory");

@@ -21,6 +21,7 @@ import CancelPage from "./pages/payment/CancelPage";
 import CheckoutPage from "./pages/checkout/CheckoutPage.jsx";
 import CheckoutOptionPage from "./pages/checkout/CheckoutOptionPage";
 import PaymentPage from "./pages/payment/PaymentPage.jsx";
+import ReviewPage from "./pages/review/ReviewPage.jsx";
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
           <Route path="/checkout/option" element={<CheckoutOptionPage />} />
           <Route path="/payment" element={<PaymentPage />} />
           <Route path="/order-success" element={<SuccessPage />} />
+          <Route path="/review" element={<ReviewPage />} />
           <Route path="/cancel" element={<CancelPage />} />
         </Route>
       </Routes>
