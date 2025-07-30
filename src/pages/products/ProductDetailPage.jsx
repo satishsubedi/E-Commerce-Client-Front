@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Heart, Star, Plus, Minus, ShoppingCart, Check } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProductAction } from "../../features/product/productAction";
+import { singleProductAction } from "../../features/product/productAction";
 import { toast } from "react-toastify";
 import { addItemToCart } from "../../features/cart/cartAction";
 import ReviewPage from "../review/ReviewPage";
+import reviewAction from "../../features/review/reviewAction";
 
 const ProductDetailPage = () => {
   const dispatch = useDispatch();
@@ -16,19 +17,21 @@ const ProductDetailPage = () => {
   const [selectedSize, setSelectedSize] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
-
+  const { singleProduct } = useSelector((state) => state.productInfo);
+  const { reviews } = useSelector((state) => state.reviewInfo);
   const { slug } = useParams();
+  const ref = useRef(true);
 
-  const { products } = useSelector((state) => state.productInfo);
-  const product = products.find((product) => product.slug === slug) || {};
-  // console.log("product", product);
+  console.log(reviews);
 
   // fetch all products when component mounts
   useEffect(() => {
-    if (!products || products.length === 0) {
-      dispatch(fetchProductAction());
+    ref.current && dispatch(singleProductAction(slug));
+    if (singleProduct?._id) {
+      dispatch(reviewAction(singleProduct._id));
     }
-  }, [dispatch, products]);
+    ref.current = false;
+  }, [dispatch, slug, singleProduct]);
 
   //function to handle add to cart
   const handleAddToCart = (product) => {
@@ -49,7 +52,7 @@ const ProductDetailPage = () => {
           <div className="flex gap-4">
             {/* Thumbnail Images - Left Side */}
             <div className="flex flex-col gap-3">
-              {product.images?.map((image, index) => (
+              {singleProduct?.images?.map((image, index) => (
                 <button
                   key={index}
                   onClick={() => setSelectedImage(index)}
@@ -61,7 +64,7 @@ const ProductDetailPage = () => {
                 >
                   <img
                     src={image || "/placeholder.svg?height=80&width=80"}
-                    alt={`${product.title} view ${index + 1}`}
+                    alt={`${singleProduct.title} view ${index + 1}`}
                     className="w-full h-full object-cover"
                   />
                 </button>
@@ -73,10 +76,10 @@ const ProductDetailPage = () => {
               <div className="aspect-square bg-white rounded-2xl overflow-hidden shadow-lg">
                 <img
                   src={
-                    product.images?.[selectedImage] ||
+                    singleProduct?.images?.[selectedImage] ||
                     "/placeholder.svg?height=600&width=600"
                   }
-                  alt={product.title}
+                  alt={singleProduct?.title}
                   width={600}
                   height={600}
                   className="w-full h-full object-cover"
@@ -92,11 +95,11 @@ const ProductDetailPage = () => {
                 variant="ghost"
                 className="text-xs font-medium bg-yellow-500"
               >
-                {product.brand}
+                {singleProduct.brand}
               </Badge>
             </div>
             <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
-              {product.title}
+              {singleProduct.title}
             </h1>
             <div className="flex items-center gap-2 mb-4">
               <div className="flex items-center">
@@ -116,36 +119,36 @@ const ProductDetailPage = () => {
             <div className="flex items-center gap-3">
               <span className="text-3xl font-bold text-gray-900">
                 $
-                {product.discountPrice > 0
-                  ? product.discountPrice
-                  : product.price}
+                {singleProduct.discountPrice > 0
+                  ? singleProduct.discountPrice
+                  : singleProduct.price}
               </span>
-              {product.price !== product.discountPrice &&
-                product.discountPrice > 0 && (
+              {singleProduct.price !== singleProduct.discountPrice &&
+                singleProduct.discountPrice > 0 && (
                   <span className="text-sm text-gray-500 line-through">
-                    ${product.price}
+                    ${singleProduct.price}
                   </span>
                 )}
-              {product.stock === 0 ? (
+              {singleProduct.stock === 0 ? (
                 <Badge
                   variant="outline"
                   className="text-xs text-red-600 border-red-200"
                 >
                   Out of stock
                 </Badge>
-              ) : product.stock <= 10 ? (
+              ) : singleProduct.stock <= 10 ? (
                 <Badge
                   variant="outline"
                   className="text-xs text-orange-600 border-orange-200"
                 >
-                  Only {product.stock} left
+                  Only {singleProduct.stock} left
                 </Badge>
               ) : null}
             </div>
 
             {/* Description */}
             <p className="text-gray-600 leading-relaxed">
-              {product.description}
+              {singleProduct.description}
             </p>
 
             {/* Color Selection */}
@@ -154,7 +157,7 @@ const ProductDetailPage = () => {
                 Color: <span className="font-normal">{selectedColor}</span>
               </h3>
               <div className="flex gap-2">
-                {product?.colors?.map((color) => (
+                {singleProduct?.colors?.map((color) => (
                   <button
                     key={color}
                     onClick={() => setSelectedColor(color)}
@@ -187,7 +190,7 @@ const ProductDetailPage = () => {
             <div>
               <h3 className="text-sm font-medium text-gray-900 mb-3">Size</h3>
               <div className="grid grid-cols-5 gap-2">
-                {product?.sizes?.map((size) => (
+                {singleProduct?.sizes?.map((size) => (
                   <button
                     key={size}
                     onClick={() => setSelectedSize(size)}
@@ -219,7 +222,7 @@ const ProductDetailPage = () => {
                   <span className="px-4 py-2 font-medium">{quantity}</span>
                   <button
                     onClick={() =>
-                      setQuantity(Math.min(product.stock, quantity + 1))
+                      setQuantity(Math.min(singleProduct.stock, quantity + 1))
                     }
                     className="p-2 hover:bg-gray-100 transition-colors"
                   >
@@ -235,12 +238,12 @@ const ProductDetailPage = () => {
                 size="lg"
                 className="w-full bg-black hover:bg-gray-800 text-white py-4 rounded-full disabled:bg-gray-400 disabled:cursor-not-allowed"
                 disabled={
-                  !selectedSize || !selectedColor || product.stock === 0
+                  !selectedSize || !selectedColor || singleProduct.stock === 0
                 }
-                onClick={() => handleAddToCart(product)}
+                onClick={() => handleAddToCart(singleProduct)}
               >
                 <ShoppingCart className="w-5 h-5 mr-2" />
-                {product.stock === 0 ? "Out of Stock" : "Add to Cart"}
+                {singleProduct.stock === 0 ? "Out of Stock" : "Add to Cart"}
               </Button>
 
               <Button
@@ -254,10 +257,8 @@ const ProductDetailPage = () => {
                 />
                 Wishlist
               </Button>
-              <ReviewPage
-                image={product?.images[0]}
-                title={product.title}
-              ></ReviewPage>
+              <div>{` totle review ${reviews.length}` || 0}</div>
+              <ReviewPage></ReviewPage>
             </div>
           </div>
         </div>

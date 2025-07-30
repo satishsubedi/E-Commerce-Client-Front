@@ -8,22 +8,48 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { FaStar } from "react-icons/fa";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaRegStar } from "react-icons/fa6";
 import useForm from "../../hooks/useForm";
+import { toast } from "react-toastify";
+import {
+  getAllReviewApi,
+  postReviewApi,
+} from "../../features/review/reviewApi";
+import { useDispatch, useSelector } from "react-redux";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 
-const ReviewPage = ({ image, title }) => {
+const ReviewPage = () => {
   const [stars, setStars] = useState(0);
+  const { user } = useSelector((state) => state.user);
+  const { singleProduct } = useSelector((state) => state.productInfo);
+  const disptach = useDispatch();
 
+  const navigate = useNavigate();
+  const location = useLocation();
+  // useEffect(() => {
+  //   !user._id && navigate("/login", { state: { from: location.pathname } });
+  // }, [user]);
   const { handleOnChange, setFormData, formData } = useForm();
   console.log(formData);
   const maxstar = 5;
 
   const emptystar = maxstar - stars;
-  const handleOnSubmit = (e) => {
+  const handleOnSubmit = async (e) => {
     e.preventDefault();
+    if (!stars > 0) {
+      return toast.error("rating is required");
+    }
+
+    // if (!user._id) {
+    //   return navigate("/login", { state: { from: location.pathname } });
+    // }
     formData.rating = stars;
-    console.log(formData);
+    formData.productId = singleProduct._id;
+    formData.userId = user?._id;
+
+    const { status, message } = await postReviewApi(formData);
+    toast[status](message);
   };
 
   return (
@@ -43,9 +69,13 @@ const ReviewPage = ({ image, title }) => {
             <div className="wrapper text-[20px]   text-black flex flex-col gap-10 mb-7">
               <div className="flex gap-10">
                 <div>
-                  <img src={image} className="h-20 w-20" alt="product image" />
+                  <img
+                    src={singleProduct?.thumbnail}
+                    className="h-20 w-20"
+                    alt="product image"
+                  />
                 </div>
-                <div>{title}</div>
+                <div>{singleProduct.title}</div>
               </div>
               <form
                 onSubmit={handleOnSubmit}
@@ -57,15 +87,15 @@ const ReviewPage = ({ image, title }) => {
                 <div>
                   Overall rating <span className="text-red-700">*</span>
                   <div className="flex">
-                    {Array.from({ length: maxstar }).map((_, index) => (
-                      <FaStar
-                        onClick={() => setStars(index + 1)}
-                        key={index}
-                        className={
-                          index < stars ? "text-yellow-500" : "text-gray-300"
-                        }
-                      />
-                    ))}
+                    {Array.from({ length: maxstar }).map((_, index) => {
+                      return (
+                        <FaStar
+                          onClick={() => setStars(index + 1)}
+                          key={index}
+                          className={index < stars && "text-yellow-500"}
+                        />
+                      );
+                    })}
                   </div>
                 </div>
                 <hr />
@@ -78,7 +108,8 @@ const ReviewPage = ({ image, title }) => {
                     className="border"
                     rows={6}
                     onChange={handleOnChange}
-                    required 
+                    required
+                    minLength={30}
                   ></textarea>
                   <small className="text-muted-foreground">
                     Describe what you liked, what you didn't like and other key
@@ -95,6 +126,7 @@ const ReviewPage = ({ image, title }) => {
                     name="reviewTitle"
                     onChange={handleOnChange}
                     required
+                    minLength={20}
                   ></textarea>
                   <small className="text-muted-foreground">
                     Summarise your review in 150 characters or less.
@@ -125,6 +157,7 @@ const ReviewPage = ({ image, title }) => {
                       value="True to Size"
                       className="size-5.5"
                       onChange={handleOnChange}
+                      required
                     />
                     True to Size
                   </label>
@@ -136,6 +169,7 @@ const ReviewPage = ({ image, title }) => {
                       value="Runs Big"
                       className="size-5.5"
                       onChange={handleOnChange}
+                      required
                     />
                     Runs Big
                   </label>
@@ -153,6 +187,7 @@ const ReviewPage = ({ image, title }) => {
                       value="Uncomforable"
                       className="size-5.5"
                       onChange={handleOnChange}
+                      required
                     />
                     Uncomforable
                   </label>
@@ -164,6 +199,7 @@ const ReviewPage = ({ image, title }) => {
                       value="avrage"
                       className="size-5.5"
                       onChange={handleOnChange}
+                      required
                     />
                     average
                   </label>
@@ -175,6 +211,7 @@ const ReviewPage = ({ image, title }) => {
                       value="Very Comfortable"
                       className="size-5.5"
                       onChange={handleOnChange}
+                      required
                     />
                     Very Comfortable
                   </label>
@@ -192,6 +229,7 @@ const ReviewPage = ({ image, title }) => {
                       value="Yes"
                       className="size-5.5"
                       onChange={handleOnChange}
+                      required
                     />
                     Yes
                   </label>
@@ -203,10 +241,12 @@ const ReviewPage = ({ image, title }) => {
                       value="No"
                       className="size-5.5"
                       onChange={handleOnChange}
+                      required
                     />
                     No
                   </label>
                 </div>
+
                 <Button
                   type="submit"
                   variant="dark"

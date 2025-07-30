@@ -19,7 +19,7 @@ export const axiosApiCall = async (axiosParams) => {
     : sessionStorage.getItem("accessJWT");
 
   // Set headers based on whether the request is private or not
-  const headers = { Authorization: isPrivate ? token : null };
+  const headers = { Authorization: isPrivate ? `bearer ${token}` : null };
 
   try {
     // Make the API call using axios
