@@ -26,13 +26,13 @@ export const autoLoginAction = () => async (dispatch) => {
     let accessJWT = sessionStorage.getItem("accessJWT");
     const refreshJWT = localStorage.getItem("refreshJWT");
 
-    // 1️⃣ If no tokens → stop
+    // If no tokens → stop
     if (!accessJWT && !refreshJWT) {
       console.log("No tokens, cannot auto-login");
       return;
     }
 
-    // 2️⃣ Try fetching user with current accessJWT
+    // Try fetching user with current accessJWT
     if (accessJWT) {
       try {
         const { data } = await axios.get(
@@ -52,7 +52,7 @@ export const autoLoginAction = () => async (dispatch) => {
       }
     }
 
-    // 3️⃣ If accessJWT failed, try using refreshJWT to get a new accessJWT
+    //If accessJWT failed, try using refreshJWT to get a new accessJWT
     if (refreshJWT) {
       try {
         const { data } = await axios.get(`${apiBaseUrl}/api/v1/auth/renew`, {

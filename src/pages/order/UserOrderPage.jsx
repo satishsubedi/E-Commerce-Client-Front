@@ -3,12 +3,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { getOrderAction } from "../../features/Order/orderAction";
 import { Link } from "react-router-dom";
 // import ReviewForm from "../../components/reviews/Reviews";
-// import GenerateReceiptPDF from "../../utils/GenerateReceiptPDF";
-// import Receipt from "../../components/Receipt/Receipt";
+import GenerateReceiptPDF from "../../utils/GenerateReceiptPDF";
+import Receipt from "../../utils/Receipt";
 
 const UserOrderPage = () => {
   const dispatch = useDispatch();
   const { orders, loading, error } = useSelector((state) => state.orders);
+  console.log(orders, "Orders");
   useEffect(() => {
     dispatch(getOrderAction());
   }, [dispatch]);
@@ -34,11 +35,11 @@ const UserOrderPage = () => {
     }
   };
 
-  // const handleDownloadReceipt = (order) => {
-  //   GenerateReceiptPDF(order, Receipt).catch((err) => {
-  //     console.error("Error generating PDF:", err);
-  //   });
-  // };
+  const handleDownloadReceipt = (order) => {
+    GenerateReceiptPDF(order, Receipt).catch((err) => {
+      console.error("Error generating PDF:", err);
+    });
+  };
 
   if (loading) {
     return (
@@ -130,26 +131,26 @@ const UserOrderPage = () => {
                     <p className="text-lg font-semibold text-gray-900">
                       ${order.totalAmount.toFixed(2)}
                     </p>
-                    {/* <button
+                    <button
                       onClick={() => handleDownloadReceipt(order)}
                       className="bg-green-600 hover:bg-green-700 text-white text-sm px-3 py-1 rounded-md"
                     >
                       Download Receipt
-                    </button> */}
+                    </button>
                   </div>
                 </div>
 
                 <div className="mt-4">
                   <p className="text-sm text-gray-500 mb-2">
                     Payment: {order.payment.method}{" "}
-                    {order.payment.transactionId && (
+                    {/* {order.payment.transactionId && (
                       <>
                         | Transaction ID:{" "}
                         <span className="text-gray-700 font-mono">
                           {order.payment.transactionId}
                         </span>
                       </>
-                    )}
+                    )} */}
                   </p>
                   <h4 className="text-sm font-medium text-gray-900 mb-2">
                     Items:
@@ -157,10 +158,10 @@ const UserOrderPage = () => {
                   <div className="space-y-3">
                     {order.items.map((item, index) => (
                       <div key={index} className="flex items-start">
-                        {item.productId?.image ? (
+                        {item.productId?.thumbnail ? (
                           <img
                             className="h-16 w-16 rounded-md object-cover"
-                            src={item.productId.image}
+                            src={item.productId.thumbnail}
                             alt={item.productId.title || "Product"}
                           />
                         ) : (
