@@ -25,7 +25,7 @@ const LoginForm = () => {
   const location = useLocation();
 
   // const params = new URLSearchParams(location.search);
-  const redirectPath = location?.state?.from || "/";
+  const redirectPath = location?.search.replace("?redirect=", "") || "/";
   console.log(redirectPath);
 
   //useform from custom hook
