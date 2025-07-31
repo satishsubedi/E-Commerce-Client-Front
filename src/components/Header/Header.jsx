@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { BsSearch } from "react-icons/bs";
 import { FaRegHeart } from "react-icons/fa6";
 import { IoBag } from "react-icons/io5";
@@ -10,11 +10,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetctCategoriesAction } from "../../features/categories/categoriesAction";
 import { setCategoires } from "../../features/categories/categoriesSlice";
 import { fetchProductAction } from "../../features/product/productAction";
+import { logoutUserAction } from "../../features/user/userAction";
 
 const Header = () => {
   const ref = useRef(true);
   const [show, setShow] = useState(true);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const categories = useSelector((state) => state.categoriesInfo);
   // Get cart item count (sum of quantities)
   const cartItemsCount = useSelector((state) =>
@@ -33,6 +35,13 @@ const Header = () => {
       dispatch(fetchProductAction());
     ref.current = false;
   }, [dispatch]);
+
+  //this is for logout
+  const handleLogout = async () => {
+    if (!user?.email) return;
+    await dispatch(logoutUserAction(user.email));
+    navigate("/");
+  };
   console.log(categories);
   return (
     <header className="text-gray-600 body-font flex justify-center  bg-slate-900">
@@ -57,21 +66,32 @@ const Header = () => {
             <Link to="/cart">
               <IoBag />
               {cartItemsCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                <span className="absolute -top-2 -right-2 bg-red-300 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                   {cartItemsCount}
                 </span>
               )}
             </Link>
           </li>
-          <li>
-            <Link to="/login">
-              <MdPeopleAlt />
-            </Link>
-          </li>
-          {user._id && (
+          {!user._id ? (
             <li>
-              <p className="text-sm font-light">hi, {user?.fName}</p>
+              <Link to="/login">
+                <MdPeopleAlt />
+              </Link>
             </li>
+          ) : (
+            <>
+              <li>
+                <p className="text-sm font-light">Hi, {user?.fName}</p>
+              </li>
+              <li>
+                <button
+                  onClick={handleLogout}
+                  className="text-sm bg-red-600 px-2 py-1 rounded hover:bg-red-700"
+                >
+                  Logout
+                </button>
+              </li>
+            </>
           )}
         </ul>
         {/* mobile navbar */}
