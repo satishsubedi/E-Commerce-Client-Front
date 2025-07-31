@@ -24,8 +24,9 @@ const LoginForm = () => {
 
   const location = useLocation();
 
-  const params = new URLSearchParams(location.search);
-  const redirectPath = params.get("redirect") || "/";
+  // const params = new URLSearchParams(location.search);
+  const redirectPath = location?.search.replace("?redirect=", "") || "/";
+  console.log(redirectPath);
 
   //useform from custom hook
   const { formData, handleOnChange, setFormData } =
@@ -44,6 +45,7 @@ const LoginForm = () => {
 
     try {
       //api call
+
       const response = await loginUser(formData);
       console.log("Login response:", response);
 

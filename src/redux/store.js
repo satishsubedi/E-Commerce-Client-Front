@@ -3,6 +3,10 @@ import userReducer from "../features/user/userSlice";
 import productReducer from "../features/product/productSlice";
 import categoiresReducer from "../features/categories/categoriesSlice";
 import filtersReducer from "../features/filters/filterSlice";
+
+import reviewReducer from "../features/review/reviewSlice";
+
+
 import { cartReducer } from "../features/cart/cartSlice";
 import ordersReducer from "../features/Order/orderSlice";
 
@@ -12,7 +16,9 @@ const rootReducer = combineReducers({
   categoriesInfo: categoiresReducer,
   cartInfo: cartReducer,
   filterInfo: filtersReducer,
+  reviewInfo: reviewReducer,
   orders: ordersReducer,
+
 });
 
 const store = configureStore({
