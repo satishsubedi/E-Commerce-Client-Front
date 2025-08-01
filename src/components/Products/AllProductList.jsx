@@ -8,6 +8,8 @@ import { useLocation } from "react-router-dom";
 import { fetchFilterProductAction } from "../../features/product/productAction";
 import { useNavigate } from "react-router-dom";
 import { useRef } from "react";
+import reviewStar from "../../utils/reviewStar.js";
+import { FaRegStar, FaRegStarHalfStroke, FaStar } from "react-icons/fa6";
 
 const AllProductList = ({ setProductList, productList }) => {
   const dispatch = useDispatch();
@@ -84,6 +86,11 @@ const AllProductList = ({ setProductList, productList }) => {
                 product.discountPrice
               );
 
+              const { fullstarrating, halfstar, emptystars } = reviewStar(
+                product.reviews
+              );
+
+              console.log(fullstarrating, halfstar, emptystars);
               const isWishlisted = isProductWishlisted(productList._id);
 
               return (
@@ -138,18 +145,31 @@ const AllProductList = ({ setProductList, productList }) => {
 
                       {/* Rating */}
                       <div className="flex items-center gap-1 mb-3">
-                        <div className="flex">
-                          {[...Array(5)].map((_, i) => (
-                            <Star
-                              key={i}
-                              className={`w-4 h-4 ${
-                                i < Math.floor(product.rating)
-                                  ? "fill-yellow-400 text-yellow-400"
-                                  : "fill-gray-200 text-gray-200"
-                              }`}
-                            />
-                          ))}
+                        <div className="flex ">
+                          {/* Full stars */}
+
+                          {Array.from({ length: fullstarrating }).map(
+                            (_, index) => (
+                              <FaStar
+                                key={`full-${index}`}
+                                className="text-yellow-500"
+                              />
+                            )
+                          )}
+                          {/* Half star */}
+
+                          <FaRegStarHalfStroke
+                            key="half"
+                            className={`text-yellow-500 ${!halfstar ? "hidden" : ""} `}
+                          />
+                          {/* Empty stars */}
+                          {Array.from({ length: emptystars }).map(
+                            (_, index) => (
+                              <FaRegStar key={`empty-${index}`} />
+                            )
+                          )}
                         </div>
+
                         <span className="text-sm text-gray-600">
                           {product.rating}
                         </span>
