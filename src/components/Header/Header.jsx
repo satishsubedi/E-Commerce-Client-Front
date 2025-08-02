@@ -11,6 +11,7 @@ import { fetctCategoriesAction } from "../../features/categories/categoriesActio
 import { setCategoires } from "../../features/categories/categoriesSlice";
 import { fetchProductAction } from "../../features/product/productAction";
 import { logoutUserAction } from "../../features/user/userAction";
+import DropDown from "../../utils/dropDown";
 
 const Header = () => {
   const ref = useRef(true);
@@ -24,6 +25,7 @@ const Header = () => {
   );
 
   const { user } = useSelector((state) => state.user);
+  console.log(user, "User Property");
 
   // const handleOnclick = () => {
   //   show ? setShow(false) : setShow(true);
@@ -42,7 +44,7 @@ const Header = () => {
     await dispatch(logoutUserAction(user.email));
     navigate("/");
   };
-  console.log(categories);
+
   return (
     <header className="text-gray-600 body-font flex justify-center  bg-slate-900">
       <div className="container  h-20 flex-wrap p-2  flex justify-between items-center md:p-6 lg:justify-between gap-10  ">
@@ -75,23 +77,13 @@ const Header = () => {
           {!user._id ? (
             <li>
               <Link to="/login">
-                <MdPeopleAlt />
+                <button className="text-sm text-black bg-amber-100 px-1 py-1 rounded hover:bg-amber-50">
+                  Login
+                </button>
               </Link>
             </li>
           ) : (
-            <>
-              <li>
-                <p className="text-sm font-light">Hi, {user?.fName}</p>
-              </li>
-              <li>
-                <button
-                  onClick={handleLogout}
-                  className="text-sm bg-red-600 px-2 py-1 rounded hover:bg-red-700"
-                >
-                  Logout
-                </button>
-              </li>
-            </>
+            <DropDown logout={handleLogout} />
           )}
         </ul>
         {/* mobile navbar */}

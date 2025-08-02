@@ -63,8 +63,8 @@ const ReceiptPDF = ({ order }) => (
     <Page size="A4" style={styles.page}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.businessInfo}>Alkimos Fish and Chips</Text>
-        <Text>17 Turnstone St, Alkimos WA 6038</Text>
+        <Text style={styles.businessInfo}>Group project</Text>
+        <Text>abc</Text>
         <Text>sam@gmail.com</Text>
       </View>
 
