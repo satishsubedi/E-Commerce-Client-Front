@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 // import ReviewForm from "../../components/reviews/Reviews";
 import GenerateReceiptPDF from "../../utils/GenerateReceiptPDF";
 import Receipt from "../../utils/Receipt";
+import { IoMdDownload } from "react-icons/io";
 
 const UserOrderPage = () => {
   const dispatch = useDispatch();
@@ -18,6 +19,7 @@ const UserOrderPage = () => {
     dispatch(getOrderAction());
   };
 
+  //This is for payement status colour
   const getStatusColor = (status) => {
     switch (status) {
       case "Paid":
@@ -35,6 +37,25 @@ const UserOrderPage = () => {
     }
   };
 
+  //This is for order status color
+  const getOrderStatusColor = (status) => {
+    switch (status) {
+      case "Order Placed":
+        return "bg-orange-100 text-orange-800";
+      case "Processing":
+        return "bg-yellow-100 text-yellow-800";
+      case "Shipped":
+        return "bg-blue-100 text-blue-800";
+      case "Delivered":
+        return "bg-green-100 text-green-800";
+      case "Cancelled":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  //This is for download the receipt
   const handleDownloadReceipt = (order) => {
     GenerateReceiptPDF(order, Receipt).catch((err) => {
       console.error("Error generating PDF:", err);
@@ -58,7 +79,7 @@ const UserOrderPage = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8 pt-[18vh]">
+    <div className="max-w-7xl mx-auto px-4 py-5 sm:px-6 lg:px-8 pt-[6vh]">
       <div className="bg-white shadow rounded-lg overflow-hidden">
         <div className="px-6 py-5 border-b border-gray-200 flex justify-between items-center">
           <h2 className="text-2xl font-semibold text-gray-800">
@@ -112,7 +133,7 @@ const UserOrderPage = () => {
                       {order.payment.status}
                     </span>
                     <span
-                      className="px-3 py-1 rounded-full text-xs bg-gray-100 text-gray-800 font-medium"
+                      className={`px-3 py-1 rounded-full text-xs font-medium ${getOrderStatusColor(order.orderStatus)}`}
                       title="Order Status"
                     >
                       {order.orderStatus}
@@ -129,14 +150,22 @@ const UserOrderPage = () => {
                   </div>
                   <div className="mt-3 sm:mt-0">
                     <p className="text-lg font-semibold text-gray-900">
-                      ${order.totalAmount.toFixed(2)}
+                      Total: ${order.totalAmount.toFixed(2)}
                     </p>
                     <button
                       onClick={() => handleDownloadReceipt(order)}
-                      className="bg-green-600 hover:bg-green-700 text-white text-sm px-3 py-1 rounded-md"
+                      className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-1 m-1 rounded-sm"
                     >
-                      Download Receipt
+                      ⬇️ Download Receipt
                     </button>
+                    <button className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-1 m-1 rounded-sm">
+                      📧 Email Receipt
+                    </button>
+                    <Link to={`/track-order/${order._id}`}>
+                      <button className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-1 m-1 rounded-sm">
+                        🚚 Track Order
+                      </button>
+                    </Link>
                   </div>
                 </div>
 

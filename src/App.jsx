@@ -21,7 +21,8 @@ import PaymentPage from "./pages/payment/PaymentPage.jsx";
 import ReviewPage from "./pages/review/ReviewPage.jsx";
 import UserOrderPage from "./pages/order/UserOrderPage.jsx";
 import ProtectedRoute from "./components/helper/ProtectedRoute.jsx";
-
+import OrderTrackingPage from "./pages/order/OrderTrackingPage.jsx";
+import SupportPage from "./pages/support/SupportPage.jsx";
 
 function App() {
   return (
@@ -48,6 +49,24 @@ function App() {
             element={
               <ProtectedRoute>
                 <UserOrderPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/track-order/:id"
+            element={
+              <ProtectedRoute>
+                <OrderTrackingPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/support"
+            element={
+              <ProtectedRoute>
+                <SupportPage />
               </ProtectedRoute>
             }
           />

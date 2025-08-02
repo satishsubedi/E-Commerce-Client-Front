@@ -15,7 +15,7 @@ const GenerateReceiptPDF = async (order) => {
   link.click();
   document.body.removeChild(link);
 
-  URL.revokeObjectURL(blobUrl); // ✅ clear old blob to avoid stale PDF
+  URL.revokeObjectURL(blobUrl);
 };
 
 export default GenerateReceiptPDF;

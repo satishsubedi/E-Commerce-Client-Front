@@ -64,8 +64,9 @@ const ReceiptPDF = ({ order }) => (
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.businessInfo}>Group project</Text>
-        <Text>abc</Text>
-        <Text>sam@gmail.com</Text>
+        <Text>Shekhar's House</Text>
+        <Text>ABN:123456789</Text>
+        <Text>shekhar@gmail.com</Text>
       </View>
 
       {/* Order Info */}
@@ -106,7 +107,7 @@ const ReceiptPDF = ({ order }) => (
         {order.items.map((item, idx) => (
           <View style={styles.tableRow} key={idx}>
             <Text style={styles.tableCol}>
-              {item.food?.title || "Unknown Item"}
+              {item.productId?.title || "Unknown Item"}
             </Text>
             <Text style={styles.tableColRight}>{item.quantity}</Text>
             <Text style={styles.tableColRight}>${item.price.toFixed(2)}</Text>
@@ -124,7 +125,10 @@ const ReceiptPDF = ({ order }) => (
 
       {/* Footer */}
       <View style={styles.footer}>
-        <Text>Thank you for choosing us.</Text>
+        <Text>
+          Thank you for choosing us. If you have any questions please feel free
+          to contact Mahesh.Thanks
+        </Text>
         <Text>Generated on {new Date().toLocaleString()}</Text>
       </View>
     </Page>

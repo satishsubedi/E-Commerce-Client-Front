@@ -1,16 +1,15 @@
 import { Button } from "@/components/ui/button";
+import { IoMdLogOut } from "react-icons/io";
+import { IoIosSettings } from "react-icons/io";
+import { FaListAlt } from "react-icons/fa";
+import { BiSupport } from "react-icons/bi";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuPortal,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useSelector } from "react-redux";
@@ -35,15 +34,27 @@ const DropDown = ({ logout }) => {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>Profile Settings</DropdownMenuItem>
+          <DropdownMenuItem>
+            <IoIosSettings className="text-blue-700" />
+            Profile Settings
+          </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link to="/orderHistory">My Orders</Link>
+            <Link to="/orderHistory">
+              <FaListAlt className="text-blue-700" /> My Orders
+            </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Support</DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link to="/support">
+            <BiSupport className="text-green-700" /> Support
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={logout}>Logout</DropdownMenuItem>
+        <DropdownMenuItem onClick={logout}>
+          <IoMdLogOut className="text-red-500" />
+          Logout
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
