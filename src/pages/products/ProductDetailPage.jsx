@@ -18,11 +18,9 @@ const ProductDetailPage = () => {
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const { singleProduct } = useSelector((state) => state.productInfo);
-  const { reviews } = useSelector((state) => state.reviewInfo);
+
   const { slug } = useParams();
   const ref = useRef(true);
-
-  console.log(reviews);
 
   // fetch all products when component mounts
   useEffect(() => {
@@ -101,19 +99,6 @@ const ProductDetailPage = () => {
             <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
               {singleProduct.title}
             </h1>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="flex items-center">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className="w-4 h-4 fill-gray-300 text-gray-300"
-                  />
-                ))}
-                <span className="ml-2 text-sm text-gray-600">
-                  No reviews yet
-                </span>
-              </div>
-            </div>
 
             {/* Price */}
             <div className="flex items-center gap-3">
@@ -257,7 +242,7 @@ const ProductDetailPage = () => {
                 />
                 Wishlist
               </Button>
-              <div>{` totle review ${reviews.length}` || 0}</div>
+
               <ReviewPage></ReviewPage>
             </div>
           </div>

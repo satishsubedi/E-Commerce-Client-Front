@@ -6,6 +6,9 @@ import { useSelector } from "react-redux";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 
+import reviewStar from "../../utils/reviewStar";
+import Rating from "../star/Rating";
+
 const RecommendationProducts = () => {
   const { products } = useSelector((state) => state.productInfo);
   const navigate = useNavigate();
@@ -43,7 +46,9 @@ const RecommendationProducts = () => {
             product.price,
             product.discountPrice
           );
-
+          const { fullstarrating, halfstar, emptystars } = reviewStar(
+            product.reviews
+          );
           const isWishlisted = isProductWishlisted(product._id);
 
           return (
@@ -98,18 +103,11 @@ const RecommendationProducts = () => {
 
                   {/* Rating */}
                   <div className="flex items-center gap-1 mb-3">
-                    <div className="flex">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`w-4 h-4 ${
-                            i < Math.floor(product.rating)
-                              ? "fill-yellow-400 text-yellow-400"
-                              : "fill-gray-200 text-gray-200"
-                          }`}
-                        />
-                      ))}
-                    </div>
+                    <Rating
+                      fullstarrating={fullstarrating}
+                      halfstar={halfstar}
+                      emptystars={emptystars}
+                    ></Rating>
                     <span className="text-sm text-gray-600">
                       {product.rating}
                     </span>
