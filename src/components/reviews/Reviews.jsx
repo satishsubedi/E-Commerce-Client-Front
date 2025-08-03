@@ -1,64 +1,73 @@
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "../../components/ui/accordion";
-import { renderStars } from "../star/Star";
-const reviews = [
-  {
-    title: "Awesome Product",
-    rating: 3.5,
-    details:
-      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Minima libero illum veniam enim. Porro sint, vitae non pariatur dolor recusandae voluptatem tenetur earum, voluptate expedita vel perferendis magni, nostrum officiis.",
-    reviewedBy: "Kovid Kunduru",
-    createdAt: "2025-03-20",
-  },
-  {
-    title: "Good Product",
-    rating: 2.5,
-    details:
-      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Minima libero illum veniam enim. Porro sint, vitae non pariatur dolor recusandae voluptatem tenetur earum, voluptate expedita vel perferendis magni, nostrum officiis.",
-    reviewedBy: "Prem Acharya",
-    createdAt: "2025-04-20",
-  },
-  {
-    title: "Wonderful Product",
-    rating: 4,
-    details:
-      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Minima libero illum veniam enim. Porro sint, vitae non pariatur dolor recusandae voluptatem tenetur earum, voluptate expedita vel perferendis magni, nostrum officiis.",
-    reviewedBy: "Rahul Sharma",
-    createdAt: "2025-02-20",
-  },
-];
+import React, { useState } from "react";
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import { addReview } from "@/store/admin/foodSlice";
 
-export const Reviews = () => {
+const ReviewForm = ({ foodId }) => {
+  const [showForm, setShowForm] = useState(false);
+  const [rating, setRating] = useState(5);
+  const [comment, setComment] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState("");
+  const dispatch = useDispatch();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    try {
+      await dispatch(addReview({ foodId, reviewData: { comment } })).unwrap();
+      setSubmitted(true);
+      setShowForm(false); // close form after successful submission
+    } catch (err) {
+      setError(err?.message || "Failed to submit review. Try again.");
+    }
+  };
+
   return (
-    <div className="mt-8">
-      <Accordion type="single" collapsible>
-        <AccordionItem value="reviews">
-          <AccordionTrigger className="text-lg font-semibold">
-            Reviews ({reviews.length})
-          </AccordionTrigger>
+    <div className="mt-2">
+      {!showForm && !submitted && (
+        <button
+          onClick={() => setShowForm(true)}
+          className="text-sm text-blue-600 hover:text-blue-500"
+        >
+          + Add Review
+        </button>
+      )}
 
-          <AccordionContent className="space-y-6 pt-4">
-            {reviews.map((review, index) => (
-              <div key={index} className="border-b pb-4 space-y-2">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-md font-semibold">{review.title}</h3>
-                  <div className="text-sm text-gray-600">
-                    {review.reviewedBy} -{" "}
-                    {new Date(review.createdAt).toLocaleDateString()}
-                  </div>
-                </div>
-                <div className="flex gap-1">{renderStars(review.rating)}</div>
+      {showForm && !submitted && (
+        <form onSubmit={handleSubmit} className="mt-2 space-y-2">
+          <textarea
+            className="w-full border rounded p-2 text-sm"
+            rows={2}
+            placeholder="Write your review"
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+          />
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+          <div className="flex space-x-2">
+            <button
+              type="submit"
+              className="text-sm bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
+            >
+              Submit
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowForm(false)}
+              className="text-sm text-gray-600 hover:underline"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      )}
 
-                <p className="text-sm text-gray-800">{review.details}</p>
-              </div>
-            ))}
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
+      {submitted && (
+        <p className="text-sm text-green-600">Review submitted successfully!</p>
+      )}
     </div>
   );
 };
+
+export default ReviewForm;
