@@ -35,6 +35,7 @@ import {
 import { Avatar } from "@/components/ui/avatar";
 
 import { Button } from "@/components/ui/button";
+import { FaStar } from "react-icons/fa6";
 
 import { useState } from "react";
 // import { FaRegStar } from "react-icons/fa6";
