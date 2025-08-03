@@ -5,8 +5,9 @@ import { Button } from "../ui/button";
 import { useSelector } from "react-redux";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
-import { FaRegStar, FaRegStarHalfStroke, FaStar } from "react-icons/fa6";
+
 import reviewStar from "../../utils/reviewStar";
+import Rating from "../star/Rating";
 
 const RecommendationProducts = () => {
   const { products } = useSelector((state) => state.productInfo);
@@ -102,28 +103,11 @@ const RecommendationProducts = () => {
 
                   {/* Rating */}
                   <div className="flex items-center gap-1 mb-3">
-                    <div className="flex ">
-                      {/* Full stars */}
-
-                      {Array.from({ length: fullstarrating }).map(
-                        (_, index) => (
-                          <FaStar
-                            key={`full-${index}`}
-                            className="text-yellow-500"
-                          />
-                        )
-                      )}
-                      {/* Half star */}
-
-                      <FaRegStarHalfStroke
-                        key="half"
-                        className={`text-yellow-500 ${!halfstar ? "hidden" : ""} `}
-                      />
-                      {/* Empty stars */}
-                      {Array.from({ length: emptystars }).map((_, index) => (
-                        <FaRegStar key={`empty-${index}`} />
-                      ))}
-                    </div>
+                    <Rating
+                      fullstarrating={fullstarrating}
+                      halfstar={halfstar}
+                      emptystars={emptystars}
+                    ></Rating>
                     <span className="text-sm text-gray-600">
                       {product.rating}
                     </span>

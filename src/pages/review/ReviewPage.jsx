@@ -32,14 +32,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Avatar } from "@/components/ui/avatar";
 
 import { Button } from "@/components/ui/button";
 
-import { use, useEffect, useRef, useState } from "react";
+import { useState } from "react";
 // import { FaRegStar } from "react-icons/fa6";
 import useForm from "../../hooks/useForm";
-import { FaRegStarHalfStroke } from "react-icons/fa6";
-import { FaStar, FaRegStar } from "react-icons/fa";
+
 import { toast } from "react-toastify";
 import {
   getAllReviewApi,
@@ -54,6 +54,7 @@ import {
   useNavigate,
 } from "react-router-dom";
 import reviewStar from "../../utils/reviewStar";
+import Rating from "../../components/star/Rating";
 
 const ReviewPage = () => {
   const [stars, setStars] = useState(0);
@@ -63,7 +64,7 @@ const ReviewPage = () => {
   const { reviews } = useSelector((state) => state.reviewInfo);
   console.log(reviews);
 
-  const ref = useRef(true);
+  // const ref = useRef(true);
   const [hideReview, SetHideReview] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
@@ -83,24 +84,20 @@ const ReviewPage = () => {
     formData.productId = singleProduct._id;
     formData.userId = user?._id;
     formData.name = `${user?.fName} ${user?.lName}`;
-    console.log(formData);
 
     const { status, message } = await postReviewApi(formData);
     toast[status](message);
-    if (status === "successs") {
-      ref.current = false;
-    }
+
     SetHideReview(false);
   };
   const handleOnClick = () => {
-    navigate(location.pathname);
+    navigate("/");
     SetHideReview(true);
   };
-  console.log(singleProduct.reviews);
+
   const { fullstarrating, halfstar, emptystars } = reviewStar(
     singleProduct.reviews
   );
-  console.log(fullstarrating, halfstar, emptystars);
 
   return (
     <Accordion type="single" collapsible>
@@ -108,22 +105,11 @@ const ReviewPage = () => {
         <AccordionTrigger>
           <div className="flex justify-between items-center w-full text-xl ">
             <div>{` Reviews(${reviews.length || 0})`}</div>
-            <div className="flex ">
-              {/* Full stars */}
-              {Array.from({ length: fullstarrating }).map((_, index) => (
-                <FaStar key={`full-${index}`} className="text-yellow-500" />
-              ))}
-              {/* Half star */}
-
-              <FaRegStarHalfStroke
-                key="half"
-                className={`text-yellow-500 ${!halfstar ? "hidden" : ""} `}
-              />
-              {/* Empty stars */}
-              {Array.from({ length: emptystars }).map((_, index) => (
-                <FaRegStar key={`empty-${index}`} />
-              ))}
-            </div>
+            <Rating
+              fullstarrating={fullstarrating}
+              halfstar={halfstar}
+              emptystars={emptystars}
+            ></Rating>
           </div>
         </AccordionTrigger>
         <AccordionContent>
@@ -372,6 +358,20 @@ const ReviewPage = () => {
           )}
 
           <div className="card-wrapper"></div>
+        </AccordionContent>
+        <AccordionContent>
+          {/* review list  */}
+
+          {reviews?.map((review) => {
+            return (
+              <div className="flex items-center">
+                <div>
+                  <Avatar className="">{review.name}</Avatar>
+                </div>
+                <div className="text-center"></div>
+              </div>
+            );
+          })}
         </AccordionContent>
       </AccordionItem>
     </Accordion>
