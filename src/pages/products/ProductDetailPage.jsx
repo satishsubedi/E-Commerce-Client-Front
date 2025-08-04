@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Heart, Star, Plus, Minus, ShoppingCart, Check } from "lucide-react";
@@ -7,6 +7,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchProductAction } from "../../features/product/productAction";
 import { toast } from "react-toastify";
 import { addItemToCart } from "../../features/cart/cartAction";
+import { toggleWishlistAction } from "../../features/user/userAction";
+// import {
+//   addToWishlistAction,
+//   removeFromWishlistAction,
+// } from "../../features/user/userAction";
 
 const ProductDetailPage = () => {
   const dispatch = useDispatch();
@@ -14,12 +19,17 @@ const ProductDetailPage = () => {
   const [selectedColor, setSelectedColor] = useState("");
   const [selectedSize, setSelectedSize] = useState("");
   const [quantity, setQuantity] = useState(1);
-  const [isWishlisted, setIsWishlisted] = useState(false);
+  // const [isWishlisted, setIsWishlisted] = useState(false);
 
   const { slug } = useParams();
 
   const { products } = useSelector((state) => state.productInfo);
+  const navigate = useNavigate();
   const product = products.find((product) => product.slug === slug) || {};
+  const { user } = useSelector((state) => state.user);
+  const isLoggedIn = !!user && !!user._id;
+  const isWishlisted = user?.wishList?.includes(product._id);
+  console.log(isWishlisted);
   // console.log("product", product);
 
   // fetch all products when component mounts
@@ -38,6 +48,20 @@ const ProductDetailPage = () => {
       console.error("Error adding item to local cart:", error);
       return [];
     }
+  };
+
+  //Function to handle WishList
+  const handleToggleWishlist = () => {
+    if (!isLoggedIn) {
+      toast.error("You must be Logged In to add products to wishlist");
+      navigate("/login");
+      return;
+    }
+    dispatch(toggleWishlistAction(product._id, product.title));
+    if (!isWishlisted) {
+      toast.success(`"${product.title} added to your wishlist`);
+      return;
+    } else toast.success(`"${product.title} removed from your wishlist`);
   };
 
   return (
@@ -246,7 +270,7 @@ const ProductDetailPage = () => {
                 variant="outline"
                 size="lg"
                 className=" w-full rounded-full bg-transparent hover:bg-gray-200"
-                onClick={() => setIsWishlisted(!isWishlisted)}
+                onClick={handleToggleWishlist}
               >
                 <Heart
                   className={`w-5 h-5 mr-2 ${isWishlisted ? "fill-red-500 text-red-500" : ""}`}

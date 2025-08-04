@@ -8,15 +8,28 @@ import { useLocation } from "react-router-dom";
 import { fetchFilterProductAction } from "../../features/product/productAction";
 import { useNavigate } from "react-router-dom";
 import { useRef } from "react";
+import { toggleWishlistAction } from "../../features/user/userAction";
+import { toast } from "react-toastify";
 
 const AllProductList = ({ setProductList, productList }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [wishlist, setWishlist] = useState([]);
+  const { user } = useSelector((state) => state.user);
+  const isLoggedIn = !!user && !!user._id;
   const { products, FilterProduct } = useSelector((state) => state.productInfo);
   const location = useLocation();
   const ref = useRef(true);
+
   const debouncedFetch = useRef(null);
+  const wishlist = useSelector((state) => state.user.wishlistProducts);
+  console.log(wishlist);
+  const handleToggleWishlist = (productId) => {
+    if (!isLoggedIn) {
+      toast.error("You must be Logged In to use the wishlist");
+      return;
+    }
+    dispatch(toggleWishlistAction(productId));
+  };
 
   // fetch all products when component mounts
   useEffect(() => {
@@ -35,7 +48,6 @@ const AllProductList = ({ setProductList, productList }) => {
   }, [dispatch, products, FilterProduct, setProductList]);
 
   // another useEffect
-
   if (!debouncedFetch.current) {
     debouncedFetch.current = (function () {
       let id;
@@ -52,25 +64,11 @@ const AllProductList = ({ setProductList, productList }) => {
     debouncedFetch.current(location.search);
   }, [location.search]);
 
-  //function to toggle wishlist
-  const toggleWishlist = (id) => {
-    setWishlist((prev) =>
-      prev.includes(id)
-        ? prev.filter((wishlist) => wishlist !== id)
-        : [...prev, id]
-    );
-  };
-
   //function to calculate discount percentage
   const calculateDiscountPercentage = (price, discountPrice) => {
     return price !== discountPrice
       ? Math.round(((price - discountPrice) / price) * 100)
       : 0;
-  };
-
-  //function to check if product is wishlisted
-  const isProductWishlisted = (productId) => {
-    return wishlist.includes(productId);
   };
 
   return (
@@ -83,8 +81,6 @@ const AllProductList = ({ setProductList, productList }) => {
                 product.price,
                 product.discountPrice
               );
-
-              const isWishlisted = isProductWishlisted(productList._id);
 
               return (
                 <Card
@@ -113,11 +109,14 @@ const AllProductList = ({ setProductList, productList }) => {
                       <Button
                         size="sm"
                         variant="outline"
-                        className="absolute top-3 right-3 w-8 h-8 p-0 bg-white/80 hover:bg-white"
-                        onClick={() => toggleWishlist(product._id)}
+                        className="absolute top-3 right-3  w-8 h-8 p-0 bg-white/80 hover:bg-white"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleToggleWishlist(product._id);
+                        }}
                       >
                         <Heart
-                          className={`w-4 h-4 ${isWishlisted ? "fill-red-500 text-red-500" : "text-gray-600"}`}
+                          className={`w-4 h-4 ${wishlist.includes(product._id) ? "fill-red-500 text-red-500" : "text-gray-600"}`}
                         />
                       </Button>
                     </div>

@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { BsSearch } from "react-icons/bs";
 import { FaRegHeart } from "react-icons/fa6";
 import { IoBag } from "react-icons/io5";
@@ -14,6 +14,7 @@ import { fetchProductAction } from "../../features/product/productAction";
 const Header = () => {
   const ref = useRef(true);
   const [show, setShow] = useState(true);
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const categories = useSelector((state) => state.categoriesInfo);
   // Get cart item count (sum of quantities)
@@ -21,11 +22,12 @@ const Header = () => {
     state.cartInfo?.cartItems?.reduce((sum, item) => sum + item.quantity, 0)
   );
 
-  const { user } = useSelector((state) => state.user);
+  const { user, wishlistProducts } = useSelector((state) => state.user);
+  console.log(user, wishlistProducts);
 
-  // const handleOnclick = () => {
-  //   show ? setShow(false) : setShow(true);
-  // };
+  const wishlistItemsCount =
+    wishlistProducts?.length || user?.wishList?.length || 0;
+  console.log(wishlistItemsCount);
 
   useEffect(() => {
     ref.current &&
@@ -50,14 +52,21 @@ const Header = () => {
           <li>
             <BsSearch />
           </li>
-          <li>
-            <FaRegHeart />
+          <li className="relative">
+            <Link to="/wishlist">
+              <FaRegHeart className="cursor-pointer" />
+              {wishlistItemsCount > 0 && (
+                <span className="absolute -top-3.5 -right-3.5 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {wishlistItemsCount}
+                </span>
+              )}
+            </Link>
           </li>
           <li className="relative">
             <Link to="/cart">
               <IoBag />
               {cartItemsCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                <span className="absolute -top-3.5 -right-3 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                   {cartItemsCount}
                 </span>
               )}
@@ -68,9 +77,9 @@ const Header = () => {
               <MdPeopleAlt />
             </Link>
           </li>
-          {user._id && (
+          {user?._id && (
             <li>
-              <p className="text-sm font-light">hi, {user?.fName}</p>
+              <p className="text-sm font-light">Hi, {user?.fName}</p>
             </li>
           )}
         </ul>

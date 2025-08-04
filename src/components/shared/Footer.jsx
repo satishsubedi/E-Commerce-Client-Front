@@ -13,7 +13,7 @@ import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
-    <footer className="w-screen bg-gradient-to-r from-[#1d1e1f] to-[#0c1218] text-white py-6">
+    <footer className="w-screen  bg-gradient-to-r from-[#1d1e1f] to-[#0c1218] text-white py-6">
       <div className=" px-4 text-center space-y-6 w-full">
         <div className="container mx-auto grid md:grid-cols-4 sm:grid-cols-2 gap-6 px-6">
           {/* Logo / Store Name */}

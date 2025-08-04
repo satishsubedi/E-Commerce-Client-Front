@@ -84,3 +84,21 @@ export const changePassword = (data) => {
     data: data,
   });
 };
+
+export const toggleWishlistApi = (productId) => {
+  console.log(productId);
+  return axiosApiCall({
+    method: "post",
+    url: `${USER_API_URL}/wishlist`,
+    data: { productId },
+    isPrivate: true,
+  });
+};
+
+export const getWishlistProductsApi = () => {
+  return axiosApiCall({
+    method: "get",
+    url: `${USER_API_URL}/wishlist`,
+    isPrivate: true,
+  });
+};

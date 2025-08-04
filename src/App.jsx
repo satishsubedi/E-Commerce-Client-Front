@@ -21,6 +21,7 @@ import CancelPage from "./pages/payment/CancelPage";
 import CheckoutPage from "./pages/checkout/CheckoutPage.jsx";
 import CheckoutOptionPage from "./pages/checkout/CheckoutOptionPage";
 import PaymentPage from "./pages/payment/PaymentPage.jsx";
+import WishlistPage from "./pages/wishlist/WishlistPage.jsx";
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
           <Route path="/payment" element={<PaymentPage />} />
           <Route path="/order-success" element={<SuccessPage />} />
           <Route path="/cancel" element={<CancelPage />} />
+          <Route path="/wishlist" element={<WishlistPage />} />
         </Route>
       </Routes>
       <ToastContainer position="top-center" autoClose={2000} />
