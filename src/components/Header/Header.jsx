@@ -10,20 +10,27 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetctCategoriesAction } from "../../features/categories/categoriesAction";
 import { setCategoires } from "../../features/categories/categoriesSlice";
 import { fetchProductAction } from "../../features/product/productAction";
+import { logoutUserAction } from "../../features/user/userAction";
+import DropDown from "../../utils/dropDown";
 
 const Header = () => {
   const ref = useRef(true);
   const [show, setShow] = useState(true);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const categories = useSelector((state) => state.categoriesInfo);
   // Get cart item count (sum of quantities)
   const cartItemsCount = useSelector((state) =>
     state.cartInfo?.cartItems?.reduce((sum, item) => sum + item.quantity, 0)
   );
 
+
   const { user, wishlistProducts } = useSelector((state) => state.user);
   console.log(user, wishlistProducts);
+
+ 
+
 
   const wishlistItemsCount =
     wishlistProducts?.length || user?.wishList?.length || 0;
@@ -35,7 +42,14 @@ const Header = () => {
       dispatch(fetchProductAction());
     ref.current = false;
   }, [dispatch]);
-  console.log(categories);
+
+  //this is for logout
+  const handleLogout = async () => {
+    if (!user?.email) return;
+    await dispatch(logoutUserAction(user.email));
+    navigate("/");
+  };
+
   return (
     <header className="text-gray-600 body-font flex justify-center  bg-slate-900">
       <div className="container  h-20 flex-wrap p-2  flex justify-between items-center md:p-6 lg:justify-between gap-10  ">
@@ -66,21 +80,26 @@ const Header = () => {
             <Link to="/cart">
               <IoBag />
               {cartItemsCount > 0 && (
+
                 <span className="absolute -top-3.5 -right-3 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+
                   {cartItemsCount}
                 </span>
               )}
             </Link>
           </li>
-          <li>
-            <Link to="/login">
-              <MdPeopleAlt />
-            </Link>
-          </li>
-          {user?._id && (
+
+          {!user._id ? (
             <li>
-              <p className="text-sm font-light">Hi, {user?.fName}</p>
+              <Link to="/login">
+                <button className="text-sm text-black bg-amber-100 px-1 py-1 rounded hover:bg-amber-50">
+                  Login
+                </button>
+              </Link>
+
             </li>
+          ) : (
+            <DropDown logout={handleLogout} />
           )}
         </ul>
         {/* mobile navbar */}

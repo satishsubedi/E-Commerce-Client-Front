@@ -21,3 +21,11 @@ export const getAllFilterProductApi = (query) => {
 
   return axiosApiCall(obj);
 };
+export const getSingleProductApi = (slug) => {
+  const obj = {
+    url: `${productApiEndPoint}/bySlug/${slug}`,
+    method: "get",
+  };
+
+  return axiosApiCall(obj);
+};

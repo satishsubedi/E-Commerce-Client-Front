@@ -1,12 +1,12 @@
-import { placeOrderApi } from "./orderApi";
-import { setOrderError, setOrderLoading } from "./orderSlice";
+import { getOrderApi } from "./orderApi";
+import { setOrders, setOrderLoading, setOrderError } from "./orderSlice";
 
-export const placeOrderAction = (orderData) => async (dispatch) => {
+export const getOrderAction = () => async (dispatch) => {
   try {
     dispatch(setOrderLoading(true));
-    const response = await placeOrderApi(orderData);
+    const response = await getOrderApi();
     if (response?.success) {
-      return response; //Used to redirect to stripe URL
+      dispatch(setOrders(response.orders));
     } else {
       dispatch(setOrderError(response.message));
     }

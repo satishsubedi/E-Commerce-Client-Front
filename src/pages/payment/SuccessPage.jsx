@@ -18,7 +18,7 @@ const SuccessPage = () => {
   //This is navigation option
 
   const handleGoBack = () => {
-    navigate("/allproducts");
+    navigate("/orderHistory");
     // if (isAuthenticated) {
     //   navigate("/allproducts");
     // } else {
