@@ -2,19 +2,6 @@ import { axiosApiCall } from "../../axios/axiosApiCall";
 
 const USER_API_URL = `${import.meta.env.VITE_APP_API_BASE_URL}/api/v1/auth`;
 
-// Get new access token using refresh token | GET | PRIVATE
-// This function is used to get a new access token using the refresh token
-//  when the current access token is expired.
-
-// export const getNewAccessJwt = () => {
-//   return axiosApiCall({
-//     method: "get",
-//     url: `${USER_API_URL}/accessjwt`,
-//     isPrivate: true,
-//     useRefreshToken: true,
-//   });
-// };
-
 //CREATE USER | POST |  SIGNUP |  PUBLIC
 export const createUser = (userObj) => {
   return axiosApiCall({
@@ -71,7 +58,7 @@ export const logoutUser = (email) => {
 export const forgetPasswordEmail = (formData) => {
   return axiosApiCall({
     method: "post",
-    url: `${USER_API_URL}/forget-password`,
+    url: `${USER_API_URL}/forgot-password`,
     data: formData,
   });
 };
@@ -80,7 +67,7 @@ export const forgetPasswordEmail = (formData) => {
 export const changePassword = (data) => {
   return axiosApiCall({
     method: "patch",
-    url: `${USER_API_URL}/change-password`,
+    url: `${USER_API_URL}/reset-password`,
     data: data,
   });
 };

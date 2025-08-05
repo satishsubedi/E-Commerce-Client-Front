@@ -12,7 +12,7 @@ const ActiveUserPage = () => {
   // grab the url params
   const [params] = useSearchParams();
   const sessionId = params.get("sessionId");
-  const token = params.get("t");
+  const token = params.get("token");
 
   console.log("Session ID:", sessionId);
   console.log("Token:", token);
@@ -22,20 +22,23 @@ const ActiveUserPage = () => {
   //function to activate user
   const ActivateUser = async () => {
     try {
-      //api call
       const response = await activateUser({ sessionId, token });
-
       setIsEmailActivating(false);
 
       if (response?.status === "error") {
         setIsEmailActivated(false);
-        toast.error(response?.data?.message || error?.message);
+        toast.error(response?.data?.message);
         navigate("/signup");
+      } else if (response?.status === "success") {
+        setIsEmailActivated(true);
+        toast.success(response.data.message);
+      } else {
+        // Catch unexpected responses
+        toast.error("Unexpected response from server");
       }
-      //if success
-      setIsEmailActivated(true);
     } catch (error) {
-      console.error("Error activating user:", error);
+      setIsEmailActivating(false);
+
       toast.error(
         error?.response?.data?.message ||
           error?.message ||

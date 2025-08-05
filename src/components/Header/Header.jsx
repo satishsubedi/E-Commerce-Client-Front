@@ -2,35 +2,31 @@ import { Link, useNavigate } from "react-router-dom";
 import { BsSearch } from "react-icons/bs";
 import { FaRegHeart } from "react-icons/fa6";
 import { IoBag } from "react-icons/io5";
-import { MdPeopleAlt } from "react-icons/md";
 import Navbar from "../navbar/Navbar";
 import { useEffect, useRef, useState } from "react";
 import MobileNavbar from "../navbar/MobileNavbar";
 import { useDispatch, useSelector } from "react-redux";
 import { fetctCategoriesAction } from "../../features/categories/categoriesAction";
-import { setCategoires } from "../../features/categories/categoriesSlice";
 import { fetchProductAction } from "../../features/product/productAction";
 import { logoutUserAction } from "../../features/user/userAction";
 import DropDown from "../../utils/dropDown";
 
 const Header = () => {
   const ref = useRef(true);
-  const [show, setShow] = useState(true);
+
   const navigate = useNavigate();
+
+  const [searchOpen, setSearchOpen] = useState(false);
+
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const categories = useSelector((state) => state.categoriesInfo);
+
   // Get cart item count (sum of quantities)
   const cartItemsCount = useSelector((state) =>
     state.cartInfo?.cartItems?.reduce((sum, item) => sum + item.quantity, 0)
   );
 
-
   const { user, wishlistProducts } = useSelector((state) => state.user);
   console.log(user, wishlistProducts);
-
- 
-
 
   const wishlistItemsCount =
     wishlistProducts?.length || user?.wishList?.length || 0;
@@ -63,9 +59,22 @@ const Header = () => {
         </div>
         {/* icons */}
         <ul className="text-base  font-medium text-white dark:text-white flex flex-row items-center justify-center gap-6 md:gap-4 flex-1 lg:flex-initial ">
-          <li>
-            <BsSearch />
+          <li className="relative flex items-center">
+            {searchOpen ? (
+              <input
+                type="text"
+                placeholder="Search..."
+                autoFocus
+                className=" absolute right-0  sm:w-64 md:w-40 px-3 py-1 rounded-md text-black bg-white outline-none shadow-md transition-all duration-300"
+                onBlur={() => setSearchOpen(false)} // closes when clicking outside
+              />
+            ) : (
+              <button onClick={() => setSearchOpen(true)}>
+                <BsSearch size={18} className="text-white" />
+              </button>
+            )}
           </li>
+
           <li className="relative">
             <Link to="/wishlist">
               <FaRegHeart className="cursor-pointer" />
@@ -80,9 +89,7 @@ const Header = () => {
             <Link to="/cart">
               <IoBag />
               {cartItemsCount > 0 && (
-
                 <span className="absolute -top-3.5 -right-3 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-
                   {cartItemsCount}
                 </span>
               )}
@@ -92,11 +99,10 @@ const Header = () => {
           {!user._id ? (
             <li>
               <Link to="/login">
-                <button className="text-sm text-black bg-amber-100 px-1 py-1 rounded hover:bg-amber-50">
+                <button className="text-sm text-black bg-green-400 px-1 py-1 rounded hover:bg-amber-50">
                   Login
                 </button>
               </Link>
-
             </li>
           ) : (
             <DropDown logout={handleLogout} />

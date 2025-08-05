@@ -115,3 +115,10 @@ export const fetchCartFromStorage = () => (dispatch, getState) => {
   const pricing = calculatePricing(cartItems, isPromoApplied);
   dispatch(updatePricing(pricing));
 };
+
+//This is for claer the cart
+export const clearCart = () => (dispatch) => {
+  dispatch(setCarts([]));
+  saveCartToLocalStorage([]);
+  dispatch(updatePricing({ subtotal: 0, discount: 0, shipping: 0, total: 0 }));
+};
