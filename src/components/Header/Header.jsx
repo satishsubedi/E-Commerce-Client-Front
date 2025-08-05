@@ -16,6 +16,7 @@ import DropDown from "../../utils/dropDown";
 const Header = () => {
   const ref = useRef(true);
   const [show, setShow] = useState(true);
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const categories = useSelector((state) => state.categoriesInfo);
@@ -24,12 +25,16 @@ const Header = () => {
     state.cartInfo?.cartItems?.reduce((sum, item) => sum + item.quantity, 0)
   );
 
-  const { user } = useSelector((state) => state.user);
-  console.log(user, "User Property");
 
-  // const handleOnclick = () => {
-  //   show ? setShow(false) : setShow(true);
-  // };
+  const { user, wishlistProducts } = useSelector((state) => state.user);
+  console.log(user, wishlistProducts);
+
+ 
+
+
+  const wishlistItemsCount =
+    wishlistProducts?.length || user?.wishList?.length || 0;
+  console.log(wishlistItemsCount);
 
   useEffect(() => {
     ref.current &&
@@ -61,19 +66,29 @@ const Header = () => {
           <li>
             <BsSearch />
           </li>
-          <li>
-            <FaRegHeart />
+          <li className="relative">
+            <Link to="/wishlist">
+              <FaRegHeart className="cursor-pointer" />
+              {wishlistItemsCount > 0 && (
+                <span className="absolute -top-3.5 -right-3.5 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {wishlistItemsCount}
+                </span>
+              )}
+            </Link>
           </li>
           <li className="relative">
             <Link to="/cart">
               <IoBag />
               {cartItemsCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-300 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+
+                <span className="absolute -top-3.5 -right-3 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+
                   {cartItemsCount}
                 </span>
               )}
             </Link>
           </li>
+
           {!user._id ? (
             <li>
               <Link to="/login">
@@ -81,6 +96,7 @@ const Header = () => {
                   Login
                 </button>
               </Link>
+
             </li>
           ) : (
             <DropDown logout={handleLogout} />

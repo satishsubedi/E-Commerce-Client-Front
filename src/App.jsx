@@ -18,11 +18,13 @@ import CancelPage from "./pages/payment/CancelPage";
 import CheckoutPage from "./pages/checkout/CheckoutPage.jsx";
 import CheckoutOptionPage from "./pages/checkout/CheckoutOptionPage";
 import PaymentPage from "./pages/payment/PaymentPage.jsx";
+import WishlistPage from "./pages/wishlist/WishlistPage.jsx";
 import ReviewPage from "./pages/review/ReviewPage.jsx";
 import UserOrderPage from "./pages/order/UserOrderPage.jsx";
 import ProtectedRoute from "./components/helper/ProtectedRoute.jsx";
 import OrderTrackingPage from "./pages/order/OrderTrackingPage.jsx";
 import SupportPage from "./pages/support/SupportPage.jsx";
+
 
 function App() {
   return (
@@ -72,6 +74,7 @@ function App() {
           />
 
           <Route path="/cancel" element={<CancelPage />} />
+          <Route path="/wishlist" element={<WishlistPage />} />
         </Route>
       </Routes>
       <ToastContainer position="top-center" autoClose={2000} />

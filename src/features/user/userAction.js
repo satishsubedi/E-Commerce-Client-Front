@@ -1,9 +1,24 @@
-import { getUser, logoutUser } from "./userApi";
+import {
+  getUser,
+  getWishlistProductsApi,
+  logoutUser,
+  toggleWishlistApi,
+} from "./userApi";
 import { toast } from "react-toastify";
+
+import {
+  getWishlistDetails,
+  setUser,
+  setWishlist,
+  toggleWishlist,
+} from "./userSlice";
+import { useSelector } from "react-redux";
+
 import { setUser } from "./userSlice";
 import axios from "axios";
 
 const apiBaseUrl = import.meta.env.VITE_APP_API_BASE_URL;
+
 
 //Redux Thunk
 // GET USER ACTION
@@ -113,5 +128,36 @@ export const logoutUserAction = (email) => async (dispatch) => {
   } catch (error) {
     toast.error(error.message || "Logout failed");
     throw error;
+  }
+};
+
+export const toggleWishlistAction = (productId) => async (dispatch) => {
+  try {
+    const { status, payload, message } = await toggleWishlistApi(productId);
+
+    console.log(status, payload, message);
+    if (status === "success") {
+      const wishlist = Array.isArray(payload) ? payload : [];
+      dispatch(setWishlist(wishlist));
+      toast.success("Wishlist updated");
+    }
+  } catch (error) {
+    toast.error("Failed to update wishlist");
+    console.log(error);
+  }
+};
+
+export const fetchWishlistAction = () => async (dispatch) => {
+  try {
+    const response = await getWishlistProductsApi();
+    const status = response.status;
+    const payload = response.payload;
+
+    if (status === "success") {
+      dispatch(getWishlistDetails(payload));
+    }
+  } catch (error) {
+    console.log("Error fetching wishlist:", error);
+    toast.error("Failed to fetch wishlist");
   }
 };

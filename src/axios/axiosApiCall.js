@@ -20,13 +20,11 @@ export const axiosApiCall = async (axiosParams) => {
 
   // Set headers based on whether the request is private or not
 
-
   const headers = {};
 
   if (isPrivate && token) {
     headers.Authorization = `Bearer ${token}`;
   }
-
 
   try {
     // Make the API call using axios
@@ -36,10 +34,9 @@ export const axiosApiCall = async (axiosParams) => {
       data,
       headers,
     });
-    // if (response.data.status === "error") {
-    //   throw { message: response.data.message || "An error occurred" };
-    // }
+
     return response.data;
+    // return response;
   } catch (error) {
     const message =
       error?.response?.data?.message ||
