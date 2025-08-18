@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   initialSignupFormData,
   SignupFormControls,
@@ -14,12 +14,14 @@ import useLoading from "../../hooks/useLoading";
 
 import LoadingSpinner from "../helper/LoadingSpinner";
 import { createUser } from "../../features/user/userApi";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const SignupForm = () => {
   const { formData, handleOnChange, setFormData } = useForm(
     initialSignupFormData
   );
+  const location = useLocation();
+  const guestData = location.state?.guestData;
   const { fName, lName, email, phone, password } = formData;
   const { isLoading, startLoading, stopLoading } = useLoading();
   const [showPassword, setShowPassword] = useState(false);
@@ -66,6 +68,19 @@ const SignupForm = () => {
       stopLoading();
     }
   };
+  //This is for refill the guest data
+  useEffect(() => {
+    if (guestData) {
+      setFormData((prev) => ({
+        ...prev,
+        fName: guestData.fName || "",
+        lName: guestData.lName || "",
+        email: guestData.email || "",
+        phone: guestData.phone || "",
+      }));
+    }
+  }, [guestData, setFormData]);
+
   return (
     <div className="flex flex-col justify-center px-4 md:px-8 w-full">
       <div className="space-y-6">

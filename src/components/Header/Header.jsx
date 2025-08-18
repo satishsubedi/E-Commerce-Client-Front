@@ -10,14 +10,13 @@ import { fetctCategoriesAction } from "../../features/categories/categoriesActio
 import { fetchProductAction } from "../../features/product/productAction";
 import { logoutUserAction } from "../../features/user/userAction";
 import DropDown from "../../utils/dropDown";
+import SearchBar from "../Search/SearchBar";
 
 const Header = () => {
+  const { products } = useSelector((state) => state.productInfo);
   const ref = useRef(true);
-
   const navigate = useNavigate();
-
   const [searchOpen, setSearchOpen] = useState(false);
-
   const dispatch = useDispatch();
 
   // Get cart item count (sum of quantities)
@@ -59,22 +58,17 @@ const Header = () => {
         </div>
         {/* icons */}
         <ul className="text-base  font-medium text-white dark:text-white flex flex-row items-center justify-center gap-6 md:gap-4 flex-1 lg:flex-initial ">
-          <li className="relative flex items-center">
-            {searchOpen ? (
-              <input
-                type="text"
-                placeholder="Search..."
-                autoFocus
-                className=" absolute right-0  sm:w-64 md:w-40 px-3 py-1 rounded-md text-black bg-white outline-none shadow-md transition-all duration-300"
-                onBlur={() => setSearchOpen(false)} // closes when clicking outside
-              />
-            ) : (
-              <button onClick={() => setSearchOpen(true)}>
-                <BsSearch size={18} className="text-white" />
-              </button>
-            )}
-          </li>
-
+          {/* This is for searching the products  */}
+          {searchOpen ? (
+            <div className="z-50">
+              <SearchBar allProducts={products} />
+            </div>
+          ) : (
+            <button onClick={() => setSearchOpen(true)}>
+              <BsSearch size={18} className="text-white" />
+            </button>
+          )}
+          {/* This is for wishlist  */}
           <li className="relative">
             <Link to="/wishlist">
               <FaRegHeart className="cursor-pointer" />

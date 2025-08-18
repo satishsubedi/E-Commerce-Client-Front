@@ -8,20 +8,14 @@ import {
   BreadcrumbSeparator,
 } from "../../components/ui/breadcrumb";
 import FilterSidebar from "../../components/sidebar/FilterSideBar";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { Collapse } from "../../components/collapsible/Collapse";
-import { useLocation, useNavigate } from "react-router-dom";
-import { setFiltered } from "../../features/filters/filterSlice";
-import { fetchFilteredProducts } from "../../features/filters/fetchFilteredProducts";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
+
 const AllProductsPage = () => {
   const [showFilter, setShowFilter] = useState(true);
   const { products, FilterProduct } = useSelector((state) => state.productInfo);
   const [productList, setProductList] = useState([]);
-  const location = useLocation();
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const { filtered } = useSelector((state) => state.filterInfo);
 
   //This is for sorting the products
   const handleOnSortOption = (option) => {
@@ -38,10 +32,8 @@ const AllProductsPage = () => {
       setProductList(sortedProducts);
     }
   };
-
   const maxPrice =
     products.length > 0 ? Math.max(...products.map((p) => p.price)) : 0;
-
   const [searchParams, setSearchParams] = useSearchParams();
   let newParams = new URLSearchParams(searchParams);
   let mainCategoryFromPath = searchParams.get("productPath");
@@ -54,7 +46,6 @@ const AllProductsPage = () => {
   }
 
   const handleOnChecked = (name, value, checked) => {
-    //maincategory
     console.log(name, value, checked, "Shekhar");
     if (name == "mainCategory") {
       if (checked) {
@@ -76,7 +67,6 @@ const AllProductsPage = () => {
         newParams.delete("productPath");
         newParams.delete("mainCategory");
       }
-
       setSearchParams(newParams);
     }
 
@@ -131,62 +121,39 @@ const AllProductsPage = () => {
     newParams.set("maxPrice", value[1]);
     setSearchParams(newParams);
   };
+  //This is for search bar
+  const searchKeyword = searchParams.get("search")?.toLowerCase() || "";
+  useEffect(() => {
+    const filteredBySearch = searchKeyword
+      ? FilterProduct.filter((product) => {
+          const title = product?.title?.toLowerCase() || "";
+          const category = product?.mainCategory?.toLowerCase() || "";
+          return (
+            title.includes(searchKeyword) || category.includes(searchKeyword)
+          );
+        })
+      : FilterProduct;
 
-  // Runs on page load and URL changes
-  // useEffect(() => {
-  //   const pathname = location.pathname;
-  //   const match = pathname.match(/\/allproducts\/(.+)/);
-
-  //   if (match && match[1]) {
-  //     const path = match[1];
-  //     const categoryList = path.split("/");
-
-  //     const newFilter = {
-  //       productPath: path,
-  //       mainCategory: categoryList,
-  //       colors: [],
-  //       brand: [],
-  //       sale: false,
-  //     };
-
-  //     dispatch(setFiltered(newFilter));
-  //     dispatch(fetchFilteredProducts(newFilter));
-  //   } else if (pathname === "/allproducts") {
-  //     // ✅ No category selected — show all
-  //     const defaultFilter = {
-  //       productPath: "",
-  //       mainCategory: [],
-  //       colors: [],
-  //       brand: [],
-  //       sale: false,
-  //     };
-
-  //     dispatch(setFiltered(defaultFilter));
-  //     dispatch(fetchFilteredProducts(defaultFilter));
-  //   }
-  // }, [location.pathname, dispatch]);
-
-  // Keeps product list in sync with filtered products
-  // useEffect(() => {
-  //   setProductList(FilterProduct);
-  // }, [FilterProduct]);
+    setProductList(filteredBySearch);
+  }, [FilterProduct, searchKeyword]);
 
   return (
     <div className="mx-auto px-4">
       <div className="bg-gray-100 p-4 mb-6">
         <Breadcrumb className="flex flex-wrap items-center space-x-1 text-sm">
           <BreadcrumbItem>
-            <BreadcrumbLink
-              href="/"
-              className="text-foreground hover:text-primary"
-            >
-              Home
+            <BreadcrumbLink asChild>
+              <Link to="/" className="text-foreground">
+                Home
+              </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator className="mx-2">{">"}</BreadcrumbSeparator>
           <BreadcrumbItem>
-            <BreadcrumbLink href="/allproducts" className="text-foreground">
-              All Products
+            <BreadcrumbLink asChild>
+              <Link to="/allproducts" className="text-foreground">
+                All Products
+              </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
         </Breadcrumb>
@@ -209,9 +176,9 @@ const AllProductsPage = () => {
           <div className="flex items-center justify-between ">
             <h3 className="text-2xl font-bold text-gray-800">All Products</h3>
 
-            {FilterProduct.length > 0 && (
+            {productList.length > 0 && (
               <h4 className="text-2xl font-bold text-gray-800">
-                Found {FilterProduct.length} out of {products.length}
+                Found {productList.length} out of {products.length}
               </h4>
             )}
 

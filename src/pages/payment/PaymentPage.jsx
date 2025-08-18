@@ -21,7 +21,7 @@ const PaymentPage = () => {
   const orderedProduct = cartItems.map((item) => {
     return {
       productId: item.product_id,
-      price: item.price,
+      price: item.discountPrice || item.price,
       quantity: item.quantity,
     };
   });

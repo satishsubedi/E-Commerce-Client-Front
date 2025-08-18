@@ -15,11 +15,11 @@ import { toast } from "react-toastify";
 import reviewStar from "../../utils/reviewStar.js";
 import { FaRegStar, FaRegStarHalfStroke, FaStar } from "react-icons/fa6";
 
-
 const AllProductList = ({ setProductList, productList }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.user);
+
   const isLoggedIn = !!user && !!user._id;
   const { products, FilterProduct } = useSelector((state) => state.productInfo);
   const location = useLocation();
@@ -87,14 +87,12 @@ const AllProductList = ({ setProductList, productList }) => {
                 product.discountPrice
               );
 
-
               const { fullstarrating, halfstar, emptystars } = reviewStar(
                 product.reviews
               );
 
               console.log(fullstarrating, halfstar, emptystars);
-              const isWishlisted = isProductWishlisted(productList._id);
-
+              // const isWishlisted = isProductWishlisted(productList._id);
 
               return (
                 <Card

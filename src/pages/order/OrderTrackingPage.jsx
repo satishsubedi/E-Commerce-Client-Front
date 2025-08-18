@@ -5,14 +5,14 @@ import { getOrderAction } from "../../features/Order/orderAction";
 import { FaBoxOpen, FaTruck, FaCheckCircle, FaSpinner } from "react-icons/fa";
 
 const steps = [
-  { label: "Order Placed", icon: <FaSpinner className="text-gray-500" /> },
+  { label: "Order Placed", icon: <FaSpinner className="text-gray-700" /> },
   { label: "Processing", icon: <FaBoxOpen className="text-orange-500" /> },
   { label: "Dispatched", icon: <FaTruck className="text-blue-500" /> },
   { label: "Delivered", icon: <FaCheckCircle className="text-green-500" /> },
 ];
 
 const OrderTrackingPage = () => {
-  const { id } = useParams(); // Get order ID from URL
+  const { id } = useParams();
   const dispatch = useDispatch();
   const { orders } = useSelector((state) => state.orders);
   const [order, setOrder] = useState(null);
@@ -72,7 +72,7 @@ const OrderTrackingPage = () => {
               <div
                 className={`absolute -left-6 w-10 h-10 flex items-center justify-center rounded-full border-2 ${
                   index <= currentStepIndex
-                    ? "bg-blue-600 border-blue-600 text-white"
+                    ? "bg-blue-300 border-blue-600 text-white"
                     : "bg-gray-200 border-gray-300 text-gray-500"
                 }`}
               >

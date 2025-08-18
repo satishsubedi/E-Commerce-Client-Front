@@ -3,6 +3,8 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { clearCart } from "../../features/cart/cartAction";
+import { sendReceiptEmailAction } from "../../features/Order/orderAction";
+import { toast } from "react-toastify";
 
 const SuccessPage = () => {
   const dispatch = useDispatch();
@@ -22,11 +24,20 @@ const SuccessPage = () => {
   const handleViewOrders = () => {
     navigate("/orderHistory");
   };
-
+  console.log("lastOrder:", lastOrder);
   //This is for guest user
   const handleRegister = () => {
-    navigate("/register");
+    // if (!lastOrder) return;
+
+    // const guestData = {
+    //   fName: lastOrder?.guestName?.split(" ")[0] || "",
+    //   lName: lastOrder?.guestName?.split(" ")[1] || "",
+    //   email: lastOrder?.guestEmail || "",
+    //   phone: lastOrder?.guestPhone || "",
+    // };
+    navigate("/signup");
   };
+
   return (
     <div className=" bg-gray-100 h-screen flex items-center justify-center">
       <div className="bg-white p-8 rounded-lg shadow-lg text-center w-full max-w-lg">

@@ -1,15 +1,19 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getOrderAction } from "../../features/Order/orderAction";
+import { toast } from "react-toastify";
+import {
+  getOrderAction,
+  sendReceiptEmailAction,
+} from "../../features/Order/orderAction";
 import { Link } from "react-router-dom";
 // import ReviewForm from "../../components/reviews/Reviews";
 import GenerateReceiptPDF from "../../utils/GenerateReceiptPDF";
 import Receipt from "../../utils/Receipt";
-import { IoMdDownload } from "react-icons/io";
 
 const UserOrderPage = () => {
   const dispatch = useDispatch();
-  const { orders, loading, error } = useSelector((state) => state.orders);
+  const { orders, loading, error, emailLoading, emailSuccess, emailError } =
+    useSelector((state) => state.orders);
   console.log(orders, "Orders");
   useEffect(() => {
     dispatch(getOrderAction());
@@ -60,6 +64,14 @@ const UserOrderPage = () => {
     GenerateReceiptPDF(order, Receipt).catch((err) => {
       console.error("Error generating PDF:", err);
     });
+  };
+  const handleEmailReceipt = async (orderId) => {
+    try {
+      await dispatch(sendReceiptEmailAction(orderId));
+      toast.success("Receipt email sent successfully!");
+    } catch (error) {
+      toast.error("Failed to send receipt email.");
+    }
   };
 
   if (loading) {
@@ -158,7 +170,10 @@ const UserOrderPage = () => {
                     >
                       ⬇️ Download Receipt
                     </button>
-                    <button className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-1 m-1 rounded-sm">
+                    <button
+                      onClick={() => handleEmailReceipt(order._id)}
+                      className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-1 m-1 rounded-sm"
+                    >
                       📧 Email Receipt
                     </button>
                     <Link to={`/track-order/${order._id}`}>

@@ -1,8 +1,6 @@
-
 import { useNavigate, useParams } from "react-router-dom";
 
 import React, { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,7 +18,6 @@ import { toggleWishlistAction } from "../../features/user/userAction";
 
 import ReviewPage from "../review/ReviewPage";
 import reviewAction from "../../features/review/reviewAction";
-
 
 const ProductDetailPage = () => {
   const dispatch = useDispatch();
@@ -42,12 +39,9 @@ const ProductDetailPage = () => {
   console.log(isWishlisted);
   // console.log("product", product);
 
-  const [isWishlisted, setIsWishlisted] = useState(false);
   const { singleProduct } = useSelector((state) => state.productInfo);
 
-
   const ref = useRef(true);
-
 
   // fetch all products when component mounts
   useEffect(() => {
