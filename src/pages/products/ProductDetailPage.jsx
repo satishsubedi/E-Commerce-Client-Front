@@ -1,7 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-
-import React, { useEffect, useRef, useState } from "react";
-
+import { useEffect, useRef, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Heart, Star, Plus, Minus, ShoppingCart, Check } from "lucide-react";
@@ -25,6 +23,7 @@ const ProductDetailPage = () => {
   const [selectedColor, setSelectedColor] = useState("");
   const [selectedSize, setSelectedSize] = useState("");
   const [quantity, setQuantity] = useState(1);
+  const wishlist = useSelector((state) => state.user.wishlistProducts);
 
   // const [isWishlisted, setIsWishlisted] = useState(false);
 
@@ -40,9 +39,7 @@ const ProductDetailPage = () => {
   // console.log("product", product);
 
   const { singleProduct } = useSelector((state) => state.productInfo);
-
   const ref = useRef(true);
-
   // fetch all products when component mounts
   useEffect(() => {
     ref.current && dispatch(singleProductAction(slug));
@@ -273,7 +270,7 @@ const ProductDetailPage = () => {
                 onClick={handleToggleWishlist}
               >
                 <Heart
-                  className={`w-5 h-5 mr-2 ${isWishlisted ? "fill-red-500 text-red-500" : ""}`}
+                  className={`w-5 h-5 mr-2 ${wishlist.includes(product._id) ? "fill-red-500 text-red-500" : ""}`}
                 />
                 Wishlist
               </Button>

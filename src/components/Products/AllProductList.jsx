@@ -9,7 +9,11 @@ import { fetchFilterProductAction } from "../../features/product/productAction";
 import { useNavigate } from "react-router-dom";
 import { useRef } from "react";
 
-import { toggleWishlistAction } from "../../features/user/userAction";
+import {
+  toggleWishlistAction,
+  fetchWishlistAction,
+  getUserAction,
+} from "../../features/user/userAction";
 import { toast } from "react-toastify";
 
 import reviewStar from "../../utils/reviewStar.js";
@@ -35,7 +39,10 @@ const AllProductList = ({ setProductList, productList }) => {
     }
     dispatch(toggleWishlistAction(productId));
   };
-
+  useEffect(() => {
+    //To  persist login when page refreshed
+    dispatch(getUserAction());
+  }, [dispatch]);
   // fetch all products when component mounts
   useEffect(() => {
     if (FilterProduct?.length > 0) {
