@@ -173,7 +173,8 @@ const AllProductsPage = () => {
         <main
           className={`${showFilter ? "flex-grow" : "w-full"} transition-all duration-300`}
         >
-          <div className="flex items-center justify-between ">
+          {/* This is for desktop version  */}
+          <div className="hidden lg:flex items-center justify-between">
             <h3 className="text-2xl font-bold text-gray-800">All Products</h3>
 
             {productList.length > 0 && (
@@ -198,6 +199,18 @@ const AllProductsPage = () => {
               title="Sort By"
               handleOnSortOption={handleOnSortOption}
             />
+          </div>
+
+          {/* Mobile version */}
+          <div className="flex lg:hidden items-center justify-between px-4 py-2 bg-gray-100">
+            <h3 className="text-lg font-semibold">All Products</h3>
+            <button
+              className="text-sm text-blue-600 flex items-center gap-1"
+              onClick={() => setShowFilter(!showFilter)}
+            >
+              <SlidersHorizontal className="w-4 h-4" />
+              Filters
+            </button>
           </div>
 
           <AllProductList

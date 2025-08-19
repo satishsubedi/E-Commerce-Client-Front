@@ -59,7 +59,7 @@ const Header = () => {
         <ul className="text-base  font-medium text-white dark:text-white flex flex-row items-center justify-center gap-6 md:gap-4 flex-1 lg:flex-initial ">
           {/* This is for searching the products  */}
           {searchOpen ? (
-            <div className="z-50">
+            <div className="z-50 hidden md:block">
               <SearchBar allProducts={products} />
             </div>
           ) : (
@@ -71,7 +71,7 @@ const Header = () => {
           <li className="relative">
             <Link to="/wishlist">
               <FaRegHeart className="cursor-pointer" />
-              {wishlistItemsCount > 0 ? (
+              {wishlistItemsCount > 0 && user?._id ? (
                 <span className="absolute -top-3.5 -right-3.5 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                   {wishlistItemsCount}
                 </span>
@@ -91,7 +91,7 @@ const Header = () => {
             </Link>
           </li>
 
-          {!user._id ? (
+          {!user?._id ? (
             <li>
               <Link to="/login">
                 <button className="text-sm text-black bg-green-400 px-1 py-1 rounded hover:bg-amber-50">

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,7 +11,6 @@ import { useRef } from "react";
 
 import {
   toggleWishlistAction,
-  fetchWishlistAction,
   getUserAction,
 } from "../../features/user/userAction";
 import { toast } from "react-toastify";
@@ -32,6 +31,7 @@ const AllProductList = ({ setProductList, productList }) => {
   const debouncedFetch = useRef(null);
   const wishlist = useSelector((state) => state.user.wishlistProducts);
   console.log(wishlist);
+
   const handleToggleWishlist = (productId) => {
     if (!isLoggedIn) {
       toast.error("You must be Logged In to use the wishlist");
@@ -39,10 +39,12 @@ const AllProductList = ({ setProductList, productList }) => {
     }
     dispatch(toggleWishlistAction(productId));
   };
+
   useEffect(() => {
     //To  persist login when page refreshed
     dispatch(getUserAction());
   }, [dispatch]);
+
   // fetch all products when component mounts
   useEffect(() => {
     if (FilterProduct?.length > 0) {
