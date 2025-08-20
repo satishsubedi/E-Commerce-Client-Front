@@ -13,19 +13,23 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
-const initialBotMessage = {
-  from: "bot",
-  text: "Hello! I am AI assistant for Group Project. How can I help you today?",
-  time: new Date().toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-  }),
-};
+const ChatBot = ({ isOpen, onOpenChange, user }) => {
+  //This is for initial message
+  const [messages, setMessages] = useState([]);
+  const getInitialBotMessage = () => ({
+    from: "bot",
+    text: `Hello ${user?.fName || ""}! I am AI assistant for Group Project. How can I help you today?`,
+    time: new Date().toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    }),
+  });
+  useEffect(() => {
+    if (user) setMessages([getInitialBotMessage()]);
+  }, [user]);
 
-const ChatBot = ({ isOpen, onOpenChange }) => {
-  const [messages, setMessages] = useState([initialBotMessage]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef(null);
@@ -52,6 +56,7 @@ const ChatBot = ({ isOpen, onOpenChange }) => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          userId: user._id,
           messages: newMessages.map((m) => ({
             role: m.from === "user" ? "user" : "assistant",
             content: m.text,
@@ -94,12 +99,12 @@ const ChatBot = ({ isOpen, onOpenChange }) => {
   }, [messages]);
 
   // Clear chat function
-  const clearChat = () => setMessages([initialBotMessage]);
+  const clearChat = () => setMessages([getInitialBotMessage()]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px] p-0">
-        <DialogHeader className="p-4 rounded-md bg-blue-500">
+        <DialogHeader className="p-4 rounded-md bg-blue-900">
           <DialogTitle className="text-center text-white">
             🤖AI Support
           </DialogTitle>
@@ -116,13 +121,10 @@ const ChatBot = ({ isOpen, onOpenChange }) => {
               className="h-[300px] w-full p-4 overflow-y-auto flex flex-col gap-3"
             >
               {messages.map((msg, idx) => (
-                <div
-                  key={idx}
-                  className={`flex flex-col ${
-                    msg.from === "user" ? "items-end" : "items-start"
-                  }`}
-                >
-                  <div className={`flex items-start gap-2`}>
+                <div key={idx} className="flex flex-col">
+                  <div
+                    className={`flex items-start gap-2 ${msg.from === "user" ? "justify-end" : "justify-start"}`}
+                  >
                     {msg.from === "bot" && (
                       <Avatar>
                         <AvatarImage
@@ -133,16 +135,20 @@ const ChatBot = ({ isOpen, onOpenChange }) => {
                       </Avatar>
                     )}
                     <div
-                      className={`px-2 py-2 rounded-lg text-sm max-w-[75%] ${
+                      className={`px-2 py-1 rounded-lg text-sm max-w-[75%] break-words ${
                         msg.from === "user"
-                          ? "bg-blue-400 text-white"
+                          ? "bg-blue-600 text-white"
                           : "bg-gray-200 text-gray-900"
                       }`}
                     >
                       {msg.text}
                     </div>
                   </div>
-                  <div className="text-xs text-gray-500 mt-1">{msg.time}</div>
+                  <div
+                    className={`text-xs text-gray-500 mt-1 ${msg.from === "user" ? "text-right" : "text-left"}`}
+                  >
+                    {msg.time}
+                  </div>
                 </div>
               ))}
             </div>
