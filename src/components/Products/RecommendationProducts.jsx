@@ -30,10 +30,10 @@ const RecommendationProducts = () => {
     }
     dispatch(toggleWishlistAction(productId));
   };
-  useEffect(() => {
-    //To  persist login when page refreshed
-    dispatch(getUserAction());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   //To  persist login when page refreshed
+  //   dispatch(getUserAction());
+  // }, [dispatch]);
 
   const calculateDiscountPercentage = (price, discountPrice) => {
     return price !== discountPrice
@@ -80,9 +80,8 @@ const RecommendationProducts = () => {
             <Card
               key={product._id}
               className="group hover:shadow-lg transition-all duration-300 bg-white m-0 p-0"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleToggleWishlist(product._id);
+              onClick={() => {
+                navigate(`/product-detail/${product.slug}`);
               }}
             >
               <CardContent className="p-0 m-0">
