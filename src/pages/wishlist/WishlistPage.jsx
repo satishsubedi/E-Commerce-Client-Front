@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "../../components/ui/card";
 import { Badge } from "../../components/ui/badge";
-import { Heart, Star } from "lucide-react";
+import { Heart } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   fetchWishlistAction,
@@ -10,46 +10,64 @@ import {
 } from "../../features/user/userAction";
 import { toast } from "react-toastify";
 import { Button } from "../../components/ui/button";
+import reviewStar from "../../utils/reviewStar";
+import { FaRegStar, FaRegStarHalfStroke, FaStar } from "react-icons/fa6";
 
 const WishlistPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
   const isLoggedIn = !!user && !!user._id;
-  //Get the whole products details from wishlist
+
   const wishlist = useSelector((state) => state.user.wishlistProductDetails);
   const [localWishlist, setLocalWishlist] = useState([]);
-  console.log("WISHLIST IN COMPONENT : ", wishlist);
+
   useEffect(() => {
-    dispatch(fetchWishlistAction());
-  }, [dispatch]);
-  // Sync local state whenever Redux wishlist changes
+    if (isLoggedIn) dispatch(fetchWishlistAction());
+  }, [dispatch, isLoggedIn]);
+
   useEffect(() => {
     setLocalWishlist(wishlist || []);
   }, [wishlist]);
+
   const handleToggleWishlist = (productId) => {
-    //To remove from the UI
     setLocalWishlist((prev) => prev.filter((p) => p._id !== productId));
-    //To remove product from wishlist : From Backend
     dispatch(toggleWishlistAction(productId));
   };
-  //Display the products in JSX, if the user is loggedin.
-  if (isLoggedIn) {
-    return (
-      <div className=" p-3">
-        <div className="p-4 border-1 border-gray-300 rounded-xl bg-white shadow-md ">
-          <h1 className="text-2xl text-center font-bold mb-6">Your Wishlist</h1>
 
-          {localWishlist?.length === 0 ? (
-            <p className="text-center my-25 text-gray-500">
-              No items in your wishlist.
-            </p>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6">
-              {localWishlist?.map((product) => (
+  if (!isLoggedIn) {
+    toast.error("Please login to view your wishlist");
+    navigate("/login");
+    return null;
+  }
+
+  return (
+    <div className="p-3">
+      <div className="p-4 border border-gray-300 rounded-xl bg-white shadow-md">
+        <h1 className="text-2xl text-center font-bold mb-6">Your Wishlist</h1>
+
+        {localWishlist.length === 0 ? (
+          <p className="text-center my-25 text-gray-500">
+            No items in your wishlist.
+          </p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {localWishlist.map((product) => {
+              const discountPercentage = product.discountPrice
+                ? Math.round(
+                    ((product.price - product.discountPrice) / product.price) *
+                      100
+                  )
+                : 0;
+
+              const { fullstarrating, halfstar, emptystars } = reviewStar(
+                product.reviews
+              );
+
+              return (
                 <Card
                   key={product._id}
-                  className="group cursor-pointer hover:shadow-xl transition duration-300"
+                  className="group cursor-pointer hover:shadow-xl transition duration-300 m-0 p-0"
                   onClick={() => navigate(`/product-detail/${product.slug}`)}
                 >
                   <div className="relative aspect-square bg-muted rounded-t-md overflow-hidden">
@@ -58,17 +76,28 @@ const WishlistPage = () => {
                       alt={product.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                     />
+
+                    {discountPercentage > 0 && (
+                      <Badge className="absolute top-3 left-3 bg-red-500 hover:bg-red-600">
+                        -{discountPercentage}%
+                      </Badge>
+                    )}
+
                     <Button
                       size="sm"
                       variant="outline"
-                      className="absolute top-3 right-3  w-8 h-8 p-0 bg-white/80 hover:bg-white cursor-pointer"
+                      className="absolute top-3 right-3 w-8 h-8 p-0 bg-white/80 hover:bg-white cursor-pointer"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleToggleWishlist(product._id);
                       }}
                     >
                       <Heart
-                        className={`w-4 h-4 ${wishlist.some((p) => p._id === product._id) ? "fill-red-500 text-red-500" : "text-gray-600"}`}
+                        className={`w-4 h-4 ${
+                          wishlist.some((p) => p._id === product._id)
+                            ? "fill-red-500 text-red-500"
+                            : "text-gray-600"
+                        }`}
                       />
                     </Button>
                   </div>
@@ -77,6 +106,7 @@ const WishlistPage = () => {
                     <Badge variant="secondary" className="text-xs">
                       {product.brand || "Brand"}
                     </Badge>
+
                     <h3 className="font-semibold text-lg line-clamp-1">
                       {product.title}
                     </h3>
@@ -84,20 +114,26 @@ const WishlistPage = () => {
                       {product.description}
                     </p>
 
-                    <div className="flex items-center gap-2 text-sm">
+                    <div className="flex items-center gap-1 mb-3">
                       <div className="flex">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`w-4 h-4 ${
-                              i < Math.floor(product.rating)
-                                ? "fill-yellow-400 text-yellow-400"
-                                : "fill-gray-300 text-gray-300"
-                            }`}
-                          />
+                        {Array.from({ length: fullstarrating }).map(
+                          (_, idx) => (
+                            <FaStar
+                              key={`full-${idx}`}
+                              className="text-yellow-500"
+                            />
+                          )
+                        )}
+                        {halfstar && (
+                          <FaRegStarHalfStroke className="text-yellow-500" />
+                        )}
+                        {Array.from({ length: emptystars }).map((_, idx) => (
+                          <FaRegStar key={`empty-${idx}`} />
                         ))}
                       </div>
-                      <span>{product.rating?.toFixed(1)}</span>
+                      <span className="text-sm text-gray-600">
+                        {product.rating}
+                      </span>
                     </div>
 
                     <div className="flex items-center gap-2 mt-1">
@@ -113,16 +149,13 @@ const WishlistPage = () => {
                     </div>
                   </CardContent>
                 </Card>
-              ))}
-            </div>
-          )}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </div>
-    );
-  } else {
-    toast.error("Please login to add products in wishlist");
-    navigate("/login");
-  }
+    </div>
+  );
 };
 
 export default WishlistPage;

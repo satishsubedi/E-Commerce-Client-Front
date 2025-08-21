@@ -35,7 +35,7 @@ const ProductDetailPage = () => {
   const { user } = useSelector((state) => state.user);
   const isLoggedIn = !!user && !!user._id;
   const isWishlisted = user?.wishList?.includes(product._id);
-  console.log(isWishlisted);
+  
   // console.log("product", product);
 
   const { singleProduct } = useSelector((state) => state.productInfo);

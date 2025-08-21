@@ -17,7 +17,7 @@ const Navbar = () => {
 
   //this is for handling on click
   const handleOnCategoryClick = (categoryPath) => {
-    const path = categoryPath.slice(1); // remove leading slash
+    const path = categoryPath.slice(1);
     const queryParams = new URLSearchParams({ productPath: path });
     navigate(`/allproducts?${queryParams.toString()}`);
 

@@ -1,8 +1,10 @@
 import { useState } from "react";
 import ChatBot from "../../components/aiChatBot/ChatBot";
+import { useSelector } from "react-redux";
 
 const SupportPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { user } = useSelector((state) => state.user);
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -40,7 +42,12 @@ const SupportPage = () => {
           >
             Start Chat
           </button>
-          <ChatBot isOpen={isModalOpen} onOpenChange={setIsModalOpen} />
+
+          <ChatBot
+            isOpen={isModalOpen}
+            onOpenChange={setIsModalOpen}
+            user={user}
+          />
         </div>
         <div className="bg-green-50 border border-green-200 p-6 rounded-lg text-center">
           <h3 className="text-lg font-semibold text-green-700">Call Mahesh</h3>

@@ -4,9 +4,7 @@ import { Route, Routes } from "react-router-dom";
 import LoginPage from "./pages/Auth/LoginPage";
 import SignupPage from "./pages/Auth/SignupPage";
 import ForgotPassword from "./pages/Auth/ForgotPassword";
-import Footer from "./components/shared/Footer";
 import { HomePage } from "./pages/Auth/HomePage";
-import Header from "./components/Header/Header";
 import ChangePasswordForm from "./components/log-in/ResetPasswordForm";
 import ActiveUserPage from "./pages/ActiveUserPage";
 import DefaultLayout from "./components/layout/DefaultLayout";
@@ -24,8 +22,23 @@ import UserOrderPage from "./pages/order/UserOrderPage.jsx";
 import ProtectedRoute from "./components/helper/ProtectedRoute.jsx";
 import OrderTrackingPage from "./pages/order/OrderTrackingPage.jsx";
 import SupportPage from "./pages/support/SupportPage.jsx";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { autoLoginAction } from "./features/user/userAction.js";
+import ChatBotPopup from "./components/aiChatBot/ChatBotPopup.jsx";
 
 function App() {
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    const accessJWT = sessionStorage.getItem("accessJWT");
+    const refreshJWT = localStorage.getItem("refreshJWT");
+
+    if (accessJWT || refreshJWT) {
+      dispatch(autoLoginAction());
+    }
+  }, [dispatch]);
   return (
     <>
       <Routes>
@@ -35,16 +48,19 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/change-password" element={<ChangePasswordForm />} />
           <Route path="/signup" element={<SignupPage />} />
-          <Route path="/product-detail/:slug" element={<ProductDetailPage />} />
           <Route path="/activate-user" element={<ActiveUserPage />} />
+          {/* Pages with or without login  */}
           <Route path="/allproducts/*" element={<AllProductsPage />} />
+          <Route path="/product-detail/:slug" element={<ProductDetailPage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/checkout/option" element={<CheckoutOptionPage />} />
           <Route path="/payment" element={<PaymentPage />} />
           <Route path="/order-success" element={<SuccessPage />} />
           <Route path="/review" element={<ReviewPage />} />
+          <Route path="/cancel" element={<CancelPage />} />
 
+          {/* This is for protedted pages  */}
           <Route
             path="/orderHistory"
             element={
@@ -71,12 +87,18 @@ function App() {
               </ProtectedRoute>
             }
           />
-
-          <Route path="/cancel" element={<CancelPage />} />
-          <Route path="/wishlist" element={<WishlistPage />} />
+          <Route
+            path="/wishlist"
+            element={
+              <ProtectedRoute>
+                <WishlistPage />
+              </ProtectedRoute>
+            }
+          />
         </Route>
       </Routes>
       <ToastContainer position="top-right" autoClose={2000} />
+      {user?._id && <ChatBotPopup user={user} />}
     </>
   );
 }

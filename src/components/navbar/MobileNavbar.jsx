@@ -1,282 +1,105 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import { RxHamburgerMenu } from "react-icons/rx";
-
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
   SheetTrigger,
+  SheetTitle,
 } from "@/components/ui/sheet";
 import { FaChevronRight } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { capitalize } from "../../utility/buldCapital";
+import { useNavigate } from "react-router-dom";
+
 const MobileNavbar = () => {
   const { categories } = useSelector((state) => state.categoriesInfo);
+  const navigate = useNavigate();
   const [path, setPath] = useState([null]);
+  const [open, setOpen] = useState(false); // Controls Sheet open/close
+
   const handleOnBack = () => {
-    if (path.length > 1) {
-      setPath(path.slice(0, -1));
-    }
+    if (path.length > 1) setPath(path.slice(0, -1));
   };
 
-  const handleOnNext = (parentid) => {
-    const haschild = categories.find((cat) => cat.parent == parentid);
-    if (haschild) {
-      setPath([...path, parentid]);
+  const handleOnNext = (category) => {
+    const hasChildren = categories.some((cat) => cat.parent === category._id);
+
+    if (hasChildren) {
+      setPath([...path, category._id]);
     } else {
-      // navigate to product list page where clg
-      console.log("no child");
+      // Navigate to filtered products page
+      const queryParams = new URLSearchParams({
+        productPath: category.path.slice(1),
+      });
+      navigate(`/allproducts?${queryParams.toString()}`);
+      setOpen(false); // Close the sidebar after selecting last-level category
+      setPath([null]); // Reset path
     }
   };
 
-  // const categories = [
-  //   // Top-level categories
-  //   {
-  //     _id: "1",
-  //     name: "Men",
-  //     slug: "men",
-  //     parent: null,
-  //     path: "/men",
-  //     level: 1,
-  //   },
-  //   {
-  //     _id: "2",
-  //     name: "Women",
-  //     slug: "women",
-  //     parent: null,
-  //     path: "/women",
-  //     level: 1,
-  //   },
-  //   {
-  //     _id: "3",
-  //     name: "Kids",
-  //     slug: "kids",
-  //     parent: null,
-  //     path: "/kids",
-  //     level: 1,
-  //   },
-
-  //   // Men Subcategories
-  //   {
-  //     _id: "4",
-  //     name: "Shoes",
-  //     slug: "shoes",
-  //     parent: "1",
-  //     path: "/men/shoes",
-  //     level: 2,
-  //   },
-  //   {
-  //     _id: "5",
-  //     name: "T-Shirts",
-  //     slug: "t-shirts",
-  //     parent: "1",
-  //     path: "/men/t-shirts",
-  //     level: 2,
-  //   },
-  //   {
-  //     _id: "6",
-  //     name: "Jackets",
-  //     slug: "jackets",
-  //     parent: "1",
-  //     path: "/men/jackets",
-  //     level: 2,
-  //   },
-
-  //   // Men > Shoes
-  //   {
-  //     _id: "7",
-  //     name: "Casual",
-  //     slug: "casual",
-  //     parent: "4",
-  //     path: "/men/shoes/casual",
-  //     level: 3,
-  //   },
-  //   {
-  //     _id: "8",
-  //     name: "Sport",
-  //     slug: "sport",
-  //     parent: "4",
-  //     path: "/men/shoes/sport",
-  //     level: 3,
-  //   },
-  //   {
-  //     _id: "9",
-  //     name: "Formal",
-  //     slug: "formal",
-  //     parent: "4",
-  //     path: "/men/shoes/formal",
-  //     level: 3,
-  //   },
-
-  //   // Men > Shoes > Casual (leaf)
-  //   {
-  //     _id: "10",
-  //     name: "Slip-On",
-  //     slug: "slip-on",
-  //     parent: "7",
-  //     path: "/men/shoes/casual/slip-on",
-  //     level: 4,
-  //   },
-  //   {
-  //     _id: "11",
-  //     name: "Sneakers",
-  //     slug: "sneakers",
-  //     parent: "7",
-  //     path: "/men/shoes/casual/sneakers",
-  //     level: 4,
-  //   },
-
-  //   // Women Subcategories
-  //   {
-  //     _id: "12",
-  //     name: "Heels",
-  //     slug: "heels",
-  //     parent: "2",
-  //     path: "/women/heels",
-  //     level: 2,
-  //   },
-  //   {
-  //     _id: "13",
-  //     name: "Dresses",
-  //     slug: "dresses",
-  //     parent: "2",
-  //     path: "/women/dresses",
-  //     level: 2,
-  //   },
-  //   {
-  //     _id: "14",
-  //     name: "Handbags",
-  //     slug: "handbags",
-  //     parent: "2",
-  //     path: "/women/handbags",
-  //     level: 2,
-  //   },
-
-  //   // Women > Dresses
-  //   {
-  //     _id: "15",
-  //     name: "Maxi",
-  //     slug: "maxi",
-  //     parent: "13",
-  //     path: "/women/dresses/maxi",
-  //     level: 3,
-  //   },
-  //   {
-  //     _id: "16",
-  //     name: "Mini",
-  //     slug: "mini",
-  //     parent: "13",
-  //     path: "/women/dresses/mini",
-  //     level: 3,
-  //   },
-  //   {
-  //     _id: "17",
-  //     name: "Midi",
-  //     slug: "midi",
-  //     parent: "13",
-  //     path: "/women/dresses/midi",
-  //     level: 3,
-  //   },
-
-  //   // Kids Subcategories
-  //   {
-  //     _id: "18",
-  //     name: "Boys",
-  //     slug: "boys",
-  //     parent: "3",
-  //     path: "/kids/boys",
-  //     level: 2,
-  //   },
-  //   {
-  //     _id: "19",
-  //     name: "Girls",
-  //     slug: "girls",
-  //     parent: "3",
-  //     path: "/kids/girls",
-  //     level: 2,
-  //   },
-
-  //   // Kids > Boys
-  //   {
-  //     _id: "20",
-  //     name: "Shirts",
-  //     slug: "shirts",
-  //     parent: "18",
-  //     path: "/kids/boys/shirts",
-  //     level: 3,
-  //   },
-  //   {
-  //     _id: "21",
-  //     name: "Pants",
-  //     slug: "pants",
-  //     parent: "18",
-  //     path: "/kids/boys/pants",
-  //     level: 3,
-  //   },
-
-  //   // Kids > Girls
-  //   {
-  //     _id: "22",
-  //     name: "Skirts",
-  //     slug: "skirts",
-  //     parent: "19",
-  //     path: "/kids/girls/skirts",
-  //     level: 3,
-  //   },
-  //   {
-  //     _id: "23",
-  //     name: "Frocks",
-  //     slug: "frocks",
-  //     parent: "19",
-  //     path: "/kids/girls/frocks",
-  //     level: 3,
-  //   },
-  // ];
   const currentParent = path[path.length - 1];
+  const currentCategories = categories.filter(
+    (cat) => cat.parent === currentParent
+  );
+
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger>
         <RxHamburgerMenu className="text-xl text-white cursor-pointer hover:ring-4 hover:ring-black hover:p-2 hover:rounded hover:text-4xl" />
       </SheetTrigger>
 
-      <SheetContent className="sm:w-screen py-10 px-2 border-2 lg:hidden overflow-hidden bg-slate-900 text-white">
-        {path.length > 1 && (
-          <SheetTitle className="p-4 font-medium text-lg text-white hover:cursor-pointer  ">
-            <button onClick={handleOnBack}>← Back</button>
-          </SheetTitle>
-        )}
+      <SheetContent
+        className="sm:w-screen lg:hidden bg-[#e0f2ff] text-black flex flex-col justify-between max-h-screen py-4 px-2"
+        side="right"
+      >
+        {/* Top: Welcome Message */}
+        <div className="mb-4 text-center text-lg font-semibold">
+          Welcome to our app
+        </div>
 
-        {/* Sliding container */}
-        <div className="relative w-full  h-full overflow-hidden">
-          <div
-            className="flex transition-transform duration-300 ease-in-out"
-            style={{ transform: `translateX(-${(path.length - 1) * 100}%)` }}
+        {/* Middle: Scrollable Categories */}
+        <div className="flex-1 overflow-auto">
+          {path.length > 1 && (
+            <SheetTitle className="p-4 font-medium text-lg text-white hover:cursor-pointer">
+              <button onClick={handleOnBack} className="text-black">
+                ← Back
+              </button>
+            </SheetTitle>
+          )}
+
+          <ul className="space-y-5">
+            {currentCategories.map((cat) => (
+              <li
+                key={cat._id}
+                className="px-4 py-2 shadow-lg rounded-2xl flex justify-between items-center cursor-pointer hover:bg-white hover:text-black"
+                onClick={() => handleOnNext(cat)}
+              >
+                <span>{capitalize(cat.name)}</span>
+                {categories.some((c) => c.parent === cat._id) && (
+                  <FaChevronRight className="text-2xl animate-pulse" />
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Bottom: Help/Support Links */}
+        <div className="mt-4 border-t border-gray-600 pt-4 flex flex-col space-y-2 text-center text-sm">
+          <button onClick={() => navigate("/help")} className="hover:underline">
+            Help
+          </button>
+          <button
+            onClick={() => navigate("/support")}
+            className="hover:underline"
           >
-            {path.map((parent, index) => {
-              const currentCategory = categories.filter(
-                (cat) => cat.parent === currentParent
-              );
-
-              return (
-                <ul key={index} className="w-full min-w-full p-3 space-y-4">
-                  {currentCategory.map((currentCat) => (
-                    <li
-                      key={currentCat._id}
-                      className=" px-4 hover:bg-white hover:text-black hover:rounded-2xl py-2 shadow-2xl text-2xl flex justify-between items-center cursor-pointer"
-                      onClick={() => handleOnNext(currentCat._id)}
-                    >
-                      <div>{capitalize(currentCat.name)}</div>
-                      <div>
-                        <FaChevronRight className="text-2xl animate-pulse"></FaChevronRight>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              );
-            })}
-          </div>
+            Support
+          </button>
+          <button
+            onClick={() => navigate("/contact")}
+            className="hover:underline"
+          >
+            Contact Us
+          </button>
         </div>
       </SheetContent>
     </Sheet>
