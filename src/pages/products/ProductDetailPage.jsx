@@ -20,6 +20,7 @@ import reviewAction from "../../features/review/reviewAction";
 import userInteractionObj from "../../utils/interactionId.js";
 import { postUserIntersction } from "../../features/userInteractions/userInteractionApi.js";
 import { result } from "lodash";
+import RecomendedProduct from "./recomendedProduct.jsx";
 
 const ProductDetailPage = () => {
   const dispatch = useDispatch();
@@ -74,6 +75,13 @@ const ProductDetailPage = () => {
   //function to handle add to cart
   const handleAddToCart = (product) => {
     try {
+      const recomedationObj = userInteractionObj({
+        productId: product._id,
+        userId: user._id,
+        type: "cart",
+      });
+
+      postUserIntersction(recomedationObj);
       dispatch(addItemToCart(product, selectedColor, selectedSize, quantity));
       toast.success(`${product.title} is added to cart`);
     } catch (error) {
@@ -301,6 +309,9 @@ const ProductDetailPage = () => {
             </div>
           </div>
         </div>
+      </div>
+      <div className="px-4">
+        <RecomendedProduct></RecomendedProduct>
       </div>
     </div>
   );
