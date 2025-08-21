@@ -17,6 +17,10 @@ import { toggleWishlistAction } from "../../features/user/userAction";
 import ReviewPage from "../review/ReviewPage";
 import reviewAction from "../../features/review/reviewAction";
 
+import userInteractionObj from "../../utils/interactionId.js";
+import { postUserIntersction } from "../../features/userInteractions/userInteractionApi.js";
+import { result } from "lodash";
+
 const ProductDetailPage = () => {
   const dispatch = useDispatch();
   const [selectedImage, setSelectedImage] = useState(0);
@@ -35,19 +39,37 @@ const ProductDetailPage = () => {
   const { user } = useSelector((state) => state.user);
   const isLoggedIn = !!user && !!user._id;
   const isWishlisted = user?.wishList?.includes(product._id);
-  
+
   // console.log("product", product);
 
   const { singleProduct } = useSelector((state) => state.productInfo);
   const ref = useRef(true);
+  // recomdation post start here
+
+  // recomdation post ends here
+
+  // const p = async () => {
+  //   result = await postUserIntersction(recomedationObj);
+  //   console.log(result);
+  //   return result;
+  // };
   // fetch all products when component mounts
   useEffect(() => {
     ref.current && dispatch(singleProductAction(slug));
+    console.log("reun user ", user);
     if (singleProduct?._id) {
+      // const recomedationObj = userInteractionObj({
+      //   productId: singleProduct._id,
+      //   userId: user._id,
+      //   type: "view",
+      // });
+      // postUserIntersction(recomedationObj);
       dispatch(reviewAction(singleProduct._id));
     }
+    // post the interaction from here
+
     ref.current = false;
-  }, [dispatch, slug, singleProduct]);
+  }, [dispatch, slug, singleProduct, user]);
 
   //function to handle add to cart
   const handleAddToCart = (product) => {

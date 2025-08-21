@@ -1,9 +1,15 @@
 import { v4 as uuidv4 } from "uuid";
-const interactionId = () => {
+const userInteractionObj = ({ productId, userId, type }) => {
   if (!localStorage.getItem("interactionId")) {
-    return localStorage.setItem("interactionId", uuidv4());
+    localStorage.setItem("interactionId", uuidv4());
   }
-  return localStorage.getItem("interactionId");
+
+  return {
+    userId,
+    interactionId: localStorage.getItem("interactionId"),
+    productId,
+    type,
+  };
 };
 
-export default interactionId;
+export default userInteractionObj;

@@ -17,6 +17,8 @@ import { toast } from "react-toastify";
 
 import reviewStar from "../../utils/reviewStar.js";
 import { FaRegStar, FaRegStarHalfStroke, FaStar } from "react-icons/fa6";
+import userInteractionObj from "../../utils/interactionId.js";
+import { postUserIntersction } from "../../features/userInteractions/userInteractionApi.js";
 
 const AllProductList = ({ setProductList, productList }) => {
   const dispatch = useDispatch();
@@ -39,19 +41,12 @@ const AllProductList = ({ setProductList, productList }) => {
     }
     dispatch(toggleWishlistAction(productId));
   };
-<<<<<<< HEAD
-  // useEffect(() => {
-  //   //To  persist login when page refreshed
-  //   dispatch(getUserAction());
-  // }, [dispatch]);
-=======
 
   useEffect(() => {
     //To  persist login when page refreshed
     dispatch(getUserAction());
   }, [dispatch]);
 
->>>>>>> 46a6a9d97b79de8ff9c87f05fc9a8f1112612dfd
   // fetch all products when component mounts
   useEffect(() => {
     if (FilterProduct?.length > 0) {
@@ -115,7 +110,15 @@ const AllProductList = ({ setProductList, productList }) => {
                   key={product._id}
                   className="group hover:shadow-lg transition-all duration-300 bg-white m-0 p-0"
                   onClick={() => {
+                    const recomedationObj = userInteractionObj({
+                      productId: product._id,
+                      userId: user._id,
+                      type: "view",
+                    });
+                    
+                    postUserIntersction(recomedationObj);
                     navigate(`/product-detail/${product.slug}`);
+                    // post recomendation
                   }}
                 >
                   <CardContent className="p-0 m-0">
