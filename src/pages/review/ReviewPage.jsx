@@ -47,7 +47,6 @@ const ReviewPage = () => {
 
   const { reviews } = useSelector((state) => state.reviewInfo);
   console.log(reviews);
-
   // const ref = useRef(true);
   const [hideReview, SetHideReview] = useState(true);
   const navigate = useNavigate();
