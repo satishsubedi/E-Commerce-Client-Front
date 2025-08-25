@@ -17,6 +17,11 @@ import { toggleWishlistAction } from "../../features/user/userAction";
 import ReviewPage from "../review/ReviewPage";
 import reviewAction from "../../features/review/reviewAction";
 
+import userInteractionObj from "../../utils/interactionId.js";
+import { postUserIntersction } from "../../features/userInteractions/userInteractionApi.js";
+import { result } from "lodash";
+import RecomendedProduct from "./recomendedProduct.jsx";
+
 const ProductDetailPage = () => {
   const dispatch = useDispatch();
   const [selectedImage, setSelectedImage] = useState(0);
@@ -28,6 +33,7 @@ const ProductDetailPage = () => {
   // const [isWishlisted, setIsWishlisted] = useState(false);
 
   const { slug } = useParams();
+  console.log(slug);
 
   const { products } = useSelector((state) => state.productInfo);
   const navigate = useNavigate();
@@ -35,23 +41,40 @@ const ProductDetailPage = () => {
   const { user } = useSelector((state) => state.user);
   const isLoggedIn = !!user && !!user._id;
   const isWishlisted = user?.wishList?.includes(product._id);
-  console.log(isWishlisted);
+
   // console.log("product", product);
 
   const { singleProduct } = useSelector((state) => state.productInfo);
-  const ref = useRef(true);
+
+  // recomdation post start here
+
+  // recomdation post ends here
+
+  // const p = async () => {
+  //   result = await postUserIntersction(recomedationObj);
+  //   console.log(result);
+  //   return result;
+  // };
   // fetch all products when component mounts
   useEffect(() => {
-    ref.current && dispatch(singleProductAction(slug));
+    dispatch(singleProductAction(slug));
+
     if (singleProduct?._id) {
       dispatch(reviewAction(singleProduct._id));
     }
-    ref.current = false;
-  }, [dispatch, slug, singleProduct]);
+    // post the interaction from here
+  }, [dispatch, slug, user]);
 
   //function to handle add to cart
   const handleAddToCart = (product) => {
     try {
+      const recomedationObj = userInteractionObj({
+        productId: product._id,
+        userId: user._id,
+        type: "cart",
+      });
+
+      postUserIntersction(recomedationObj);
       dispatch(addItemToCart(product, selectedColor, selectedSize, quantity));
       toast.success(`${product.title} is added to cart`);
     } catch (error) {
@@ -279,6 +302,9 @@ const ProductDetailPage = () => {
             </div>
           </div>
         </div>
+      </div>
+      <div className="px-4">
+        <RecomendedProduct></RecomendedProduct>
       </div>
     </div>
   );
