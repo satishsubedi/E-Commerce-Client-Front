@@ -84,8 +84,8 @@ const RecommendationProducts = () => {
               className="group hover:shadow-lg transition-all duration-300 bg-white m-0 p-0"
               onClick={() => {
                 const recomedationObj = userInteractionObj({
-                  productId: product._id,
-                  userId: user._id,
+                  productId: product?._id,
+                  userId: user?._id,
                   type: "view",
                 });
 

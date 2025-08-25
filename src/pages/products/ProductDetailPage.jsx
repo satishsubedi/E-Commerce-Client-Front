@@ -33,6 +33,7 @@ const ProductDetailPage = () => {
   // const [isWishlisted, setIsWishlisted] = useState(false);
 
   const { slug } = useParams();
+  console.log(slug);
 
   const { products } = useSelector((state) => state.productInfo);
   const navigate = useNavigate();
@@ -44,7 +45,7 @@ const ProductDetailPage = () => {
   // console.log("product", product);
 
   const { singleProduct } = useSelector((state) => state.productInfo);
-  const ref = useRef(true);
+
   // recomdation post start here
 
   // recomdation post ends here
@@ -56,21 +57,13 @@ const ProductDetailPage = () => {
   // };
   // fetch all products when component mounts
   useEffect(() => {
-    ref.current && dispatch(singleProductAction(slug));
-    console.log("reun user ", user);
+    dispatch(singleProductAction(slug));
+
     if (singleProduct?._id) {
-      // const recomedationObj = userInteractionObj({
-      //   productId: singleProduct._id,
-      //   userId: user._id,
-      //   type: "view",
-      // });
-      // postUserIntersction(recomedationObj);
       dispatch(reviewAction(singleProduct._id));
     }
     // post the interaction from here
-
-    ref.current = false;
-  }, [dispatch, slug, singleProduct, user]);
+  }, [dispatch, slug, user]);
 
   //function to handle add to cart
   const handleAddToCart = (product) => {

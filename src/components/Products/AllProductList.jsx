@@ -112,11 +112,12 @@ const AllProductList = ({ setProductList, productList }) => {
                   onClick={() => {
                     const recomedationObj = userInteractionObj({
                       productId: product._id,
-                      userId: user._id,
+                      userId: user?._id,
                       type: "view",
                     });
-                    
+
                     postUserIntersction(recomedationObj);
+                    console.log("navigate from product list ");
                     navigate(`/product-detail/${product.slug}`);
                     // post recomendation
                   }}
@@ -238,7 +239,7 @@ const AllProductList = ({ setProductList, productList }) => {
           </div>
         ) : (
           <div className="text-center font-semibold text-2xl text-gray-600 py-10">
-            Loading......
+          <h1>No Product found</h1>
           </div>
         )}
       </div>
