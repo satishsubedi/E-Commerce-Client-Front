@@ -7,20 +7,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { singleProductAction } from "../../features/product/productAction";
 import { toast } from "react-toastify";
 import { addItemToCart } from "../../features/cart/cartAction";
-
 import { toggleWishlistAction } from "../../features/user/userAction";
-// import {
-//   addToWishlistAction,
-//   removeFromWishlistAction,
-// } from "../../features/user/userAction";
-
 import ReviewPage from "../review/ReviewPage";
 import reviewAction from "../../features/review/reviewAction";
-
 import userInteractionObj from "../../utils/interactionId.js";
 import { postUserIntersction } from "../../features/userInteractions/userInteractionApi.js";
-import { result } from "lodash";
-import RecomendedProduct from "./recomendedProduct.jsx";
+import RecomendedProduct from "./RecomendedProduct.jsx";
+import { Separator } from "@/components/ui/separator";
 
 const ProductDetailPage = () => {
   const dispatch = useDispatch();
@@ -29,8 +22,6 @@ const ProductDetailPage = () => {
   const [selectedSize, setSelectedSize] = useState("");
   const [quantity, setQuantity] = useState(1);
   const wishlist = useSelector((state) => state.user.wishlistProducts);
-
-  // const [isWishlisted, setIsWishlisted] = useState(false);
 
   const { slug } = useParams();
   console.log(slug);
@@ -42,27 +33,14 @@ const ProductDetailPage = () => {
   const isLoggedIn = !!user && !!user._id;
   const isWishlisted = user?.wishList?.includes(product._id);
 
-  // console.log("product", product);
-
   const { singleProduct } = useSelector((state) => state.productInfo);
 
-  // recomdation post start here
-
-  // recomdation post ends here
-
-  // const p = async () => {
-  //   result = await postUserIntersction(recomedationObj);
-  //   console.log(result);
-  //   return result;
-  // };
-  // fetch all products when component mounts
   useEffect(() => {
     dispatch(singleProductAction(slug));
 
     if (singleProduct?._id) {
       dispatch(reviewAction(singleProduct._id));
     }
-    // post the interaction from here
   }, [dispatch, slug, user]);
 
   //function to handle add to cart
@@ -303,7 +281,8 @@ const ProductDetailPage = () => {
           </div>
         </div>
       </div>
-      <div className="px-4">
+      <Separator />
+      <div className="px-4 py-4">
         <RecomendedProduct></RecomendedProduct>
       </div>
     </div>

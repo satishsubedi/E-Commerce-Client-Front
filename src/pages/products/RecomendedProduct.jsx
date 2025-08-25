@@ -10,55 +10,21 @@ import { useEffect } from "react";
 
 import { recomendedProductAction } from "../../features/product/productAction";
 import { postUserIntersction } from "../../features/userInteractions/userInteractionApi";
+import { toggleWishlistAction } from "../../features/user/userAction";
+import { toast } from "react-toastify";
 
 const RecomendedProduct = () => {
   const { recomedateProducts } = useSelector((state) => state.productInfo);
   const wishlist = useSelector((state) => state.user.wishlistProducts);
   const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
+  const isLoggedIn = !!user && !!user._id;
   console.log(recomedateProducts);
 
   useEffect(() => {
     console.log("run ussseffect in recomedded product");
     // Step 1: fetch on page load
     dispatch(recomendedProductAction(user?._id));
-
-    // Step 2: check expiry every 5 seconds (for testing)
-    // const interval = setInterval(
-    //   () => {
-    //     const storedExpiry = localStorage.getItem("expiry");
-    //     const now = new Date();
-    //     console.log(storedExpiry, "30");
-    //     let expiryDate;
-    //     if (!storedExpiry) {
-    //       // first time: set expiry 5 seconds from now
-    //       expiryDate = new Date(now.getTime() + 24 * 60 * 60 * 1000);
-    //       localStorage.setItem("expiry", expiryDate.toISOString());
-    //       console.log(
-    //         "Expiry not set, creating new one:",
-    //         expiryDate.toISOString()
-    //       );
-    //     } else {
-    //       expiryDate = new Date(storedExpiry);
-    //     }
-
-    //     if (now > expiryDate) {
-    //       console.log("Expired — fetching new data");
-    //       // fetch new data from server
-    //       dispatch(recomendedProductAction(user?._id));
-    //       // reset expiry 5 seconds from now (for testing)
-    //       const newExpiry = new Date(now.getTime() + 24 * 60 * 60 * 1000);
-    //       localStorage.setItem("expiry", newExpiry.toISOString());
-    //       console.log("New expiry set:", newExpiry.toISOString());
-    //     } else {
-    //       console.log("Data is still valid");
-    //     }
-    //   },
-    //   5 * 60 * 60 * 1000
-    // );
-
-    // // cleanup interval on unmount
-    // return () => clearInterval(interval);
   }, []);
   const handleToggleWishlist = (productId) => {
     if (!isLoggedIn) {
@@ -71,7 +37,9 @@ const RecomendedProduct = () => {
   return (
     recomedateProducts.length > 0 && (
       <div>
-        <div className="text-3xl text-grey-400 mb-4  ">You might also like</div>
+        <div className="text-3xl text-black mb-4 text-center font-bold">
+          You might also like
+        </div>
         <div>
           <div className="max-w-7xl mx-auto  sm:px-6 lg:px-8">
             {recomedateProducts.length > 0 ? (

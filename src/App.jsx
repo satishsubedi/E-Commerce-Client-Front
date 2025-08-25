@@ -21,6 +21,7 @@ import ReviewPage from "./pages/review/ReviewPage.jsx";
 import UserOrderPage from "./pages/order/UserOrderPage.jsx";
 import ProtectedRoute from "./components/helper/ProtectedRoute.jsx";
 import OrderTrackingPage from "./pages/order/OrderTrackingPage.jsx";
+import ProfileSettingPage from "./pages/Auth/ProfileSettingPage.jsx";
 import SupportPage from "./pages/support/SupportPage.jsx";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
@@ -61,6 +62,15 @@ function App() {
           <Route path="/cancel" element={<CancelPage />} />
 
           {/* This is for protedted pages  */}
+          <Route
+            path="/profileSettings"
+            element={
+              <ProtectedRoute>
+                {" "}
+                <ProfileSettingPage />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/orderHistory"
             element={

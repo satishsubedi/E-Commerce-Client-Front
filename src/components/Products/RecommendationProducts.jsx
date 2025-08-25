@@ -18,7 +18,7 @@ import userInteractionObj from "../../utils/interactionId";
 import { postUserIntersction } from "../../features/userInteractions/userInteractionApi";
 
 const RecommendationProducts = () => {
-   const { recomedateProducts } = useSelector((state) => state.productInfo);
+  const { recomedateProducts } = useSelector((state) => state.productInfo);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user, wishlistProducts } = useSelector((state) => state.user);
@@ -32,10 +32,6 @@ const RecommendationProducts = () => {
     }
     dispatch(toggleWishlistAction(productId));
   };
-  // useEffect(() => {
-  //   //To  persist login when page refreshed
-  //   dispatch(getUserAction());
-  // }, [dispatch]);
 
   const calculateDiscountPercentage = (price, discountPrice) => {
     return price !== discountPrice
@@ -43,19 +39,6 @@ const RecommendationProducts = () => {
       : 0;
   };
 
-  //function to check if product is wishlisted
-  // const isProductWishlisted = (productId) => {
-  //   return wishlist.includes(productId);
-  // };
-
-  // //function to toggle wishlist
-  // const toggleWishlist = (id) => {
-  //   setWishlist((prev) =>
-  //     prev.includes(id)
-  //       ? prev.filter((wishlist) => wishlist !== id)
-  //       : [...prev, id]
-  //   );
-  // };
   useEffect(() => {
     if (user?._id) {
       dispatch(fetchWishlistAction());
@@ -76,7 +59,6 @@ const RecommendationProducts = () => {
           const { fullstarrating, halfstar, emptystars } = reviewStar(
             product.reviews
           );
-          // const isWishlisted = isProductWishlisted(product._id);
 
           return (
             <Card
