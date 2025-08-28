@@ -2,6 +2,10 @@ import { axiosApiCall } from "../../axios/axiosApiCall";
 
 const USER_API_URL = `${import.meta.env.VITE_APP_API_BASE_URL}/api/v1/auth`;
 
+// Get new access token using refresh token | GET | PRIVATE
+// This function is used to get a new access token using the refresh token
+//  when the current access token is expired.
+
 //CREATE USER | POST |  SIGNUP |  PUBLIC
 export const createUser = (userObj) => {
   return axiosApiCall({
