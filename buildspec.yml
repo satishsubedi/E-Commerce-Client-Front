@@ -1,0 +1,19 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo "Running tests and checks..."
+      - npm i -g yarn
+      - yarn
+
+  build:
+    commands:
+      - echo "Building React application..."
+      - yarn build
+
+artifacts:
+  files:
+    - "**/*"
+  base-directory: dist
+  discard-paths: no
