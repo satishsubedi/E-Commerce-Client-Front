@@ -2,17 +2,31 @@ version: 0.2
 
 phases:
   install:
+    runtime-versions:
+      nodejs: 20 # Required for react-router-dom v7.7.0
     commands:
-      - echo "Installing Yarn..."
+      - echo "Setting up Node.js environment..."
+      - node --version
       - npm install -g yarn
+      - yarn --version
+
   pre_build:
     commands:
       - echo "Installing dependencies..."
       - yarn install --frozen-lockfile
+
   build:
     commands:
       - echo "Building Vite application..."
       - yarn build
+      - echo "Build completed successfully!"
+
+  post_build:
+    commands:
+      - echo "Build output:"
+      - ls -la dist/
+      - echo "Build size:"
+      - du -sh dist/
 
 artifacts:
   files:
@@ -23,3 +37,4 @@ artifacts:
 cache:
   paths:
     - node_modules/**/*
+    - .yarn/cache/**/*
