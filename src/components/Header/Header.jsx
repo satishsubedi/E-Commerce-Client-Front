@@ -11,7 +11,6 @@ import { fetchProductAction } from "../../features/product/productAction";
 import { logoutUserAction } from "../../features/user/userAction";
 import DropDown from "../../utils/dropDown";
 import SearchBar from "../Search/SearchBar";
-import { getRecomendedProducts } from "../../features/userInteractions/userInteractionApi";
 
 const Header = () => {
   const { products } = useSelector((state) => state.productInfo);
@@ -30,7 +29,6 @@ const Header = () => {
 
   const wishlistItemsCount = wishlistProducts?.length || 0;
   console.log("Number of wishlist items : ", wishlistItemsCount);
-  
 
   useEffect(() => {
     ref.current &&
