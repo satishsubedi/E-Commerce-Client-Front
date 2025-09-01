@@ -1,15 +1,17 @@
 version: 0.2
 
 phases:
+  install:
+    commands:
+      - echo "Installing Yarn..."
+      - npm install -g yarn
   pre_build:
     commands:
-      - echo "Running tests and checks..."
-      - npm i -g yarn
-      - yarn
-
+      - echo "Installing dependencies..."
+      - yarn install --frozen-lockfile
   build:
     commands:
-      - echo "Building React application..."
+      - echo "Building Vite application..."
       - yarn build
 
 artifacts:
@@ -17,3 +19,7 @@ artifacts:
     - "**/*"
   base-directory: dist
   discard-paths: no
+
+cache:
+  paths:
+    - node_modules/**/*
