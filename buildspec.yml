@@ -19,17 +19,14 @@ phases:
     commands:
       - echo "Installing dependencies..."
       - yarn install --frozen-lockfile
-      - echo "Environment variables check:"
-      - echo "VITE_APP_API_BASE_URL=$VITE_APP_API_BASE_URL"
-      - echo "VITE_APP_STRIPE_PUBLIC_KEY=$VITE_APP_STRIPE_PUBLIC_KEY"
 
   build:
     commands:
       - echo "Building Vite application with environment variables..."
-      # Create .env file for build
-      - echo "VITE_APP_API_BASE_URL=$VITE_APP_API_BASE_URL" > .env
-      - echo "VITE_APP_STRIPE_PUBLIC_KEY=$VITE_APP_STRIPE_PUBLIC_KEY" >> .env
-      - cat .env
+      # Create .env.production file for build
+      - echo "VITE_APP_API_BASE_URL=$VITE_APP_API_BASE_URL" > .env.production
+      - echo "VITE_APP_STRIPE_PUBLIC_KEY=$VITE_APP_STRIPE_PUBLIC_KEY" >> .env.production
+      - echo ".env.production created"
       - yarn build
       - echo "Build completed successfully!"
 
@@ -37,9 +34,9 @@ phases:
     commands:
       - echo "Build output:"
       - ls -la dist/
-      - echo "Checking if env variables are in built files:"
-      - grep -r "http://ecommerce-client-be-env" dist/ || echo "API URL not found in built files"
-      - grep -r "pk_test_51Rlk7IAS81Snyc3lAlBRshsKloPFYVqkWOiqDVRKqhqLFFghyNVo097iE9aU6Cpu209kVgHgCTcuuAghi4B1xjuJ00hmq2E7s7" dist/ || echo "Stripe key not found in built files"
+      # Optional: debugging (remove later)
+      - grep -r "$VITE_APP_API_BASE_URL" dist/ || echo "API URL not found in built files"
+      - grep -r "$VITE_APP_STRIPE_PUBLIC_KEY" dist/ || echo "Stripe key not found in built files"
 
 artifacts:
   files:
