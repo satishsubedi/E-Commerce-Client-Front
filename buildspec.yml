@@ -8,7 +8,7 @@ env:
 phases:
   install:
     runtime-versions:
-      nodejs: 20 # Required for react-router-dom v7.7.0
+      nodejs: 20
     commands:
       - echo "Setting up Node.js environment..."
       - node --version
@@ -19,11 +19,17 @@ phases:
     commands:
       - echo "Installing dependencies..."
       - yarn install --frozen-lockfile
+      - echo "Environment variables check:"
+      - echo "VITE_APP_API_BASE_URL=$VITE_APP_API_BASE_URL"
+      - echo "VITE_APP_STRIPE_PUBLIC_KEY=$VITE_APP_STRIPE_PUBLIC_KEY"
 
   build:
     commands:
-      - echo "Building Vite application..."
-      - echo "Environment variables are set for build"
+      - echo "Building Vite application with environment variables..."
+      # Create .env file for build
+      - echo "VITE_APP_API_BASE_URL=$VITE_APP_API_BASE_URL" > .env
+      - echo "VITE_APP_STRIPE_PUBLIC_KEY=$VITE_APP_STRIPE_PUBLIC_KEY" >> .env
+      - cat .env
       - yarn build
       - echo "Build completed successfully!"
 
@@ -31,8 +37,9 @@ phases:
     commands:
       - echo "Build output:"
       - ls -la dist/
-      - echo "Build size:"
-      - du -sh dist/
+      - echo "Checking if env variables are in built files:"
+      - grep -r "http://ecommerce-client-be-env" dist/ || echo "API URL not found in built files"
+      - grep -r "pk_test_51Rlk7IAS81Snyc3lAlBRshsKloPFYVqkWOiqDVRKqhqLFFghyNVo097iE9aU6Cpu209kVgHgCTcuuAghi4B1xjuJ00hmq2E7s7" dist/ || echo "Stripe key not found in built files"
 
 artifacts:
   files:
