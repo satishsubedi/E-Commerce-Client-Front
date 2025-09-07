@@ -2,7 +2,7 @@ version: 0.2
 
 env:
   variables:
-    VITE_APP_API_BASE_URL: "http://ecommerce-client-be-env.eba-frymnet8.eu-north-1.elasticbeanstalk.com"
+    VITE_APP_API_BASE_URL: "http://ecommerce-client-be-env.eba-z3yjyev2.eu-north-1.elasticbeanstalk.com"
     VITE_APP_STRIPE_PUBLIC_KEY: "pk_test_51Rlk7IAS81Snyc3lAlBRshsKloPFYVqkWOiqDVRKqhqLFFghyNVo097iE9aU6Cpu209kVgHgCTcuuAghi4B1xjuJ00hmq2E7s7"
 
 phases:
